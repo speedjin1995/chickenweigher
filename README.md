@@ -1,0 +1,2 @@
+# synctronix
+Synctronix Weighing Scale
