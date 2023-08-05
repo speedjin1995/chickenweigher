@@ -395,6 +395,36 @@ to get the desired effect
                       <p>Products</p>
                     </a>
                   </li>
+                  <li class="nav-item">
+                    <a href="#vehicles" data-file="vehicles.php" class="nav-link link">
+                      <i class="nav-icon fas fa-car"></i>
+                      <p>Vehicles</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#transporters" data-file="transport.php" class="nav-link link">
+                      <i class="nav-icon fas fa-box"></i>
+                      <p>Drivers</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#units" data-file="units.php" class="nav-link link">
+                      <i class="nav-icon fas fa-balance-scale"></i>
+                      <p>Grades</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#packages" data-file="packages.php" class="nav-link link">
+                      <i class="nav-icon fas fa-shopping-bag"></i>
+                      <p>Farms</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#lots" data-file="lots.php" class="nav-link link">
+                      <i class="nav-icon fas fa-store"></i>
+                      <p>Groups</p>
+                    </a>
+                  </li>
                 </ul>
               </li>';
               }
@@ -417,12 +447,12 @@ to get the desired effect
                 }
               ?>
 
-              <li class="nav-item">
+              <!--li class="nav-item">
                 <a href="#setup" data-file="setup.php" class="nav-link link">
                   <i class="nav-icon fas fa-user-cog"></i>
                   <p>Port Setup</p>
                 </a>
-              </li>
+              </li-->
 
               <li class="nav-item">
                 <a href="#myprofile" data-file="myprofile.php" class="nav-link link">

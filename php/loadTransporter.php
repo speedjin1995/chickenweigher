@@ -36,8 +36,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     $data[] = array( 
       "id"=>$row['id'],
       "transporter_code"=>$row['transporter_code'],
-      "transporter_name"=>$row['transporter_name'],
-      "transporter_price"=>$row['transporter_price']
+      "transporter_name"=>$row['transporter_name']
     );
 }
 

@@ -42,7 +42,7 @@ else{
 							<thead>
 								<tr>
 									<th>No.</th>
-									<th>Units</th>
+									<th>Grades</th>
 									<th>Actions</th>
 								</tr>
 							</thead>
@@ -59,7 +59,7 @@ else{
       <div class="modal-content">
         <form role="form" id="unitForm">
             <div class="modal-header">
-              <h4 class="modal-title">Add Lots</h4>
+              <h4 class="modal-title">Add Grades</h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -70,7 +70,7 @@ else{
     					<input type="hidden" class="form-control" id="id" name="id">
     				</div>
     				<div class="form-group">
-    					<label for="units">Units*</label>
+    					<label for="units">Grades *</label>
     					<input type="text" class="form-control" name="units" id="units" placeholder="Enter Units" required>
     				</div>
     			</div>

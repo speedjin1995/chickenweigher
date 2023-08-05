@@ -16,7 +16,7 @@ else{
     <div class="container-fluid">
         <div class="row mb-2">
 			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">Transporter</h1>
+				<h1 class="m-0 text-dark">Drivers</h1>
 			</div><!-- /.col -->
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -42,8 +42,7 @@ else{
 							<thead>
 								<tr>
                                     <th>Code</th>
-									<th>Transporter</th>
-									<th>Phone</th>
+									<th>Driver</th>
 									<th>Actions</th>
 								</tr>
 							</thead>
@@ -71,16 +70,12 @@ else{
                   <input type="hidden" class="form-control" id="id" name="id">
                 </div>
                 <div class="form-group">
-                  <label for="code">Transporter Code *</label>
+                  <label for="code">Driver Code *</label>
                   <input type="text" class="form-control" name="code" id="code" placeholder="Enter Transporter Code" maxlength="10" required>
                 </div>
                 <div class="form-group">
-                  <label for="transporter">Transporter Name *</label>
+                  <label for="transporter">Driver Name *</label>
                   <input type="text" class="form-control" name="transporter" id="transporter" placeholder="Enter Transporter Name" required>
-                </div>
-                <div class="form-group"> 
-                  <label for="price">Transporter Phone *</label>
-                  <input type="text"  class="form-control" id="price" name="price" placeholder="Enter Transporter Phone" required>
                 </div>
               </div>
             </div>
@@ -109,7 +104,6 @@ $(function () {
         'columns': [
             { data: 'transporter_code' },
             { data: 'transporter_name' },
-            { data: 'transporter_price' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -154,7 +148,6 @@ $(function () {
         $('#addModal').find('#id').val("");
         $('#addModal').find('#code').val("");
         $('#addModal').find('#transporter').val("");
-        $('#addModal').find('#price').val("");
         $('#addModal').modal('show');
         
         $('#transporterForm').validate({
@@ -182,7 +175,6 @@ function edit(id){
             $('#addModal').find('#id').val(obj.message.id);
             $('#addModal').find('#code').val(obj.message.transporter_code);
             $('#addModal').find('#transporter').val(obj.message.transporter_name);
-            $('#addModal').find('#price').val(obj.message.transporter_price);
             $('#addModal').modal('show');
             
             $('#transporterForm').validate({

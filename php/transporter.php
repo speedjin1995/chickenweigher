@@ -8,14 +8,13 @@ if(!isset($_SESSION['userID'])){
     echo 'window.location.href = "../login.html";</script>';
 }
 
-if(isset($_POST['code'], $_POST['transporter'], $_POST['price'])){
+if(isset($_POST['code'], $_POST['transporter'])){
     $code = filter_input(INPUT_POST, 'code', FILTER_SANITIZE_STRING);
     $transporter = filter_input(INPUT_POST, 'transporter', FILTER_SANITIZE_STRING);
-    $price = filter_input(INPUT_POST, 'price', FILTER_SANITIZE_STRING);
 
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE transporters SET transporter_code=?, transporter_name=?, transporter_price=? WHERE id=?")) {
-            $update_stmt->bind_param('ssss', $code, $transporter, $price, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE transporters SET transporter_code=?, transporter_name=? WHERE id=?")) {
+            $update_stmt->bind_param('sss', $code, $transporter, $_POST['id']);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -40,8 +39,8 @@ if(isset($_POST['code'], $_POST['transporter'], $_POST['price'])){
         }
     }
     else{
-        if ($insert_stmt = $db->prepare("INSERT INTO transporters (transporter_code, transporter_name, transporter_price) VALUES (?, ?, ?)")) {
-            $insert_stmt->bind_param('sss', $code, $transporter, $price);
+        if ($insert_stmt = $db->prepare("INSERT INTO transporters (transporter_code, transporter_name) VALUES (?, ?)")) {
+            $insert_stmt->bind_param('ss', $code, $transporter);
             
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {

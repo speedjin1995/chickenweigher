@@ -15,7 +15,7 @@ else{
     <div class="container-fluid">
         <div class="row mb-2">
 			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">Packages</h1>
+				<h1 class="m-0 text-dark">Farms</h1>
 			</div><!-- /.col -->
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -70,11 +70,11 @@ else{
                   <input type="hidden" class="form-control" id="id" name="id">
                 </div>
                 <div class="form-group">
-                  <label for="code">Packages Code *</label>
+                  <label for="code">Farm Code *</label>
                   <input type="text" class="form-control" name="code" id="code" placeholder="Enter Product Code" maxlength="10" required>
                 </div>
                 <div class="form-group">
-                  <label for="packages">Packages *</label>
+                  <label for="packages">Farm Name *</label>
                   <input type="text" class="form-control" name="packages" id="packages" placeholder="Enter Packages Number" required>
                 </div>
               </div>

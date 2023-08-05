@@ -8,13 +8,12 @@ if(!isset($_SESSION['userID'])){
     echo 'window.location.href = "../login.html";</script>';
 }
 
-if(isset($_POST['vehicleNumber'], $_POST['vehicleWeight'])){
+if(isset($_POST['vehicleNumber'])){
     $vehicleNumber = filter_input(INPUT_POST, 'vehicleNumber', FILTER_SANITIZE_STRING);
-    $vehicleWeight = filter_input(INPUT_POST, 'vehicleWeight', FILTER_SANITIZE_STRING);
 
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE vehicles SET veh_number=?, vehicleWeight=? WHERE id=?")) {
-            $update_stmt->bind_param('sss', $vehicleNumber, $vehicleWeight, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE vehicles SET veh_number=? WHERE id=?")) {
+            $update_stmt->bind_param('ss', $vehicleNumber, $_POST['id']);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -39,8 +38,8 @@ if(isset($_POST['vehicleNumber'], $_POST['vehicleWeight'])){
         }
     }
     else{
-        if ($insert_stmt = $db->prepare("INSERT INTO vehicles (veh_number, vehicleWeight) VALUES (?,?)")) {
-            $insert_stmt->bind_param('ss', $vehicleNumber, $vehicleWeight);
+        if ($insert_stmt = $db->prepare("INSERT INTO vehicles (veh_number) VALUES (?)")) {
+            $insert_stmt->bind_param('s', $vehicleNumber);
             
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {

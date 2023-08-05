@@ -33,7 +33,7 @@ else{
                         <div class="row">
                             <div class="col-9"></div>
                             <div class="col-3">
-                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addLots">Add Lots</button>
+                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addLots">Add Grades</button>
                             </div>
                         </div>
                     </div>
@@ -42,7 +42,7 @@ else{
 							<thead>
 								<tr>
 									<th>No.</th>
-									<th>Lot No.</th>
+									<th>Group</th>
 									<th>Actions</th>
 								</tr>
 							</thead>
@@ -59,7 +59,7 @@ else{
       <div class="modal-content">
         <form role="form" id="lotForm">
             <div class="modal-header">
-              <h4 class="modal-title">Add Lots</h4>
+              <h4 class="modal-title">Add Groups</h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -70,7 +70,7 @@ else{
     					<input type="hidden" class="form-control" id="id" name="id">
     				</div>
     				<div class="form-group">
-    					<label for="lotsNumber">Lots Number *</label>
+    					<label for="lotsNumber">Group *</label>
     					<input type="text" class="form-control" name="lotsNumber" id="lotsNumber" placeholder="Enter Lots Number" required>
     				</div>
     			</div>
