@@ -9,40 +9,16 @@ if(!isset($_SESSION['userID'])){
 }
 else{
   $user = $_SESSION['userID'];
-  $stmt = $db->prepare("SELECT * from users where id = ?");
-	$stmt->bind_param('s', $user);
-	$stmt->execute();
-	$result = $stmt->get_result();
-  $role = 'NORMAL';
-  $port = 'COM5';
-  $baudrate = 9600;
-  $databits = "8";
-  $parity = "N";
-  $stopbits = '1';
-	
-	if(($row = $result->fetch_assoc()) !== null){
-    $role = $row['role_code'];
-    $port = $row['port'];
-    $baudrate = $row['baudrate'];
-    $databits = $row['databits'];
-    $parity = $row['parity'];
-    $stopbits = $row['stopbits'];
-  }
 
   $lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
   $vehicles = $db->query("SELECT * FROM vehicles WHERE deleted = '0'");
-  $vehicles2 = $db->query("SELECT * FROM vehicles WHERE deleted = '0'");
-  $products2 = $db->query("SELECT * FROM products WHERE deleted = '0'");
   $products = $db->query("SELECT * FROM products WHERE deleted = '0'");
   $packages = $db->query("SELECT * FROM packages WHERE deleted = '0'");
   $customers = $db->query("SELECT * FROM customers WHERE customer_status = 'CUSTOMERS' AND deleted = '0'");
   $suppliers = $db->query("SELECT * FROM customers WHERE customer_status = 'SUPPLIERS' AND deleted = '0'");
   $units = $db->query("SELECT * FROM units WHERE deleted = '0'");
-  $units1 = $db->query("SELECT * FROM units WHERE deleted = '0'");
   $status = $db->query("SELECT * FROM `status` WHERE deleted = '0'");
-  $status2 = $db->query("SELECT * FROM `status` WHERE deleted = '0'");
   $transporters = $db->query("SELECT * FROM `transporters` WHERE deleted = '0'");
-  $currency = $db->query("SELECT * FROM `currency` WHERE deleted = '0'");
 }
 ?>
 
@@ -82,7 +58,7 @@ else{
 <!-- Main content -->
 <div class="content">
   <div class="container-fluid">
-    <div div class="row">
+    <!--div div class="row">
       <div class="col-md-3 col-sm-6 col-12">
         <div class="info-box" id="saleCard">
           <span class="info-box-icon bg-info">
@@ -123,7 +99,7 @@ else{
         <div class="input-group-text color-palette" id="indicatorConnected"><i>Indicator Connected</i></div>
         <div class="input-group-text bg-danger color-palette" id="checkingConnection"><i>Checking Connection</i></div>
       </div>
-    </div>
+    </div-->
 
     <div class="row">
 
@@ -150,7 +126,7 @@ else{
       <div class="col-lg-12">
         <div class="card card-primary">
           <div class="card-header">
-            <div class="row">
+            <!--div class="row">
               <div class="col-6"></div>
               <div class="col-3">
                 <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="refreshBtn">Refresh</button>
@@ -158,7 +134,7 @@ else{
               <div class="col-3">
                 <button type="button" class="btn btn-block bg-gradient-warning btn-sm" onclick="newEntry()">Add New Weight</button>
               </div>
-            </div>
+            </div-->
           </div>
 
           <div class="card-body">
@@ -187,7 +163,7 @@ else{
   </div>
 </div>
 
-<div class="modal fade" id="extendModal">
+<!--div class="modal fade" id="extendModal">
   <div class="modal-dialog modal-xl" style="max-width: 90%;">
     <div class="modal-content">
       <form role="form" id="extendForm">
@@ -483,66 +459,9 @@ else{
           <button type="submit" class="btn btn-primary" id="saveButton">Save changes</button>
         </div>
       </form>
-    </div> <!-- /.modal-content -->
-  </div> <!-- /.modal-dialog -->
-</div> <!-- /.modal -->
-
-<div class="modal fade" id="setupModal">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content">
-
-    <form role="form" id="setupForm">
-      <div class="modal-header bg-gray-dark color-palette">
-        <h4 class="modal-title">Setup</h4>
-        <button type="button" class="close bg-gray-dark color-palette" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-4">
-            <div class="form-group">
-              <label>Serial Port</label>
-              <input class="form-control" type="text" id="serialPort" name="serialPort" value="<?=$port ?>">
-            </div>
-          </div>
-          <div class="col-4">
-            <div class="form-group">
-              <label>Baud Rate</label>
-              <input class="form-control" type="number" id="serialPortBaudRate" name="serialPortBaudRate" value="<?=$baudrate ?>">
-            </div>
-          </div>
-          <div class="col-4">
-            <div class="form-group">
-              <label>Data Bits</label>
-              <input class="form-control" type="text" id="serialPortDataBits" name="serialPortDataBits" value="<?=$databits ?>">
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-4">
-            <div class="form-group">
-              <label>Parity</label>
-              <input class="form-control" type="text" id="serialPortParity" name="serialPortParity" value="<?=$parity ?>">
-            </div>
-          </div>
-          <div class="col-4">
-            <div class="form-group">
-              <label>Stop bits</label>
-              <input class="form-control" type="text" id="serialPortStopBits" name="serialPortStopBits" value="<?=$stopbits ?>">
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer justify-content-between bg-gray-dark color-palette">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Save</button>
-      </div>
-
-    </form>
-  </div>
-</div>      
+    </div> <!-- /.modal-content >
+  </div> <!-- /.modal-dialog >
+</div> <!-- /.modal -->     
 
 <script>
 // Values
