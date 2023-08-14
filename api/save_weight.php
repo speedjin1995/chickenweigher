@@ -1,23 +1,23 @@
 <?php
 require_once 'db_connect.php';
-//mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 session_start();
 $post = json_decode(file_get_contents('php://input'), true);
 
-if(isset($_POST['status'], $_POST['groupNumber'], $_POST['product']
-, $_POST['vehicleNumber'], $_POST['driverName'],$_POST['farmId']
-, $_POST['averageCage'], $_POST['averageBird'], $_POST['capturedData'])){
+if(isset($post['status'], $post['groupNumber'], $post['product']
+, $post['vehicleNumber'], $post['driverName'], $post['farmId']
+, $post['averageCage'], $post['averageBird'], $post['capturedData'])){
 
-	$status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_STRING);
-	$groupNumber = filter_input(INPUT_POST, 'groupNumber', FILTER_SANITIZE_STRING);
-	$product = filter_input(INPUT_POST, 'product', FILTER_SANITIZE_STRING);
-	$vehicleNumber = filter_input(INPUT_POST, 'vehicleNumber', FILTER_SANITIZE_STRING);
-	$driverName = filter_input(INPUT_POST, 'driverName', FILTER_SANITIZE_STRING);
-	$farmId = filter_input(INPUT_POST, 'farmId', FILTER_SANITIZE_STRING);
-	$averageCage = filter_input(INPUT_POST, 'averageCage', FILTER_SANITIZE_STRING);
-	$averageBird = filter_input(INPUT_POST, 'averageBird', FILTER_SANITIZE_STRING);
-	$capturedData = $_POST['capturedData'];
+	$status = $post['status'];
+	$groupNumber = $post['groupNumber'];
+	$product = $post['product'];
+	$vehicleNumber = $post['vehicleNumber'];
+	$driverName = $post['driverName'];
+	$farmId = $post['farmId'];
+	$averageCage = $post['averageCage'];
+	$averageBird = $post['averageBird'];
+	$capturedData = $post['capturedData'];
 
 	$customerName = null;
 	$supplierName = null;
@@ -26,23 +26,23 @@ if(isset($_POST['status'], $_POST['groupNumber'], $_POST['product']
 	$serialNo = "";
 	$today = date("Y-m-d 00:00:00");
 
-	if($_POST['customerName'] != null && $_POST['customerName'] != ''){
-		$customerName = filter_input(INPUT_POST, 'customerName', FILTER_SANITIZE_STRING);
+	if($post['customerName'] != null && $post['customerName'] != ''){
+		$customerName = $post['customerName'];
 	}
 
-	if($_POST['supplierName'] != null && $_POST['supplierName'] != ''){
-		$supplierName = filter_input(INPUT_POST, 'supplierName', FILTER_SANITIZE_STRING);
+	if($post['supplierName'] != null && $post['supplierName'] != ''){
+		$supplierName = $post['supplierName'];
 	}
 
-	if($_POST['minWeight'] != null && $_POST['minWeight'] != ''){
-		$minWeight = filter_input(INPUT_POST, 'minWeight', FILTER_SANITIZE_STRING);
+	if($post['minWeight'] != null && $post['minWeight'] != ''){
+		$minWeight = $post['minWeight'];
 	}
 
-	if($_POST['maxWeight'] != null && $_POST['maxWeight'] != ''){
-		$maxWeight = filter_input(INPUT_POST, 'maxWeight', FILTER_SANITIZE_STRING);
+	if($post['maxWeight'] != null && $post['maxWeight'] != ''){
+		$maxWeight = $post['maxWeight'];
 	}
 
-	if($_POST['serialNo'] == null || $_POST['serialNo'] == ''){
+	if($post['serialNo'] == null || $post['serialNo'] == ''){
 		if($status == 'Sales'){
 			$serialNo = 'S'.date("Ymd");
 		}
@@ -81,7 +81,7 @@ if(isset($_POST['status'], $_POST['groupNumber'], $_POST['product']
 		}
 	}
 
-	if(isset($_POST['id']) && $_POST['id'] != null && $_POST['id'] != ''){
+	if(isset($post['id']) && $post['id'] != null && $post['id'] != ''){
 		if ($update_stmt = $db->prepare("UPDATE weight SET vehicleNo=?, lotNo=?, batchNo=?, invoiceNo=?, deliveryNo=?, purchaseNo=?, customer=?, productName=?, package=?
 		, unitWeight=?, currentWeight=?, tare=?, totalWeight=?, actualWeight=?, currency=?, moq=?, unitPrice=?, totalPrice=?, remark=?, supplyWeight=?, varianceWeight=?, status=?, 
 		dateTime=?, manual=?, manualVehicle=?, manualOutgoing=?, reduceWeight=?, outGDateTime=?, inCDateTime=?, pStatus=?, variancePerc=?, transporter=?, updated_by=? WHERE id=?")){
@@ -120,11 +120,12 @@ if(isset($_POST['status'], $_POST['groupNumber'], $_POST['product']
 		}
 	}
 	else{
-		if ($insert_stmt = $db->prepare("INSERT INTO weighing (serialNo, group_no, customer, supplier, product, driver_name, lorry_no, 
+		if ($insert_stmt = $db->prepare("INSERT INTO weighing (serial_no, group_no, customer, supplier, product, driver_name, lorry_no, 
 		farm_id, average_cage, average_bird, minimum_weight, maximum_weight, weight_data) 
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){
+		    $data = json_encode($capturedData);
 			$insert_stmt->bind_param('sssssssssssss', $serialNo, $groupNumber, $customerName, $supplierName, $product, $driverName, 
-			$vehicleNumber, $farmId, $averageCage, $averageBird, $minWeight, $maxWeight, $capturedData);
+			$vehicleNumber, $farmId, $averageCage, $averageBird, $minWeight, $maxWeight, $data);
 								
 								// Execute the prepared query.
 			if (! $insert_stmt->execute()){

@@ -9,6 +9,14 @@ if(!isset($_SESSION['userID'])){
 }
 else{
   $user = $_SESSION['userID'];
+  $stmt = $db->prepare("SELECT * from users where id = ?");
+	$stmt->bind_param('s', $user);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	
+	if(($row = $result->fetch_assoc()) !== null){
+    $role = $row['role_code'];
+  }
 
   $lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
   $vehicles = $db->query("SELECT * FROM vehicles WHERE deleted = '0'");
@@ -142,16 +150,14 @@ else{
               <thead>
                 <tr>
                   <th>No</th>
-                  <th>Status</th>
-                  <th>Weight Status</th>
                   <th>Serial No</th>
+                  <th>Group No</th>
+                  <th>Customers</th>
+                  <th>Suppliers</th>
+                  <th>Product</th>
                   <th>Vehicle No</th>
-                  <th>Product Description Detail</th>
-                  <th>Incoming (Gross Weight)</th>
-                  <th>Incoming (Gross) Date Time</th>
-                  <th>Outgoing (Tare) Weight</th>
-                  <th>Outgoing (Tare) Date Time</th>
-                  <th>Total Nett Weight</th>
+                  <th>Driver Name</th>
+                  <th>Farm Id</th>
                   <th></th>
                 </tr>
               </thead>
@@ -489,16 +495,14 @@ $(function () {
     },
     'columns': [
       { data: 'no' },
-      { data: 'pStatus' },
-      { data: 'status' },
-      { data: 'serialNo' },
-      { data: 'veh_number' },
-      { data: 'product_name' },
-      { data: 'currentWeight' },
-      { data: 'inCDateTime' },
-      { data: 'tare' },
-      { data: 'outGDateTime' },
-      { data: 'totalWeight' },
+      { data: 'serial_no' },
+      { data: 'group_no' },
+      { data: 'customer' },
+      { data: 'supplier' },
+      { data: 'product' },
+      { data: 'lorry_no' },
+      { data: 'driver_name' },
+      { data: 'farm_id' },
       { 
         className: 'dt-control',
         orderable: false,
@@ -512,9 +516,7 @@ $(function () {
       $('td', row).css('background-color', '#E6E6FA');
     },
     "drawCallback": function(settings) {
-      $('#salesInfo').text(settings.json.salesTotal);
-      $('#purchaseInfo').text(settings.json.purchaseTotal);
-      $('#localInfo').text(settings.json.localTotal);
+      
     }
   });
 
@@ -552,7 +554,7 @@ $(function () {
       format: 'DD/MM/YYYY hh:mm:ss A'
   });
 
-  $.post('http://127.0.0.1:5002/', $('#setupForm').serialize(), function(data){
+  /*$.post('http://127.0.0.1:5002/', $('#setupForm').serialize(), function(data){
     if(data == "true"){
       $('#indicatorConnected').addClass('bg-primary');
       $('#checkingConnection').removeClass('bg-danger');
@@ -579,7 +581,7 @@ $(function () {
         $('#checkingConnection').addClass('bg-danger');
       }
     });
-  }, 500);
+  }, 500);*/
 
   $.validator.setDefaults({
     submitHandler: function () {
@@ -894,339 +896,6 @@ $(function () {
       }
     });
   });
-
-  $('#datePicker').on('click', function () {
-    $('#datePicker').attr('data-info', '1');
-  });
-  
-  <?php 
-    if($role == "ADMIN"){
-      echo "$('#manual').on('click', function(){
-        if($(this).is(':checked')){
-          $(this).val(1);
-            $('#currentWeight').removeAttr('readonly');
-        }
-        else{
-          $(this).val(0);
-            $('#currentWeight').attr('readonly', 'readonly');
-        }
-      })";
-    }
-  ?>
-
-  $('#extendModal').find('#supplyWeight').on('keyup', function () {
-    if($('#actualWeight').val() && $(this).val()){
-      var varianWeight = $('#actualWeight').val() - $(this).val();
-
-      if(varianWeight != ''){
-        $('#varianceWeight').val(varianWeight.toFixed(2));
-      }
-      else{
-        $('#varianceWeight').val((0).toFixed(2))
-      }
-
-      $('#variancePerc').trigger("keyup");
-    }
-  });
-
-  $('#extendModal').find('#inCButton').on('click', function(){
-    var text = $('#indicatorWeight').text();
-    
-    if(text[text.length-2] == 'k'){
-        if(weightUnit == "2"){
-            $('#currentWeight').val(parseFloat(parseFloat(text.substring(0, text.length-2)) * 1000).toFixed(2));
-        }
-        else{
-            $('#currentWeight').val(text.substring(0, text.length-2));
-        }
-        
-        indicatorUnit = "kg";
-    }
-    else{
-        if(weightUnit == "1"){
-            $('#currentWeight').val(parseFloat(parseFloat(text.substring(0, text.length-1)) / 1000).toFixed(2));
-        }
-        else{
-            $('#currentWeight').val(text.substring(0, text.length-1)); 
-        }
-         
-        indicatorUnit = "g";
-    }
-
-    $('#currentWeight').trigger("keyup");
-  });
-
-  $('#extendModal').find('#currentWeight').on('keyup', function(){
-    updateWeights();
-    var today  = new Date();
-    $('#extendModal').find('#inCDateTime').val(today.toLocaleString("en-US"));
-    $('#supplyWeight').trigger("keyup");
-    $('#variancePerc').trigger("keyup");
-    $('#unitPrice').trigger("keyup");
-  });
-
-  $('#extendModal').find('#outGButton').on('click', function(){
-    var text = $('#indicatorWeight').text();
-    
-    if(text[text.length-2] == 'k'){
-        if(weightUnit == "2"){
-            $('#tareWeight').val(parseFloat(parseFloat(text.substring(0, text.length-2)) * 1000).toFixed(2));
-        }
-        else{
-            $('#tareWeight').val(text.substring(0, text.length-2));
-        }
-        
-        indicatorUnit = "kg";
-    }
-    else{
-        if(weightUnit == "1"){
-            $('#tareWeight').val(parseFloat(parseFloat(text.substring(0, text.length-1)) / 1000).toFixed(2));
-        }
-        else{
-            $('#tareWeight').val(text.substring(0, text.length-1)); 
-        }
-         
-        indicatorUnit = "g";
-    }
-    
-    $('#tareWeight').trigger("keyup");
-  });
-
-  $('#extendModal').find('#tareWeight').on('keyup', function(){
-    updateWeights();
-    var today  = new Date();
-    $('#extendModal').find('#outGDateTime').val(today.toLocaleString("en-US"));
-    $('#supplyWeight').trigger("keyup");
-    $('#variancePerc').trigger("keyup");
-    $('#unitPrice').trigger("keyup");
-  });
-
-  $('#extendModal').find('#reduceWeight').on('keyup', function(){
-    updateWeights();
-    $('#supplyWeight').trigger("keyup");
-    $('#variancePerc').trigger("keyup");
-    $('#unitPrice').trigger("keyup");
-  });
-
-  $('#extendModal').find('#vehicleNo').on('change', function(){
-    $vehicleWeight = $('#vehicleNo option:selected').data("weight");
-    if($vehicleWeight != null && $vehicleWeight != ''){
-      $('#currentWeight').val(($vehicleWeight).toFixed(2));
-    }
-    $('#currentWeight').trigger("keyup");
-  });
-
-  $('#extendModal').find('#manualVehicle').on('click', function(){
-    if($(this).is(':checked')){
-      $(this).val(1);
-      $('#vehicleNoTct').removeAttr('hidden');
-      $('#vehicleNo').attr('hidden', 'hidden');
-    }
-    else{
-      $(this).val(0);
-      $('#vehicleNo').removeAttr('hidden');
-      $('#vehicleNoTct').attr('hidden', 'hidden');
-    }
-  });
-
-  $('#extendModal').find('#manualOutgoing').on('click', function(){
-    if($(this).is(':checked')){
-      $(this).val(1);
-        $('#tareWeight').removeAttr('readonly');
-    }
-    else{
-      $(this).val(0);
-        $('#tareWeight').attr('readonly', 'readonly');
-    }
-  });
-
-  $('#extendModal').find('#status').on('change', function () {
-    if($(this).val() == '1'){
-      $('#extendModal').find('#customerNo').html($('select#customerNoHidden').html()).append($(this).val());
-      $('#extendModal').find('.labelStatus').text('Customer No *');
-      $('#extendModal').find('.labelOrder').text('Order Weight');
-      $('#customerNo').removeAttr('hidden');
-      $('#customerNo').attr('required', 'required');
-      $('#customerNoTxt').attr('hidden', 'hidden');
-      $('#customerNoTxt').removeAttr('required');
-    }
-    else if($(this).val() == '2'){
-      $('#extendModal').find('#customerNo').html($('select#supplierNoHidden').html()).append($(this).val());
-      $('#extendModal').find('.labelStatus').text('Supplier No *');
-      $('#extendModal').find('.labelOrder').text('Supply Weight');
-      $('#customerNo').removeAttr('hidden');
-      $('#customerNo').attr('required', 'required');
-      $('#customerNoTxt').attr('hidden', 'hidden');
-      $('#customerNoTxt').removeAttr('required');
-    }
-    else{
-      $('#extendModal').find('.labelStatus').text('Description *');
-      $('#customerNoTxt').removeAttr('hidden');
-      $('#customerNo').removeAttr('required');
-      $('#customerNoTxt').attr('required', 'required');
-      $('#customerNo').attr('hidden', 'hidden');
-    }
-  });
-
-  $('#extendModal').find('#product').on('change', function () {
-    var id = $(this).val();
-
-    $.post('php/getProduct.php', {userID: id}, function(data){
-      var obj = JSON.parse(data);
-        
-      if(obj.status === 'success'){
-        var unitPrice = parseFloat(obj.message.product_price).toFixed(2);
-        $('#extendModal').find('#unitPrice').val(unitPrice);
-        $('#unitPrice').trigger("keyup");
-      }
-      else if(obj.status === 'failed'){
-        toastr["error"](obj.message, "Failed:");
-      }
-      else{
-        toastr["error"]("Something wrong when getting product price", "Failed:");
-      }
-    });
-  });
-
-  $('#extendModal').find('#currency').on('change', function () {
-    var id = $(this).val();
-
-    $.post('php/getCurrency.php', {userID: id}, function(data){
-      var obj = JSON.parse(data);
-        
-      if(obj.status === 'success'){
-        updatePrices("Y", obj.message.rate);
-      }
-      else if(obj.status === 'failed'){
-        toastr["error"](obj.message, "Failed:");
-      }
-      else{
-        toastr["error"]("Something wrong when getting currency rate", "Failed:");
-      }
-    });
-  });
-
-  $('#extendModal').find('#unitWeight').on('change', function () {
-    var unitWeight = $(this).val();
-
-    if(unitWeight == 1){
-      weightUnit = "1";
-      $('#changeWeight').text("KG");
-      $('#changeWeightTare').text("KG");
-      $('#changeWeightActual').text("KG");
-      $('#changeWeightTotal').text("KG");
-      $('#changeSupplyWeight').text("KG");
-      $('#changeWeightVariance').text("KG");
-      $('#changeReduceWeight').text("KG");
-
-      if(indicatorUnit == "g"){
-        if($('#currentWeight').val()){
-          $('#currentWeight').val(parseFloat(parseFloat($('#currentWeight').val()) / 1000).toFixed(2));
-        }
-        
-        if($('#tareWeight').val()){
-            $('#tareWeight').val(parseFloat(parseFloat($('#tareWeight').val()) / 1000).toFixed(2));
-        }
-        
-        if($('#actualWeight').val()){
-          $('#actualWeight').val(parseFloat(parseFloat($('#actualWeight').val()) / 1000).toFixed(2));
-        }
-        
-        if($('#totalWeight').val()){
-          $('#totalWeight').val(parseFloat(parseFloat($('#totalWeight').val()) / 1000).toFixed(2));
-        }
-
-        if($('#reduceWeight').val()){
-          $('#reduceWeight').val(parseFloat(parseFloat($('#reduceWeight').val()) / 1000).toFixed(2));
-        }
-      }
-    }
-    else if(unitWeight == 2){
-      weightUnit = "2";
-      $('#changeWeight').text("G");
-      $('#changeWeightTare').text("G");
-      $('#changeWeightActual').text("G");
-      $('#changeWeightTotal').text("G");
-      $('#changeSupplyWeight').text("G");
-      $('#changeWeightVariance').text("G");
-      $('#changeReduceWeight').text("G");
-      
-      if(indicatorUnit == "kg"){
-        if($('#currentWeight').val()){
-          $('#currentWeight').val(parseFloat(parseFloat($('#currentWeight').val()) * 1000).toFixed(2));
-        }
-        
-        if($('#tareWeight').val()){
-          $('#tareWeight').val(parseFloat(parseFloat($('#tareWeight').val()) * 1000).toFixed(2));
-        }
-        
-        if($('#actualWeight').val()){
-          $('#actualWeight').val(parseFloat(parseFloat($('#actualWeight').val()) * 1000).toFixed(2));
-        }
-        
-        if($('#totalWeight').val()){
-          $('#totalWeight').val(parseFloat(parseFloat($('#totalWeight').val()) * 1000).toFixed(2));
-        }
-
-        if($('#reduceWeight').val()){
-          $('#reduceWeight').val(parseFloat(parseFloat($('#reduceWeight').val()) * 1000).toFixed(2));
-        }
-      }
-    }
-    else if(unitWeight == 3){
-      weightUnit = "3";
-      $('#changeWeight').text("LB");
-      $('#changeWeightTare').text("LB");
-      $('#changeWeightActual').text("LB");
-      $('#changeWeightTotal').text("LB");
-      $('#changeSupplyWeight').text("LB");
-      $('#changeWeightVariance').text("LB");
-      $('#changeReduceWeight').text("LB");
-    }
-    else if(unitWeight == 6){
-      weightUnit = "6";
-      $('#changeWeight').text("mg");
-      $('#changeWeightTare').text("mg");
-      $('#changeWeightActual').text("mg");
-      $('#changeWeightTotal').text("mg");
-      $('#changeSupplyWeight').text("mg");
-      $('#changeWeightVariance').text("mg");
-      $('#changeReduceWeight').text("mg");
-    }
-    else if(unitWeight == 8){
-      weightUnit = "8";
-      $('#changeWeight').text("ct");
-      $('#changeWeightTare').text("ct");
-      $('#changeWeightActual').text("ct");
-      $('#changeWeightTotal').text("ct");
-      $('#changeSupplyWeight').text("ct");
-      $('#changeWeightVariance').text("ct");
-      $('#changeReduceWeight').text("ct");
-    }
-    else if(unitWeight == 9){
-      weightUnit = "9";
-      $('#changeWeight').text("Oz");
-      $('#changeWeightTare').text("Oz");
-      $('#changeWeightActual').text("Oz");
-      $('#changeWeightTotal').text("Oz");
-      $('#changeSupplyWeight').text("Oz");
-      $('#changeWeightVariance').text("Oz");
-      $('#changeReduceWeight').text("Oz");
-    }
-  });
-
-  $('#extendModal').find('#unitPrice').on('keyup', function () {
-    updatePrices("N", rate);
-  });
-
-  $('#extendModal').find('#variancePerc').on('keyup', function(){
-    if($('#supplyWeight').val() && $('#actualWeight').val()){
-      var supplyWeight =  $('#supplyWeight').val();
-      var actualWeight =  $('#actualWeight').val();
-      $('#variancePerc').val(((supplyWeight - actualWeight) / actualWeight * 100).toFixed(2));
-    }
-    
-  });
 });
 
 function updatePrices(isFromCurrency, rat){
@@ -1296,65 +965,25 @@ function updateWeights(){
 }
 
 function format (row) {
-  return '<div class="row"><div class="col-md-3"><p>Customer Name: '+row.customer_name+
-  '</p></div><div class="col-md-3"><p>Unit Weight: '+row.unit+
-  '</p></div><div class="col-md-3"><p>Weight Status: '+row.status+
-  '</p></div><div class="col-md-3"><p>MOQ: '+row.moq+
-  '</p></div></div><div class="row"><div class="col-md-3"><p>Address: '+row.customer_address+
-  '</p></div><div class="col-md-3"><p>Batch No: '+row.batchNo+
-  '</p></div><div class="col-md-3"><p>Weight By: '+row.userName+
-  '</p></div><div class="col-md-3"><p>Package: '+row.packages+
-  '</p></div></div><div class="row"><div class="col-md-3">'+
-  '</div><div class="col-md-3"><p>Lot No: '+row.lots_no+
-  '</p></div><div class="col-md-3"><p>Invoice No: '+row.invoiceNo+
-  '</p></div><div class="col-md-3 money"><p>Unit Price: '+row.unitPrice+
-  '</p></div></div><div class="row"><div class="col-md-3">'+
-  '</div><div class="col-md-3"><p>Order Weight: '+row.supplyWeight+
-  '</p></div><div class="col-md-3"><p>Delivery No: '+row.deliveryNo+
-  '</p></div><div class="col-md-3 money"><p>Total Weight: '+row.totalPrice+
-  '</p></div></div><div class="row"><div class="col-md-3"><p>Contact No: '+row.customer_phone+
-  '</p></div><div class="col-md-3"><p>Variance Weight: '+row.varianceWeight+
-  '</p></div><div class="col-md-3"><p>Purchase No: '+row.purchaseNo+
-  '</p></div><div class="col-md-3"><div class="row"><div class="col-3"><button type="button" class="btn btn-warning btn-sm" onclick="edit('+row.id+
-  ')"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" class="btn btn-danger btn-sm" onclick="deactivate('+row.id+
+  return '<div class="row"><div class="col-md-3"><p>Average Cage Weight: '+row.average_cage+
+  ' kg</p></div><div class="col-md-3"><p>Average Bird Weight: '+row.average_bird+
+  ' kg</p></div><div class="col-md-3"><p>Minimum Weight: '+row.minimum_weight+
+  ' kg</p></div><div class="col-md-3"><p>Maximum Weight: '+row.maximum_weight+
+  ' kg</p></div></div><div class="row"><div class="col-3"><button type="button" class="btn btn-danger btn-sm" onclick="deactivate('+row.id+
   ')"><i class="fas fa-trash"></i></button></div><div class="col-3"><button type="button" class="btn btn-info btn-sm" onclick="print('+row.id+
-  ')"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" class="btn btn-success btn-sm" onclick="portrait('+row.id+
-  ')"><i class="fas fa-receipt"></i></button></div></div></div></div>'+
-  '</div><div class="row"><div class="col-md-3"><p>Remark: '+row.remark+
-  '</p></div><div class="col-md-3"><p>% Variance: '+row.variancePerc+
-  '</p></div><div class="col-md-3"><p>Transporter: '+row.transporter_name+
-  '</p></div></div>';
-  ;
+  ')"><i class="fas fa-print"></i></button></div></div></div></div>'+
+  '</div>';
 }
 
 function formatNormal (row) {
-  return '<div class="row"><div class="col-md-3"><p>Customer Name: '+row.customer_name+
-  '</p></div><div class="col-md-3"><p>Unit Weight: '+row.unit+
-  '</p></div><div class="col-md-3"><p>Weight Status: '+row.status+
-  '</p></div><div class="col-md-3"><p>MOQ: '+row.moq+
-  '</p></div></div><div class="row"><div class="col-md-3"><p>Address: '+row.customer_address+
-  '</p></div><div class="col-md-3"><p>Batch No: '+row.batchNo+
-  '</p></div><div class="col-md-3"><p>Weight By: '+row.userName+
-  '</p></div><div class="col-md-3"><p>Package: '+row.packages+
-  '</p></div></div><div class="row"><div class="col-md-3">'+
-  '</div><div class="col-md-3"><p>Lot No: '+row.lots_no+
-  '</p></div><div class="col-md-3"><p>Invoice No: '+row.invoiceNo+
-  '</p></div><div class="col-md-3"><p>Unit Price: '+row.unitPrice+
-  '</p></div></div><div class="row"><div class="col-md-3">'+
-  '</div><div class="col-md-3"><p>Order Weight: '+row.supplyWeight+
-  '</p></div><div class="col-md-3"><p>Delivery No: '+row.deliveryNo+
-  '</p></div><div class="col-md-3"><p>Total Weight: '+row.totalPrice+
-  '</p></div></div><div class="row"><div class="col-md-3"><p>Contact No: '+row.customer_phone+
-  '</p></div><div class="col-md-3"><p>Variance Weight: '+row.varianceWeight+
-  '</p></div><div class="col-md-3"><p>Purchase No: '+row.purchaseNo+
-  '</p></div><div class="col-md-3"><div class="row"><div class="col-3"><button type="button" class="btn btn-warning btn-sm" onclick="edit('+row.id+
-  ')"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" class="btn btn-info btn-sm" onclick="print('+row.id+
-  ')"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" class="btn btn-success btn-sm" onclick="portrait('+row.id+
-  ')"><i class="fas fa-receipt"></i></button></div></div></div></div>'+
-  '</div><div class="row"><div class="col-md-3"><p>Remark: '+row.remark+
-  '</p></div><div class="col-md-3"><p>% Variance: '+row.variancePerc+
-  '</p></div><div class="col-md-3"><p>Transporter: '+row.transporter_name+
-  '</p></div></div>';
+  return '<div class="row"><div class="col-md-3"><p>Average Cage Weight: '+row.average_cage+
+  ' kg</p></div><div class="col-md-3"><p>Average Bird Weight: '+row.average_bird+
+  ' kg</p></div><div class="col-md-3"><p>Minimum Weight: '+row.minimum_weight+
+  ' kg</p></div><div class="col-md-3"><p>Maximum Weight: '+row.maximum_weight+
+  ' kg</p></div></div><div class="row"><div class="col-3"><button type="button" class="btn btn-danger btn-sm" onclick="deactivate('+row.id+
+  ')"><i class="fas fa-trash"></i></button></div><div class="col-3"><button type="button" class="btn btn-info btn-sm" onclick="print('+row.id+
+  ')"><i class="fas fa-print"></i></button></div></div></div></div>'+
+  '</div>';
 }
 
 function newEntry(){
