@@ -22,8 +22,8 @@ else{
   $vehicles = $db->query("SELECT * FROM vehicles WHERE deleted = '0'");
   $products = $db->query("SELECT * FROM products WHERE deleted = '0'");
   $packages = $db->query("SELECT * FROM packages WHERE deleted = '0'");
-  $customers = $db->query("SELECT * FROM customers WHERE customer_status = 'CUSTOMERS' AND deleted = '0'");
-  $suppliers = $db->query("SELECT * FROM customers WHERE customer_status = 'SUPPLIERS' AND deleted = '0'");
+  $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'");
+  $suppliers = $db->query("SELECT * FROM supplies WHERE deleted = '0'");
   $units = $db->query("SELECT * FROM units WHERE deleted = '0'");
   $status = $db->query("SELECT * FROM `status` WHERE deleted = '0'");
   $transporters = $db->query("SELECT * FROM `transporters` WHERE deleted = '0'");
