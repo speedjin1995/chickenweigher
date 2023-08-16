@@ -341,18 +341,6 @@ else{
                   </select>
                 </div>
 
-                <div class="col-md-2">
-                  <div class="form-group">
-                    <label>Currency *</label>
-                    <select class="form-control" style="width: 100%;" id="currency" name="currency" required>
-                      <option selected="selected">-</option>
-                      <?php while($row50=mysqli_fetch_assoc($currency)){ ?>
-                        <option value="<?=$row50['id'] ?>"><?=$row50['currency'] ?></option>
-                      <?php } ?>
-                    </select>
-                  </div>
-                </div>
-
                 <div class="form-group col-md-2">
                   <label>Unit Price</label>
                   <div class="input-group">

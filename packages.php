@@ -42,7 +42,7 @@ else{
 								<tr>
 									<th>No.</th>
                                     <th>Code</th>
-									<th>Packages.</th>
+									<th>Farm.</th>
 									<th>Actions</th>
 								</tr>
 							</thead>

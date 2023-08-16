@@ -81,7 +81,7 @@ else{
                 </div>
                 <div class="form-group"> 
                   <label for="price">Farm ID *</label>
-                  <input type="text"  class="form-control" id="price" name="price" placeholder="Enter Product Price" required>
+                  <input type="text"  class="form-control" id="price" name="price" placeholder="Enter Farm Id" required>
                 </div>
                 <div class="form-group"> 
                   <label for="remark">Remark </label>
