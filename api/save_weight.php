@@ -19,6 +19,7 @@ if(isset($post['status'], $post['groupNumber'], $post['product']
 	$farmId = $post['farmId'];
 	$averageCage = $post['averageCage'];
 	$averageBird = $post['averageBird'];
+	$capturedData = $post['capturedData'];
 	$timestampData = $post['timestampData'];
 
 	$grade = $post['grade'];

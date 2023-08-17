@@ -6,7 +6,7 @@ session_start();
 $post = json_decode(file_get_contents('php://input'), true);
 $now = date("Y-m-d H:i:s");
 
-$stmt = $db->prepare("SELECT * from weighing");
+$stmt = $db->prepare("SELECT * from weighing WHERE deleted = '0'");
 $stmt->execute();
 $result = $stmt->get_result();
 $message = array();
@@ -29,7 +29,11 @@ while($row = $result->fetch_assoc()){
         'weight_data'=>$row['weight_data'],
         'created_datetime'=>$row['created_datetime'],
         'start_time'=>$row['start_time'],
-        'end_time'=>$row['end_time']
+        'end_time'=>$row['end_time'],
+        'grade'=>$row['grade'],
+        'gender'=>$row['gender'],
+        'house_no'=>$row['house_no'],
+        'remark'=>$row['remark']
     );
 }
 
