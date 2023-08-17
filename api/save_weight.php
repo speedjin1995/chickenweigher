@@ -7,7 +7,9 @@ $post = json_decode(file_get_contents('php://input'), true);
 
 if(isset($post['status'], $post['groupNumber'], $post['product']
 , $post['vehicleNumber'], $post['driverName'], $post['farmId']
-, $post['averageCage'], $post['averageBird'], $post['capturedData'])){
+, $post['averageCage'], $post['averageBird'], $post['capturedData']
+, $post['grade'], $post['gender'], $post['houseNo'], $post['remark']
+, $post['startTime'], $post['endTime'], $post['timestampData'])){
 
 	$status = $post['status'];
 	$groupNumber = $post['groupNumber'];
@@ -17,7 +19,14 @@ if(isset($post['status'], $post['groupNumber'], $post['product']
 	$farmId = $post['farmId'];
 	$averageCage = $post['averageCage'];
 	$averageBird = $post['averageBird'];
-	$capturedData = $post['capturedData'];
+	$timestampData = $post['timestampData'];
+
+	$grade = $post['grade'];
+	$gender = $post['gender'];
+	$houseNo = $post['houseNo'];
+	$remark = $post['remark'];
+	$startTime = $post['startTime'];
+	$endTime = $post['endTime'];
 
 	$customerName = null;
 	$supplierName = null;
@@ -121,11 +130,12 @@ if(isset($post['status'], $post['groupNumber'], $post['product']
 	}
 	else{
 		if ($insert_stmt = $db->prepare("INSERT INTO weighing (serial_no, group_no, customer, supplier, product, driver_name, lorry_no, 
-		farm_id, average_cage, average_bird, minimum_weight, maximum_weight, weight_data) 
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){
+		farm_id, average_cage, average_bird, minimum_weight, maximum_weight, weight_data, grade, gender, house_no, remark, start_time, weight_time) 
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){
 		    $data = json_encode($capturedData);
-			$insert_stmt->bind_param('sssssssssssss', $serialNo, $groupNumber, $customerName, $supplierName, $product, $driverName, 
-			$vehicleNumber, $farmId, $averageCage, $averageBird, $minWeight, $maxWeight, $data);
+			$data2 = json_encode($timestampData);
+			$insert_stmt->bind_param('sssssssssssssssssss', $serialNo, $groupNumber, $customerName, $supplierName, $product, $driverName, 
+			$vehicleNumber, $farmId, $averageCage, $averageBird, $minWeight, $maxWeight, $data, $grade, $gender, $houseNo, $remark, $startTime, $data2);
 								
 								// Execute the prepared query.
 			if (! $insert_stmt->execute()){

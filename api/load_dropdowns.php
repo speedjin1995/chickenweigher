@@ -21,57 +21,57 @@ $data9 = array();
 
 while($row1=mysqli_fetch_assoc($lots)){
     $data1[] = array( 
-        'id'=>$row['id'],
-        'lots_no'=>$row['lots_no']
+        'id'=>$row1['id'],
+        'lots_no'=>$row1['lots_no']
     );
 }
 
 while($row2=mysqli_fetch_assoc($vehicles)){
     $data2[] = array( 
-        'id'=>$row['id'],
-        'veh_number'=>$row['veh_number']
+        'id'=>$row2['id'],
+        'veh_number'=>$row2['veh_number']
     );
 }
 
 while($row3=mysqli_fetch_assoc($products)){
     $data3[] = array( 
-        'id'=>$row['id'],
-        'product_name'=>$row['product_name']
+        'id'=>$row3['id'],
+        'product_name'=>$row3['product_name']
     );
 }
 
 while($row4=mysqli_fetch_assoc($packages)){
     $data4[] = array( 
-        'id'=>$row['id'],
-        'packages'=>$row['packages']
+        'id'=>$row4['id'],
+        'packages'=>$row4['packages']
     );
 }
 
 while($row5=mysqli_fetch_assoc($customers)){
     $data5[] = array( 
-        'id'=>$row['id'],
-        'customer_name'=>$row['customer_name']
+        'id'=>$row5['id'],
+        'customer_name'=>$row5['customer_name']
     );
 }
 
 while($row6=mysqli_fetch_assoc($suppliers)){
     $data6[] = array( 
-        'id'=>$row['id'],
-        'supplier_name'=>$row['supplier_name']
+        'id'=>$row6['id'],
+        'supplier_name'=>$row6['supplier_name']
     );
 }
 
 while($row7=mysqli_fetch_assoc($units)){
     $data7[] = array( 
-        'id'=>$row['id'],
-        'units'=>$row['units']
+        'id'=>$row7['id'],
+        'units'=>$row7['units']
     );
 }
 
 while($row9=mysqli_fetch_assoc($transporters)){
     $data9[] = array( 
-        'id'=>$row['id'],
-        'transporter_name'=>$row['transporter_name']
+        'id'=>$row9['id'],
+        'transporter_name'=>$row9['transporter_name']
     );
 }
 
