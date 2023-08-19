@@ -359,7 +359,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                         $indexCount++;
                     }
                     else{
-                        $message .= '<tr>'.$indexString.'</tr>';
+                        $indexString .= '<tr>'.$indexString.'</tr>';
                         $indexCount = 0;
                         $indexString = '<td style="border-top:0px;padding: 0 0.7rem;">
                         <p>
@@ -370,6 +370,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                     }
                 }
 
+                $message .= $indexString;
                 $message .= '</tbody>
         </table><br>
         
@@ -515,7 +516,9 @@ if(isset($_POST['userID'], $_POST["file"])){
                 echo json_encode(
                     array(
                         "status" => "success",
-                        "message" => $message
+                        "message" => $message,
+                        "weightData" => $weightData,
+                        "time" => $weightTime
                     )
                 );
             }
