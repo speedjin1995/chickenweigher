@@ -22,50 +22,24 @@ if(isset($_POST['userID'])){
             $message = array();
             
             while ($row = $result->fetch_assoc()) {
-                if($row['dateTime'] == null || $row['dateTime'] == ''){
-                    $dateTime = '-';
-                }
-                else{
-                    $convertDate = new DateTime($row['dateTime']);
-                    $dateTime = date_format($convertDate,"d/m/Y H:i:s A");
-                }
-
                 $message['id'] = $row['id'];
-                $message['serialNo'] = $row['serialNo'];
-                $message['vehicleNo'] = $row['vehicleNo'];
-                $message['lotNo'] = $row['lotNo'];
-                $message['batchNo'] = $row['batchNo'];
-                $message['invoiceNo'] = $row['invoiceNo'];
-                $message['purchaseNo'] = $row['purchaseNo'];
-                $message['deliveryNo'] = $row['deliveryNo'];
-                $message['customer'] = $row['customer'];
-                $message['productName'] = $row['productName'];
-                $message['package'] = $row['package'];
-                $message['unitWeight'] = $row['unitWeight'];
-                $message['tare'] = $row['tare'];
-                $message['totalWeight'] = $row['totalWeight'];
-                $message['actualWeight'] = $row['actualWeight'];
-                $message['supplyWeight'] = $row['supplyWeight'];
-                $message['varianceWeight'] = $row['varianceWeight'];
-                $message['currentWeight'] = $row['currentWeight'];
-                $message['unit'] = $row['unit'];
-                $message['currency'] = $row['currency'];
-                $message['moq'] = $row['moq'];
-                $message['dateTime'] = $dateTime;
-                $message['unitPrice'] = $row['unitPrice'];
-                $message['totalPrice'] = $row['totalPrice'];
-                $message['remark'] = $row['remark'];
                 $message['status'] = $row['status'];
-                $message['manual'] = $row['manual'];
-                $message['manualOutgoing'] = $row['manualOutgoing'];
-                $message['manualVehicle'] = $row['manualVehicle'];
-                $message['reduceWeight'] = $row['reduceWeight'];
-                $message['outGDateTime'] = $row['outGDateTime'];
-                $message['inCDateTime'] = $row['inCDateTime'];
-                $message['pStatus'] = $row['pStatus'];
-                $message['variancePerc'] = $row['variancePerc'];
-                $message['transporter'] = $row['transporter'];
-
+                $message['group_no'] = $row['group_no'];
+                $message['customer'] = $row['customer'];
+                $message['supplier'] = $row['supplier'];
+                $message['product'] = $row['product'];
+                $message['driver_name'] = $row['driver_name'];
+                $message['lorry_no'] = $row['lorry_no'];
+                $message['farm_id'] = $row['farm_id'];
+                $message['grade'] = $row['grade'];
+                $message['gender'] = $row['gender'];
+                $message['house_no'] = $row['house_no'];
+                $message['average_cage'] = $row['average_cage'];
+                $message['average_bird'] = $row['average_bird'];
+                $message['minimum_weight'] = $row['minimum_weight'];
+                $message['maximum_weight'] = $row['maximum_weight'];
+                $message['weighted_by'] = $row['weighted_by'];
+                $message['remark'] = $row['remark'];
             }
             
             echo json_encode(

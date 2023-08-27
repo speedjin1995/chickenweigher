@@ -18,15 +18,14 @@ else{
     $role = $row['role_code'];
   }
 
-  $lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
-  $vehicles = $db->query("SELECT * FROM vehicles WHERE deleted = '0'");
-  $products = $db->query("SELECT * FROM products WHERE deleted = '0'");
-  $packages = $db->query("SELECT * FROM packages WHERE deleted = '0'");
-  $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'");
-  $suppliers = $db->query("SELECT * FROM supplies WHERE deleted = '0'");
-  $units = $db->query("SELECT * FROM units WHERE deleted = '0'");
-  $status = $db->query("SELECT * FROM `status` WHERE deleted = '0'");
-  $transporters = $db->query("SELECT * FROM `transporters` WHERE deleted = '0'");
+  $lots = $db->query("SELECT * FROM lots WHERE deleted = '0'"); // Groups
+  $vehicles = $db->query("SELECT * FROM vehicles WHERE deleted = '0'"); // Vehicles
+  $products = $db->query("SELECT * FROM products WHERE deleted = '0'"); // Products
+  $packages = $db->query("SELECT * FROM packages WHERE deleted = '0'"); // Farms
+  $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'"); // Customers
+  $suppliers = $db->query("SELECT * FROM supplies WHERE deleted = '0'"); // Suppliers
+  $units = $db->query("SELECT * FROM units WHERE deleted = '0'"); // Grades
+  $users = $db->query("SELECT * FROM users WHERE deleted = '0'"); // Drivers
 }
 ?>
 
@@ -41,14 +40,14 @@ else{
 <select class="form-control" style="width: 100%;" id="customerNoHidden" style="display: none;">
   <option value="" selected disabled hidden>Please Select</option>
   <?php while($rowCustomer=mysqli_fetch_assoc($customers)){ ?>
-    <option value="<?=$rowCustomer['id'] ?>"><?=$rowCustomer['customer_name'] ?></option>
+    <option value="<?=$rowCustomer['customer_name'] ?>"><?=$rowCustomer['customer_name'] ?></option>
   <?php } ?>
 </select>
 
 <select class="form-control" style="width: 100%;" id="supplierNoHidden" style="display: none;">
   <option value="" selected disabled hidden>Please Select</option>
   <?php while($rowCustomer=mysqli_fetch_assoc($suppliers)){ ?>
-    <option value="<?=$rowCustomer['id'] ?>"><?=$rowCustomer['customer_name'] ?></option>
+    <option value="<?=$rowCustomer['supplier_name'] ?>"><?=$rowCustomer['supplier_name'] ?></option>
   <?php } ?>
 </select>
 
@@ -134,7 +133,7 @@ else{
       <div class="col-lg-12">
         <div class="card card-primary">
           <div class="card-header">
-            <!--div class="row">
+            <div class="row">
               <div class="col-6"></div>
               <div class="col-3">
                 <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="refreshBtn">Refresh</button>
@@ -142,7 +141,7 @@ else{
               <div class="col-3">
                 <button type="button" class="btn btn-block bg-gradient-warning btn-sm" onclick="newEntry()">Add New Weight</button>
               </div>
-            </div-->
+            </div>
           </div>
 
           <div class="card-body">
@@ -169,293 +168,165 @@ else{
   </div>
 </div>
 
-<!--div class="modal fade" id="extendModal">
+<div class="modal fade" id="extendModal">
   <div class="modal-dialog modal-xl" style="max-width: 90%;">
     <div class="modal-content">
       <form role="form" id="extendForm">
         <div class="modal-header bg-gray-dark color-palette">
-          <h4 class="modal-title">Add New Entry</h4>
+          <h4 class="modal-title">Add New Jobs</h4>
           <button type="button" class="close bg-gray-dark color-palette" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
 
-        <div class="modal-body" >
+        <div class="modal-body">
+          <input type="hidden" class="form-control" id="id" name="id">
           <div class="row">
-            <div class="col-md-3">
-              <div class="d-flex">
-                <div class="small-box bg-success">
-                  <div class="inner">
-                  <h3 style="text-align: center; font-size: 100px" id="indicatorWeight">0.00kg</h3>
-                  </div>
-                </div>
-              </div>      
-            </div>
-            
-            <div class="row col-md-9">
-              <div class="row col-md-12">
-                <div class="col-2">
-                  <input type="hidden" class="form-control" id="id" name="id">
-                  <div class="form-group">
-                    <label>Serial No.</label>
-                    <input class="form-control" type="text" placeholder="Serial No" id="serialNumber" name="serialNumber" readonly>
-                  </div>
-                </div>
-
-                <div class="col-md-2">
-                  <div class="form-group">
-                    <label>Status *</label>
-                    <select class="form-control" style="width: 100%;" id="status" name="status" required>
-                      <option selected="selected">-</option>
-                      <?php while($rowS=mysqli_fetch_assoc($status)){ ?>
-                        <option value="<?=$rowS['id'] ?>"><?=$rowS['status'] ?></option>
-                      <?php } ?>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-group col-md-2">
-                  <label>Invoice No</label>
-                  <input class="form-control" type="text" placeholder="Invoice No" id="invoiceNo" name="invoiceNo" >
-                </div>
-
-                <div class="form-group col-md-2">
-                  <label>Delivery No</label>
-                  <input class="form-control" type="text" placeholder="Delivery No" id="deliveryNo" name="deliveryNo" >
-                </div>
-
-                <div class="form-group col-md-2">
-                  <label>Purchase Order</label>
-                  <input class="form-control" type="text" placeholder="Purchase No" id="purchaseNo" name="purchaseNo" >
-                </div>
-
-                <div class="form-group col-md-2">
-                  <label class="labelOrder">Order Weight</label>
-                  <div class="input-group">
-                    <input class="form-control" type="number" id="supplyWeight" name="supplyWeight"/>
-                    <div class="input-group-text bg-success color-palette"><i id="changeSupplyWeight">KG/G</i></div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row col-md-12">
-                <div class="col-2">
-                  <div class="form-group">
-                    <label>Date / Time</label>
-                      <div class='input-group date' id="datePicker" data-target-input="nearest">
-                        <input type='text' class="form-control datetimepicker-input" data-target="#datePicker" id="dateTime" name="dateTime" required/>
-                        <div class="input-group-append" data-target="#datePicker" data-toggle="datetimepicker">
-                          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                        </div>
-                      </div>
-                  </div>
-                </div>
-
-                <div class="col-md-2">
-                  <div class="form-group">
-                    <label>Unit Weight *</label>
-                    <select class="form-control" style="width: 100%;" id="unitWeight" name="unitWeight" required> 
-                      <option selected="selected">-</option>
-                      <?php while($rowunits=mysqli_fetch_assoc($units)){ ?>
-                        <option value="<?=$rowunits['id'] ?>"><?=$rowunits['units'] ?></option>
-                      <?php } ?>
-                    </select>
-                  </div>
-                </div>      
-
-                <div class="col-md-2">
-                  <div class="form-group">
-                    <label>Package *</label>
-                    <select class="form-control" style="width: 100%;" id="package" name="package" required>
-                      <option selected="selected">-</option>
-                      <?php while($row6=mysqli_fetch_assoc($packages)){ ?>
-                        <option value="<?=$row6['id'] ?>"><?=$row6['packages'] ?></option>
-                      <?php } ?>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-group col-md-2">
-                  <label>Batch No</label>
-                  <input class="form-control" type="text" placeholder="Batch No" id="batchNo" name="batchNo" >
-                </div>
-
-                <div class="col-md-2">
-                  <div class="form-group">
-                    <label>Lot No </label>
-                    <select class="form-control" style="width: 100%;" id="lotNo" name="lotNo">
-                      <option selected="selected">-</option>
-                      <?php while($row3=mysqli_fetch_assoc($lots)){ ?>
-                        <option value="<?=$row3['lots_no'] ?>"><?=$row3['lots_no'] ?></option>
-                      <?php } ?>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-group col-md-2">
-                    <label style="color:red;">Variance Weight</label>
-                    <div class="input-group">
-                      <input class="form-control" type="text" placeholder="Variance Weight" id="varianceWeight" name="varianceWeight" readonly/>
-                      <div class="input-group-text bg-success color-palette"><i id="changeWeightVariance">KG/G</i></div>
-                    </div>
-                </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label>Status *</label>
+                <select class="form-control" style="width: 100%;" id="status" name="status" required>
+                  <option selected="selected">-</option>
+                  <option value="Sales">Sales</option>
+                  <option value="Purchase">Purchase</option>
+                </select>
               </div>
             </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-4">
+            <div class="col-4">
               <div class="form-group">
                 <label class="labelStatus">Customer No *</label>
                 <select class="form-control" id="customerNo" name="customerNo" required></select>
-                <input class="form-control" type="text" placeholder="Description" id="customerNoTxt" name="customerNoTxt" hidden>
+                <!--input class="form-control" type="text" placeholder="Description" id="customerNoTxt" name="customerNoTxt" hidden-->
               </div>
             </div>
-
-            <div class="row col-md-8">
-              <div class="row col-md-12">
-                <div class="col-md-3">
-                  <div class="form-group">
-                    <label>Product *</label>
-                    <select class="form-control" style="width: 100%;" id="product" name="product" required>
-                      <option selected="selected">-</option>
-                      <?php while($row5=mysqli_fetch_assoc($products)){ ?>
-                        <option value="<?=$row5['id'] ?>"><?=$row5['product_name'] ?></option>
-                      <?php } ?>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-group" hidden>
-                  <label>M.O.Q *</label>
-                  <input class="form-control" type="number" placeholder="moq" id="moq" name="moq" min="0">
-                </div>
-
-                <div class="form-group col-md-3">
-                  <label>Transporter</label>
-                  <select class="form-control" style="width: 100%;" id="transporter" name="transporter">
-                      <option selected="selected">-</option>
-                      <?php while($row5=mysqli_fetch_assoc($transporters)){ ?>
-                        <option value="<?=$row5['transporter_name'] ?>"><?=$row5['transporter_name'] ?></option>
-                      <?php } ?>
-                  </select>
-                </div>
-
-                <div class="form-group col-md-2">
-                  <label>Unit Price</label>
-                  <div class="input-group">
-                    <div class="input-group-text"><i>RM</i></div>
-                    <input class="form-control money" type="number" placeholder="unitPrice" id="unitPrice" name="unitPrice" min="0" required/>                        
-                  </div>
-                </div>
-
-                <div class="form-group col-md-2">
-                  <label>Total Price</label>
-                  <div class="input-group">
-                    <div class="input-group-text"><i>RM</i></div>
-                    <input class="form-control money" type="number" placeholder="Total Price"  id="totalPrice" name="totalPrice" readonly required/>                        
-                  </div>
-                </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label>Group No. *</label>
+                <select class="form-control" style="width: 100%;" id="group" name="group" required>
+                  <option selected="selected">-</option>
+                  <?php while($row3=mysqli_fetch_assoc($lots)){ ?>
+                    <option value="<?=$row3['lots_no'] ?>"><?=$row3['lots_no'] ?></option>
+                  <?php } ?>
+                </select>
               </div>
             </div>
-          </div>
-
-          <div class="row">
-            <input type="hidden" id="outGDateTime" name="outGDateTime">
-            <input type="hidden" id="inCDateTime" name="inCDateTime">
-
-            <div class="col-md-2">
+            <div class="col-4">
+              <div class="form-group">
+                <label>Product *</label>
+                <select class="form-control" style="width: 100%;" id="product" name="product" required>
+                  <option selected="selected">-</option>
+                  <?php while($row5=mysqli_fetch_assoc($products)){ ?>
+                    <option value="<?=$row5['product_name'] ?>"><?=$row5['product_name'] ?></option>
+                  <?php } ?>
+                </select>
+              </div>
+            </div>
+            <div class="col-4">
               <div class="form-group">
                 <label>
-                  Vehicle No
-                  <span style="padding-left: 80px;"><input type="checkbox" class="form-check-input" id="manualVehicle" name="manualVehicle" value="0"/>Manual</span>
+                  Vehicle No *
+                  <!--span style="padding-left: 80px;"><input type="checkbox" class="form-check-input" id="manualVehicle" name="manualVehicle" value="0"/>Manual</span-->
                 </label>
 
-                <select class="form-control" id="vehicleNo" name="vehicleNo">
+                <select class="form-control" id="vehicleNo" name="vehicleNo" required>
                   <option selected="selected">-</option>
                   <?php while($row2=mysqli_fetch_assoc($vehicles)){ ?>
-                    <option value="<?=$row2['veh_number'] ?>" data-weight="<?=$row2['vehicleWeight'] ?>"><?=$row2['veh_number'] ?></option>
+                    <option value="<?=$row2['veh_number'] ?>" ><?=$row2['veh_number'] ?></option>
                   <?php } ?>
                 </select>
 
-                <input class="form-control" type="text" placeholder="Vehicle No." id="vehicleNoTct" name="vehicleNoTxt" hidden>
+                <!--input class="form-control" type="text" placeholder="Vehicle No." id="vehicleNoTct" name="vehicleNoTxt" hidden-->
               </div>
             </div>
-
-            <div class="form-group col-md-2">
-              <label>Incoming - G.W *
-              <?php 
-                if($role == "ADMIN"){         
-                  echo '<span style="padding-left: 60px;"><input type="checkbox" class="form-check-input" id="manual" name="manual" value="0"/>Manual</span>';
-                }
-              ?>
-              </label>
-              <div class="input-group">
-                <input class="form-control" type="number" placeholder="Current Weight" id="currentWeight" name="currentWeight" readonly required/>
-                <div class="input-group-text bg-primary color-palette"><i id="changeWeight">KG/G</i></div>
-                <button type="button" class="btn btn-primary" id="inCButton"><i class="fas fa-sync"></i></button>
-              </div>
-            </div> 
-
-            <div class="form-group col-md-2 hidOutgoing">
-              <label>Outgoing - T.W *
-                <span style="padding-left: 70px;"><input type="checkbox" class="form-check-input" id="manualOutgoing" name="manualOutgoing" value="0"/>Manual</span>
-              </label>
-              <div class="input-group">
-                <input class="form-control" type="number" placeholder="Tare Weight" id="tareWeight" name="tareWeight" min="0" readonly/>
-                <div class="input-group-text bg-primary color-palette"><i id="changeWeightTare">KG/G</i></div>
-                <button type="button" class="btn btn-primary" id="outGButton"><i class="fas fa-sync"></i></button>
+            <div class="form-group col-4">
+              <label>Driver *</label>
+              <select class="form-control" style="width: 100%;" id="driver" name="driver">
+                  <option selected="selected">-</option>
+                  <?php while($row5=mysqli_fetch_assoc($transporters)){ ?>
+                    <option value="<?=$row5['transporter_name'] ?>"><?=$row5['transporter_name'] ?></option>
+                  <?php } ?>
+              </select>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label>Farm *</label>
+                <select class="form-control" style="width: 100%;" id="farm" name="farm" required>
+                  <option selected="selected">-</option>
+                  <?php while($row6=mysqli_fetch_assoc($packages)){ ?>
+                    <option value="<?=$row6['packages'] ?>"><?=$row6['packages'] ?></option>
+                  <?php } ?>
+                </select>
               </div>
             </div>
-              
-            <div class="row col-md-6">
-              <div class="row col-md-12">
-                <div class="form-group col-md-3">
-                  <label>Reduce Weight</label>
-                  <div class="input-group">
-                    <input class="form-control" type="number" placeholder="Reduce Weight" id="reduceWeight" name="reduceWeight" min="0"/>
-                    <div class="input-group-text bg-danger color-palette"><i id="changeReduceWeight">KG/G</i></div>
-                  </div>
-                </div>
-
-                <div class="form-group col-md-3">
-                  <label>Sub Nett Weight</label>
-                  <div class="input-group">
-                    <input class="form-control" type="number" placeholder="Actual Weight" id="actualWeight" name="actualWeight" readonly required/>
-                    <div class="input-group-text bg-success color-palette"><i id="changeWeightActual">KG/G</i></div>
-                  </div>
-                </div>
-
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label>Remark</label>
-                    <textarea class="form-control" rows="1" placeholder="Enter ..." id="remark" name="remark"></textarea>
-                  </div>
-                </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label>Grade *</label>
+                <select class="form-control" style="width: 100%;" id="grade" name="grade" required> 
+                  <option selected="selected">-</option>
+                  <?php while($rowunits=mysqli_fetch_assoc($units)){ ?>
+                    <option value="<?=$rowunits['units'] ?>"><?=$rowunits['units'] ?></option>
+                  <?php } ?>
+                </select>
+              </div>
+            </div>
+            <div class="form-group col-4">
+              <label>House No</label>
+              <input class="form-control" type="text" placeholder="House No" id="houseNo" name="houseNo" required>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label>Gender *</label>
+                <select class="form-control" style="width: 100%;" id="gender" name="gender" required>
+                  <option selected="selected">-</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Mixed">Mixed</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group col-4">
+              <label>Average Bird Weight</label>
+              <input class="form-control" type="number" placeholder="House No" id="aveBird" name="aveBird" required>
+            </div>
+            <div class="form-group col-4">
+              <label>Average Cage Weight</label>
+              <input class="form-control" type="number" placeholder="House No" id="aveCage" name="aveCage" required>
+            </div>
+            <div class="form-group col-4">
+              <label>Min Weight</label>
+              <input class="form-control" type="number" placeholder="House No" id="minWeight" name="minWeight" required>
+            </div>
+            <div class="form-group col-4">
+              <label>Max Weight</label>
+              <input class="form-control" type="number" placeholder="House No" id="maxWeight" name="maxWeight" required>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label>Assigned To *</label>
+                <select class="form-control" style="width: 100%;" id="assignTo" name="assignTo" required> 
+                  <option selected="selected">-</option>
+                  <?php while($rowusers=mysqli_fetch_assoc($users)){ ?>
+                    <option value="<?=$rowusers['id'] ?>"><?=$rowusers['name'] ?></option>
+                  <?php } ?>
+                </select>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group">
+                <label>Remark</label>
+                <textarea class="form-control" rows="1" placeholder="Enter ..." id="remark" name="remark"></textarea>
               </div>
             </div>
           </div>
-
-          <div class="form-group col-md-3" hidden>
-            <label>Total Weight</label>
-            <div class="input-group">
-              <input class="form-control" type="number" placeholder="Total Weight" id="totalWeight" name="totalWeight" readonly required/>
-              <div class="input-group-text bg-success color-palette"><i id="changeWeightTotal">KG/G</i></div>
-            </div>
-          </div>
-
-          <input type="hidden" id="pStatus" name="pStatus">
-          <input type="hidden" id="variancePerc" name="variancePerc">
         </div>
-
         <div class="modal-footer justify-content-between bg-gray-dark color-palette">
           <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
           <button type="submit" class="btn btn-primary" id="saveButton">Save changes</button>
         </div>
       </form>
-    </div> <!-- /.modal-content >
-  </div> <!-- /.modal-dialog >
-</div> <!-- /.modal -->     
+    </div>
+  </div>
+</div>
 
 <script>
 // Values
@@ -573,20 +444,8 @@ $(function () {
 
   $.validator.setDefaults({
     submitHandler: function () {
-        if($('#extendModal').hasClass('show')){
-          $('#spinnerLoading').show();
-
-            var convert1 = $('#extendModal').find('#dateTime').val().replace(", ", " ");
-            convert1 = convert1.replace(":", "/");
-            convert1 = convert1.replace(":", "/");
-            convert1 = convert1.replace(" ", "/");
-            convert1 = convert1.replace(" pm", "");
-            convert1 = convert1.replace(" am", "");
-            convert1 = convert1.replace(" PM", "");
-            convert1 = convert1.replace(" AM", "");
-            var convert2 = convert1.split("/");
-            var date  = new Date(convert2[2], convert2[1] - 1, convert2[0], convert2[3], convert2[4], convert2[5]);
-            $('#extendModal').find('#dateTime').val(date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds());
+      if($('#extendModal').hasClass('show')){
+        $('#spinnerLoading').show();
 
         $.post('php/insertWeight.php', $('#extendForm').serialize(), function(data){
           var obj = JSON.parse(data); 
@@ -605,22 +464,6 @@ $(function () {
           $('#spinnerLoading').hide();
         });
       }
-      /*else if ($('#setupModal').hasClass('show')){
-        $.post('http://127.0.0.1:5002/', $('#setupForm').serialize(), function(data){
-          if(data == "true"){
-            $('#indicatorConnected').addClass('bg-primary');
-            $('#checkingConnection').removeClass('bg-danger');
-            $('#captureWeight').removeAttr('disabled');
-          }
-          else{
-            $('#indicatorConnected').removeClass('bg-primary');
-            $('#checkingConnection').addClass('bg-danger');
-            $('#captureWeight').attr('disabled', true);
-          }
-        });
-        
-        $('#setupModal').modal('hide');
-      }*/
     }
   });
 
@@ -637,8 +480,47 @@ $(function () {
     //Destroy the old Datatable
     $("#weightTable").DataTable().clear().destroy();
 
-    //Create new Datatable
     table = $("#weightTable").DataTable({
+      "responsive": true,
+      "autoWidth": false,
+      'processing': true,
+      'serverSide': true,
+      'serverMethod': 'post',
+      'searching': true,
+      'order': [[ 1, 'asc' ]],
+      'columnDefs': [ { orderable: false, targets: [0] }],
+      'ajax': {
+          'url':'php/loadWeights.php'
+      },
+      'columns': [
+        { data: 'no' },
+        { data: 'serial_no' },
+        { data: 'group_no' },
+        { data: 'customer' },
+        { data: 'supplier' },
+        { data: 'product' },
+        { data: 'lorry_no' },
+        { data: 'driver_name' },
+        { data: 'farm_id' },
+        { 
+          className: 'dt-control',
+          orderable: false,
+          data: null,
+          render: function ( data, type, row ) {
+            return '<td class="table-elipse" data-toggle="collapse" data-target="#demo'+row.serialNo+'"><i class="fas fa-angle-down"></i></td>';
+          }
+        }
+      ],
+      "rowCallback": function( row, data, index ) {
+        $('td', row).css('background-color', '#E6E6FA');
+      },
+      "drawCallback": function(settings) {
+        
+      }
+    });
+
+    //Create new Datatable
+    /*table = $("#weightTable").DataTable({
       "responsive": true,
       "autoWidth": false,
       'processing': true,
@@ -690,7 +572,7 @@ $(function () {
         $('#purchaseInfo').text(settings.json.purchaseTotal);
         $('#localInfo').text(settings.json.localTotal);
       }
-    });
+    });*/
   });
 
   $('#saleCard').on('click', function(){
@@ -884,6 +766,17 @@ $(function () {
       }
     });
   });
+
+  $('#status').on('change', function(){
+    if($(this).val() == 'Sales'){
+      $('#extendModal').find('#customerNo').html($('select#customerNoHidden').html());
+      $('#extendModal').find('.labelStatus').text('Customer *');
+    }
+    else{
+      $('#extendModal').find('#customerNo').html($('select#supplierNoHidden').html());
+      $('#extendModal').find('.labelStatus').text('Supplier *');
+    }
+  });
 });
 
 function updatePrices(isFromCurrency, rat){
@@ -977,49 +870,22 @@ function formatNormal (row) {
 function newEntry(){
   var date = new Date();
   $('#extendModal').find('#id').val("");
-  $('#extendModal').find('#serialNumber').val("");
-  $('#extendModal').find('#unitWeight').val('');
-  $('#extendModal').find('#invoiceNo').val("");
-  $('#extendModal').find('#status').val('');
-  $('#extendModal').find('#lotNo').val('');
-  $('#extendModal').find('#vehicleNo').val('');
+  $('#extendModal').find('#status').val("");
   $('#extendModal').find('#customerNo').val('');
-  $('#extendModal').find('#deliveryNo').val("");
-  $('#extendModal').find('#batchNo').val("");
-  $('#extendModal').find('#purchaseNo').val("");
-  $('#extendModal').find('#currentWeight').val("");
+  $('#extendModal').find('#group').val("");
   $('#extendModal').find('#product').val('');
-  $('#extendModal').find('#transporter').val('');
-  $('#extendModal').find('#moq').val("1");
-  $('#extendModal').find('#currency').val("1");
-  $('#extendModal').find('#tareWeight').val("0.00");
-  $('#extendModal').find('#package').val('');
-  $('#extendModal').find('#actualWeight').val("");
-  $('#extendModal').find('#supplyWeight').val("");
-  $('#extendModal').find('#varianceWeight').val("");
+  $('#extendModal').find('#vehicleNo').val('');
+  $('#extendModal').find('#driver').val('');
+  $('#extendModal').find('#farm').val('');
+  $('#extendModal').find('#grade').val("");
+  $('#extendModal').find('#houseNo').val("");
+  $('#extendModal').find('#gender').val("");
+  $('#extendModal').find('#aveBird').val("");
+  $('#extendModal').find('#aveCage').val('');
+  $('#extendModal').find('#minWeight').val('');
+  $('#extendModal').find('#maxWeight').val("");
+  $('#extendModal').find('#assignTo').val("");
   $('#extendModal').find('#remark').val("");
-  $('#extendModal').find('#totalPrice').val("");
-  $('#extendModal').find('#unitPrice').val("");
-  $('#extendModal').find('#totalWeight').val("");
-  $('#extendModal').find('#manual').prop('checked', false);
-  $('#extendModal').find('#manualVehicle').prop('checked', false);
-  $('#extendModal').find('#manualOutgoing').prop('checked', false);
-  $('#extendModal').find('#vehicleNoTct').val("");
-  $('#extendModal').find('#vehicleNo').removeAttr('hidden');
-  $('#extendModal').find('#vehicleNoTct').attr('hidden', 'hidden');
-  // $('#extendModal').find('.hidOutgoing').attr('hidden', 'hidden');
-  $('#extendModal').find('#currentWeight').attr('readonly', true);
-  $('#extendModal').find('#tareWeight').attr('readonly', true);
-  $('#extendModal').find('#reduceWeight').val("");
-  $('#extendModal').find('#outGDateTime').val("");
-  $('#extendModal').find('#inCDateTime').val("");
-  $('#extendModal').find('#pStatus').val("");
-  $('#extendModal').find('#variancePerc').val("");
-  $('#datePicker').datetimepicker({
-      icons: { time: 'far fa-clock' },
-      format: 'DD/MM/YYYY HH:mm:ss A'
-  });
-  $('#extendModal').find('#dateTime').val(date.toLocaleString('en-AU', { hour12: false }));
   $('#extendModal').modal('show');
   
   $('#extendForm').validate({
@@ -1048,77 +914,31 @@ function edit(id) {
     
     if(obj.status === 'success'){
       $('#extendModal').find('#id').val(obj.message.id);
-      $('#extendModal').find('#serialNumber').val(obj.message.serialNo);
-      $('#extendModal').find('#unitWeight').val(obj.message.unitWeight);
-      $('#extendModal').find('#invoiceNo').val(obj.message.invoiceNo);
       $('#extendModal').find('#status').val(obj.message.status);
-      $('#extendModal').find('#lotNo').val(obj.message.lotNo);
-      $('#extendModal').find('#deliveryNo').val(obj.message.deliveryNo);
-      $('#extendModal').find('#batchNo').val(obj.message.batchNo);
-      $('#extendModal').find('#purchaseNo').val(obj.message.purchaseNo);
-      $('#extendModal').find('#currentWeight').val(obj.message.currentWeight);
-      $('#extendModal').find('#product').val(obj.message.productName);
-      $('#extendModal').find('#moq').val(obj.message.moq);
-      $('#extendModal').find('#currency').val(obj.message.currency);
-      $('#extendModal').find('#transporter').val(obj.message.transporter);
-      $('#extendModal').find('#tareWeight').val(obj.message.tare);
-      $('#extendModal').find('#package').val(obj.message.package);
-      $('#extendModal').find('#actualWeight').val(obj.message.actualWeight);
-      $('#extendModal').find('#supplyWeight').val(obj.message.supplyWeight);
-      $('#extendModal').find('#varianceWeight').val(obj.message.varianceWeight);
+      $('#extendModal').find('#group').val(obj.message.group_no);
+      $('#extendModal').find('#product').val(obj.message.product);
+      $('#extendModal').find('#vehicleNo').val(obj.message.lorry_no);
+      $('#extendModal').find('#driver').val(obj.message.driver_name);
+      $('#extendModal').find('#farm').val(obj.message.farm_id);
+      $('#extendModal').find('#grade').val(obj.message.grade);
+      $('#extendModal').find('#houseNo').val(obj.message.house_no);
+      $('#extendModal').find('#gender').val(obj.message.gender);
+      $('#extendModal').find('#aveBird').val(obj.message.average_bird);
+      $('#extendModal').find('#aveCage').val(obj.message.average_cage);
+      $('#extendModal').find('#minWeight').val(obj.message.minimum_weight);
+      $('#extendModal').find('#maxWeight').val(obj.message.maximum_weight);
+      $('#extendModal').find('#assignTo').val(obj.message.weighted_by);
       $('#extendModal').find('#remark').val(obj.message.remark);
-      $('#extendModal').find('#totalPrice').val(obj.message.totalPrice);
-      $('#extendModal').find('#unitPrice').val(obj.message.unitPrice);
-      $('#extendModal').find('#totalWeight').val(obj.message.totalWeight);
-      $('#extendModal').find('#reduceWeight').val(obj.message.reduceWeight);
-      $('#extendModal').find('#pStatus').val(obj.message.pStatus);
-      $('#extendModal').find('#outGDateTime').val(obj.message.outGDateTime);
-      $('#extendModal').find('#inCDateTime').val(obj.message.inCDateTime);
-      $('#extendModal').find('#variancePerc').val(obj.message.variancePerc);
 
-      $('#extendModal').find('#toDatePicker').datetimepicker({
-        icons: { time: 'far fa-clock' },
-        format: 'DD/MM/YYYY HH:mm:ss A'
-      });
-
-      $('#extendModal').find('#dateTime').val(obj.message.dateTime);
-    
-      if($('#extendModal').find('#status').val() == '1'){
-        $('#extendModal').find('#customerNo').html($('select#customerNoHidden').html()).append($('#extendModal').find('#status').val());
-        $('#extendModal').find('.labelStatus').text('Customer No');
-        $('#extendModal').find('.labelOrder').text('Order Weight');
+      if($('#extendModal').find('#status').val() == 'Sales'){
+        $('#extendModal').find('#customerNo').html($('select#customerNoHidden').html());
+        $('#extendModal').find('.labelStatus').text('Customer *');
         $('#extendModal').find('#customerNo').val(obj.message.customer);
-        
-      }
-      else if($('#extendModal').find('#status').val() == '2'){
-        $('#extendModal').find('#customerNo').html($('select#supplierNoHidden').html()).append($('#extendModal').find('#status').val());
-        $('#extendModal').find('.labelStatus').text('Supplier No');
-        $('#extendModal').find('.labelOrder').text('Supply Weight');
-        $('#extendModal').find('#customerNo').val(obj.message.customer);
-      }
-
-      if(obj.message.manualVehicle === 1){
-        $('#extendModal').find('#manualVehicle').prop('checked', true);
-        $('#extendModal').find('#vehicleNoTct').removeAttr('hidden');
-        $('#extendModal').find('#vehicleNo').attr('hidden', 'hidden');
-        $('#extendModal').find('#vehicleNoTct').val(obj.message.vehicleNo);
       }
       else{
-        $('#extendModal').find('#manualVehicle').prop('checked', false);
-        $('#extendModal').find('#vehicleNo').removeAttr('hidden');
-        $('#extendModal').find('#vehicleNoTct').attr('hidden', 'hidden');
-        $('#extendModal').find('#vehicleNo').val(obj.message.vehicleNo);
-      }
-
-            ///still need do some changes
-      if(obj.message.manual === 1){
-        $('#extendModal').find('#manual').prop('checked', true);
-        $('#extendModal').find('#currentWeight').attr('readonly', false);
-      }
-
-      if(obj.message.manualOutgoing === 1){
-        $('#extendModal').find('#manualOutgoing').prop('checked', true);
-        $('#extendModal').find('#tareWeight').attr('readonly', false);
+        $('#extendModal').find('#customerNo').html($('select#supplierNoHidden').html());
+        $('#extendModal').find('.labelStatus').text('Supplier *');
+        $('#extendModal').find('#customerNo').val(obj.message.supplier);
       }
 
       $('#extendModal').modal('show');
