@@ -384,12 +384,6 @@ to get the desired effect
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="#suppliers" data-file="suppliers.php" class="nav-link link">
-                      <i class="nav-icon fas fa-industry"></i>
-                      <p>Suppliers</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
                     <a href="#products" data-file="products.php" class="nav-link link">
                       <i class="nav-icon fas fa-shopping-cart"></i>
                       <p>Products</p>

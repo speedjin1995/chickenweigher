@@ -353,7 +353,6 @@ if(isset($_POST['userID'], $_POST["file"])){
                         $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
                         <p>
                             <span style="font-size: 14px;font-family: sans-serif;">'.$weightData[$i].'/'.round((float)$weightData[$i]/(float)$row['average_bird']).'</span><br>
-                            <span style="font-size: 14px;font-family: sans-serif;">'.$weightTime[$i].'</span>
                         </p>
                     </td>';
                         $indexCount++;

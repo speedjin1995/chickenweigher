@@ -23,9 +23,9 @@ else{
   $products = $db->query("SELECT * FROM products WHERE deleted = '0'"); // Products
   $packages = $db->query("SELECT * FROM packages WHERE deleted = '0'"); // Farms
   $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'"); // Customers
-  $suppliers = $db->query("SELECT * FROM supplies WHERE deleted = '0'"); // Suppliers
   $units = $db->query("SELECT * FROM units WHERE deleted = '0'"); // Grades
-  $users = $db->query("SELECT * FROM users WHERE deleted = '0'"); // Drivers
+  $users = $db->query("SELECT * FROM users WHERE deleted = '0'"); // Users
+  $transporters = $db->query("SELECT * FROM transporters WHERE deleted = '0'"); // Drivers
 }
 ?>
 
@@ -36,20 +36,6 @@ else{
     }
   }
 </style>
-
-<select class="form-control" style="width: 100%;" id="customerNoHidden" style="display: none;">
-  <option value="" selected disabled hidden>Please Select</option>
-  <?php while($rowCustomer=mysqli_fetch_assoc($customers)){ ?>
-    <option value="<?=$rowCustomer['customer_name'] ?>"><?=$rowCustomer['customer_name'] ?></option>
-  <?php } ?>
-</select>
-
-<select class="form-control" style="width: 100%;" id="supplierNoHidden" style="display: none;">
-  <option value="" selected disabled hidden>Please Select</option>
-  <?php while($rowCustomer=mysqli_fetch_assoc($suppliers)){ ?>
-    <option value="<?=$rowCustomer['supplier_name'] ?>"><?=$rowCustomer['supplier_name'] ?></option>
-  <?php } ?>
-</select>
 
 <div class="content-header">
   <div class="container-fluid">
@@ -184,28 +170,11 @@ else{
           <div class="row">
             <div class="col-4">
               <div class="form-group">
-                <label>Status *</label>
-                <select class="form-control" style="width: 100%;" id="status" name="status" required>
-                  <option selected="selected">-</option>
-                  <option value="Sales">Sales</option>
-                  <option value="Purchase">Purchase</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-4">
-              <div class="form-group">
                 <label class="labelStatus">Customer No *</label>
-                <select class="form-control" id="customerNo" name="customerNo" required></select>
-                <!--input class="form-control" type="text" placeholder="Description" id="customerNoTxt" name="customerNoTxt" hidden-->
-              </div>
-            </div>
-            <div class="col-4">
-              <div class="form-group">
-                <label>Group No. *</label>
-                <select class="form-control" style="width: 100%;" id="group" name="group" required>
-                  <option selected="selected">-</option>
-                  <?php while($row3=mysqli_fetch_assoc($lots)){ ?>
-                    <option value="<?=$row3['lots_no'] ?>"><?=$row3['lots_no'] ?></option>
+                <select class="form-control" style="width: 100%;" id="customerNo" name="customerNo" required>
+                  <option value="" selected disabled hidden>Please Select</option>
+                  <?php while($rowCustomer=mysqli_fetch_assoc($customers)){ ?>
+                    <option value="<?=$rowCustomer['customer_name'] ?>"><?=$rowCustomer['customer_name'] ?></option>
                   <?php } ?>
                 </select>
               </div>
@@ -223,19 +192,13 @@ else{
             </div>
             <div class="col-4">
               <div class="form-group">
-                <label>
-                  Vehicle No *
-                  <!--span style="padding-left: 80px;"><input type="checkbox" class="form-check-input" id="manualVehicle" name="manualVehicle" value="0"/>Manual</span-->
-                </label>
-
+                <label class="vehicleNo">Vehicle No *</label>
                 <select class="form-control" id="vehicleNo" name="vehicleNo" required>
                   <option selected="selected">-</option>
                   <?php while($row2=mysqli_fetch_assoc($vehicles)){ ?>
                     <option value="<?=$row2['veh_number'] ?>" ><?=$row2['veh_number'] ?></option>
                   <?php } ?>
                 </select>
-
-                <!--input class="form-control" type="text" placeholder="Vehicle No." id="vehicleNoTct" name="vehicleNoTxt" hidden-->
               </div>
             </div>
             <div class="form-group col-4">
@@ -258,47 +221,21 @@ else{
                 </select>
               </div>
             </div>
-            <div class="col-4">
-              <div class="form-group">
-                <label>Grade *</label>
-                <select class="form-control" style="width: 100%;" id="grade" name="grade" required> 
-                  <option selected="selected">-</option>
-                  <?php while($rowunits=mysqli_fetch_assoc($units)){ ?>
-                    <option value="<?=$rowunits['units'] ?>"><?=$rowunits['units'] ?></option>
-                  <?php } ?>
-                </select>
-              </div>
-            </div>
-            <div class="form-group col-4">
-              <label>House No</label>
-              <input class="form-control" type="text" placeholder="House No" id="houseNo" name="houseNo" required>
-            </div>
-            <div class="col-4">
-              <div class="form-group">
-                <label>Gender *</label>
-                <select class="form-control" style="width: 100%;" id="gender" name="gender" required>
-                  <option selected="selected">-</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Mixed">Mixed</option>
-                </select>
-              </div>
-            </div>
             <div class="form-group col-4">
               <label>Average Bird Weight</label>
-              <input class="form-control" type="number" placeholder="House No" id="aveBird" name="aveBird" required>
+              <input class="form-control" type="number" placeholder="Average Bird Weight" id="aveBird" name="aveBird">
             </div>
             <div class="form-group col-4">
               <label>Average Cage Weight</label>
-              <input class="form-control" type="number" placeholder="House No" id="aveCage" name="aveCage" required>
+              <input class="form-control" type="number" placeholder="Average Cage Weight" id="aveCage" name="aveCage">
             </div>
             <div class="form-group col-4">
-              <label>Min Weight</label>
-              <input class="form-control" type="number" placeholder="House No" id="minWeight" name="minWeight" required>
+              <label>Min Weight </label>
+              <input class="form-control" type="number" placeholder="Min Weight" id="minWeight" name="minWeight">
             </div>
             <div class="form-group col-4">
-              <label>Max Weight</label>
-              <input class="form-control" type="number" placeholder="House No" id="maxWeight" name="maxWeight" required>
+              <label>Max Weight </label>
+              <input class="form-control" type="number" placeholder="Max Weight" id="maxWeight" name="maxWeight">
             </div>
             <div class="col-4">
               <div class="form-group">
@@ -870,16 +807,11 @@ function formatNormal (row) {
 function newEntry(){
   var date = new Date();
   $('#extendModal').find('#id').val("");
-  $('#extendModal').find('#status').val("");
   $('#extendModal').find('#customerNo').val('');
-  $('#extendModal').find('#group').val("");
   $('#extendModal').find('#product').val('');
   $('#extendModal').find('#vehicleNo').val('');
   $('#extendModal').find('#driver').val('');
   $('#extendModal').find('#farm').val('');
-  $('#extendModal').find('#grade').val("");
-  $('#extendModal').find('#houseNo').val("");
-  $('#extendModal').find('#gender').val("");
   $('#extendModal').find('#aveBird').val("");
   $('#extendModal').find('#aveCage').val('');
   $('#extendModal').find('#minWeight').val('');
@@ -915,14 +847,10 @@ function edit(id) {
     if(obj.status === 'success'){
       $('#extendModal').find('#id').val(obj.message.id);
       $('#extendModal').find('#status').val(obj.message.status);
-      $('#extendModal').find('#group').val(obj.message.group_no);
       $('#extendModal').find('#product').val(obj.message.product);
       $('#extendModal').find('#vehicleNo').val(obj.message.lorry_no);
       $('#extendModal').find('#driver').val(obj.message.driver_name);
       $('#extendModal').find('#farm').val(obj.message.farm_id);
-      $('#extendModal').find('#grade').val(obj.message.grade);
-      $('#extendModal').find('#houseNo').val(obj.message.house_no);
-      $('#extendModal').find('#gender').val(obj.message.gender);
       $('#extendModal').find('#aveBird').val(obj.message.average_bird);
       $('#extendModal').find('#aveCage').val(obj.message.average_cage);
       $('#extendModal').find('#minWeight').val(obj.message.minimum_weight);
@@ -930,7 +858,7 @@ function edit(id) {
       $('#extendModal').find('#assignTo').val(obj.message.weighted_by);
       $('#extendModal').find('#remark').val(obj.message.remark);
 
-      if($('#extendModal').find('#status').val() == 'Sales'){
+      /*if($('#extendModal').find('#status').val() == 'Sales'){
         $('#extendModal').find('#customerNo').html($('select#customerNoHidden').html());
         $('#extendModal').find('.labelStatus').text('Customer *');
         $('#extendModal').find('#customerNo').val(obj.message.customer);
@@ -939,7 +867,7 @@ function edit(id) {
         $('#extendModal').find('#customerNo').html($('select#supplierNoHidden').html());
         $('#extendModal').find('.labelStatus').text('Supplier *');
         $('#extendModal').find('#customerNo').val(obj.message.supplier);
-      }
+      }*/
 
       $('#extendModal').modal('show');
       $('#extendForm').validate({
