@@ -136,9 +136,7 @@ else{
                 <tr>
                   <th>No</th>
                   <th>Serial No</th>
-                  <th>Group No</th>
                   <th>Customers</th>
-                  <th>Suppliers</th>
                   <th>Product</th>
                   <th>Vehicle No</th>
                   <th>Driver Name</th>
@@ -292,9 +290,7 @@ $(function () {
     'columns': [
       { data: 'no' },
       { data: 'serial_no' },
-      { data: 'group_no' },
       { data: 'customer' },
-      { data: 'supplier' },
       { data: 'product' },
       { data: 'lorry_no' },
       { data: 'driver_name' },
@@ -432,9 +428,7 @@ $(function () {
       'columns': [
         { data: 'no' },
         { data: 'serial_no' },
-        { data: 'group_no' },
         { data: 'customer' },
-        { data: 'supplier' },
         { data: 'product' },
         { data: 'lorry_no' },
         { data: 'driver_name' },
