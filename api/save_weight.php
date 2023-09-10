@@ -5,14 +5,13 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 session_start();
 $post = json_decode(file_get_contents('php://input'), true);
 
-if(isset($post['status'], $post['groupNumber'], $post['product']
+if(isset($post['status'], $post['product'], $post['timestampData']
 , $post['vehicleNumber'], $post['driverName'], $post['farmId']
 , $post['averageCage'], $post['averageBird'], $post['capturedData']
-, $post['grade'], $post['gender'], $post['houseNo'], $post['remark']
-, $post['startTime'], $post['endTime'], $post['timestampData'])){
+, $post['remark'], $post['startTime'], $post['endTime'], $post['weightDetails'])){
 
 	$status = $post['status'];
-	$groupNumber = $post['groupNumber'];
+	//$groupNumber = $post['groupNumber'];
 	$product = $post['product'];
 	$vehicleNumber = $post['vehicleNumber'];
 	$driverName = $post['driverName'];
@@ -21,10 +20,11 @@ if(isset($post['status'], $post['groupNumber'], $post['product']
 	$averageBird = $post['averageBird'];
 	$capturedData = $post['capturedData'];
 	$timestampData = $post['timestampData'];
+	$weightDetails = $post['weightDetails'];
 
-	$grade = $post['grade'];
-	$gender = $post['gender'];
-	$houseNo = $post['houseNo'];
+	//$grade = $post['grade'];
+	//$gender = $post['gender'];
+	//$houseNo = $post['houseNo'];
 	$remark = $post['remark'];
 	$startTime = $post['startTime'];
 	$endTime = $post['endTime'];
@@ -92,12 +92,13 @@ if(isset($post['status'], $post['groupNumber'], $post['product']
 	}
 
 	if(isset($post['id']) && $post['id'] != null && $post['id'] != ''){
-		if ($update_stmt = $db->prepare("UPDATE weight SET vehicleNo=?, lotNo=?, batchNo=?, invoiceNo=?, deliveryNo=?, purchaseNo=?, customer=?, productName=?, package=?
-		, unitWeight=?, currentWeight=?, tare=?, totalWeight=?, actualWeight=?, currency=?, moq=?, unitPrice=?, totalPrice=?, remark=?, supplyWeight=?, varianceWeight=?, status=?, 
-		dateTime=?, manual=?, manualVehicle=?, manualOutgoing=?, reduceWeight=?, outGDateTime=?, inCDateTime=?, pStatus=?, variancePerc=?, transporter=?, updated_by=? WHERE id=?")){
-			$update_stmt->bind_param('ssssssssssssssssssssssssssssssssss', $vehicleNo, $lotNo, $batchNo, $invoiceNo, $deliveryNo, $purchaseNo, $customerNo, $product,
-			$package, $unitWeight, $currentWeight, $tareWeight, $totalWeight, $actualWeight, $currency, $moq, $unitPrice, $totalPrice, $remark, $supplyWeight, $varianceWeight, 
-			$status, $dateTime, $manual, $manualVehicle, $manualOutgoing, $reduceWeight, $outGDateTime, $inCDateTime, $pStatus, $variancePerc, $transporter, $userId, $_POST['id']);
+		if ($update_stmt = $db->prepare("UPDATE weight SET customer=?, supplier=?, product=?, driver_name=?, lorry_no=?, farm_id=?, average_cage=?, average_bird=?
+		, minimum_weight=?, maximum_weight=?, weight_data=?, remark=?, start_time=?, weight_time=?, end_time=? WHERE id=?")){
+			$id = $post['id'];
+			$data = json_encode($weightDetails);
+			$data2 = json_encode($timestampData);
+			$update_stmt->bind_param('ssssssssssssssss', $customerName, $supplierName, $product, $driverName, 
+			$vehicleNumber, $farmId, $averageCage, $averageBird, $minWeight, $maxWeight, $data, $remark, $startTime, $data2, $endTime, $id);
 		
 			// Execute the prepared query.
 			if (! $update_stmt->execute()){
@@ -130,15 +131,14 @@ if(isset($post['status'], $post['groupNumber'], $post['product']
 		}
 	}
 	else{
-		if ($insert_stmt = $db->prepare("INSERT INTO weighing (serial_no, group_no, customer, supplier, product, driver_name, lorry_no, 
-		farm_id, average_cage, average_bird, minimum_weight, maximum_weight, weight_data, grade, gender, house_no, remark, start_time, weight_time) 
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){
-		    $data = json_encode($capturedData);
+		if ($insert_stmt = $db->prepare("INSERT INTO weighing (serial_no, customer, supplier, product, driver_name, lorry_no, 
+		farm_id, average_cage, average_bird, minimum_weight, maximum_weight, weight_data, remark, start_time, weight_time, end_time) 
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){
+		    $data = json_encode($weightDetails);
 			$data2 = json_encode($timestampData);
-			$insert_stmt->bind_param('sssssssssssssssssss', $serialNo, $groupNumber, $customerName, $supplierName, $product, $driverName, 
-			$vehicleNumber, $farmId, $averageCage, $averageBird, $minWeight, $maxWeight, $data, $grade, $gender, $houseNo, $remark, $startTime, $data2);
-								
-								// Execute the prepared query.
+			$insert_stmt->bind_param('ssssssssssssssss', $serialNo, $customerName, $supplierName, $product, $driverName, 
+			$vehicleNumber, $farmId, $averageCage, $averageBird, $minWeight, $maxWeight, $data, $remark, $startTime, $data2, $endTime);		
+			// Execute the prepared query.
 			if (! $insert_stmt->execute()){
 				echo json_encode(
 					array(
