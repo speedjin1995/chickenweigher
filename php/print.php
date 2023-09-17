@@ -7,6 +7,21 @@ $compname = 'SYNCTRONIX TECHNOLOGY (M) SDN BHD';
 $compaddress = 'No.34, Jalan Bagan 1, Taman Bagan, 13400 Butterworth. Penang. Malaysia.';
 $compphone = '6043325822';
 $compiemail = 'admin@synctronix.com.my';
+
+$mapOfWeights = array();
+
+$totalGross = 0.0;
+$totalCrate = 0.0;
+$totalReduce = 0.0;
+$totalNet = 0.0;
+$totalCrates = 0;
+$totalBirds = 0;
+$totalMaleBirds = 0;
+$totalMaleCages = 0;
+$totalFemaleBirds = 0;
+$totalFemaleCages = 0;
+$totalMixedBirds = 0;
+$totalMixedCages = 0;
  
 // Filter the excel data 
 function filterData(&$str){ 
@@ -18,8 +33,8 @@ function filterData(&$str){
 function totalWeight($strings){ 
     $totalSum = 0;
 
-    foreach ($strings as $string) {
-        if (preg_match('/([\d.]+)/', $string, $matches)) {
+    for ($i =0; $i < count($strings); $i++) {
+        if (preg_match('/([\d.]+)/', $strings[$i]['grossWeight'], $matches)) {
             $value = floatval($matches[1]);
             $totalSum += $value;
         }
@@ -27,6 +42,51 @@ function totalWeight($strings){
 
     return $totalSum;
 }
+
+function rearrangeList($weightDetails) {
+    global $mapOfWeights, $totalGross, $totalCrate, $totalReduce, $totalNet, $totalCrates, $totalBirds, $totalMaleBirds, $totalMaleCages, $totalFemaleBirds, $totalFemaleCages, $totalMixedBirds, $totalMixedCages;
+
+    if (!empty($weightDetails)) {
+        $array1 = array(); // group
+        $array2 = array(); // house
+
+        foreach ($weightDetails as $element) {
+            if(!in_array($element['groupNumber'], $array1)){
+                $mapOfWeights[] = array( 
+                    'groupNumber' => $element['groupNumber'],
+                    'weightList' => array()
+                );
+
+                array_push($array1, $element['groupNumber']);
+            }
+
+            $key = array_search($element['groupNumber'], $array1);
+            array_push($mapOfWeights[$key]['weightList'], $element);
+            
+
+            $totalGross += floatval($element['grossWeight']);
+            $totalCrate += floatval($element['tareWeight']);
+            $totalReduce += floatval($element['reduceWeight']);
+            $totalNet += floatval($element['netWeight']);
+            $totalCrates += intval($element['numberOfCages']);
+            $totalBirds += intval($element['numberOfBirds']);
+
+            if ($element['sex'] == 'Male') {
+                $totalMaleBirds += intval($element['numberOfBirds']);
+                $totalMaleCages += intval($element['numberOfCages']);
+            } elseif ($element['sex'] == 'Female') {
+                $totalFemaleBirds += intval($element['numberOfBirds']);
+                $totalFemaleCages += intval($element['numberOfCages']);
+            } elseif ($element['sex'] == 'Mixed') {
+                $totalMixedBirds += intval($element['numberOfBirds']);
+                $totalMixedCages += intval($element['numberOfCages']);
+            }
+        }
+    }
+    
+    // Now you can work with $mapOfWeights and the calculated totals as needed.
+}
+
 
 if(isset($_POST['userID'], $_POST["file"])){
     $id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
@@ -47,14 +107,26 @@ if(isset($_POST['userID'], $_POST["file"])){
             if ($row = $result->fetch_assoc()) { 
                 $assigned_seconds = strtotime ( $row['start_time'] );
                 $completed_seconds = strtotime ( $row['end_time'] );
-
                 $duration = $completed_seconds - $assigned_seconds;
-
-                // j gives days
                 $time = date ( 'j g:i:s', $duration );
                 $weightData = json_decode($row['weight_data'], true);
                 $totalWeight = totalWeight($weightData);
+                rearrangeList($weightData);
                 $weightTime = json_decode($row['weight_time'], true);
+                $userName = "Pri Name";
+
+                if ($select_stmt2 = $db->prepare("select * FROM users WHERE id=?")) {
+                    $uid = $row['weighted_by'];
+                    $select_stmt2->bind_param('s', $uid);
+
+                    if ($select_stmt2->execute()) {
+                        $result2 = $select_stmt2->get_result();
+
+                        if ($row2= $result2->fetch_assoc()) { 
+                            $userName = $row2['name'];
+                        }
+                    }
+                }
 
                 $message = '<html>
     <head>
@@ -149,7 +221,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                     <td style="width: 100%;border-top:0px;text-align:center;"><img src="assets/header.png" width="100%" height="auto" /></td>
                 </tr>
             </tbody>
-        </table><br><br>
+        </table>
         
         <table class="table">
             <tbody>
@@ -173,7 +245,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                     <td style="width: 40%;border-top:0px;">
                         <p>
                             <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">DO No. : </span>
-                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">128800</span>
+                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['serial_no'].'</span>
                         </p>
                     </td>
                 </tr>
@@ -212,7 +284,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                     </td>
                     <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
                         <p>
-                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Issued By : </span>
+                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Issued By : '.$userName.'</span>
                             <span style="font-size: 12px;font-family: sans-serif;"></span>
                         </p>
                     </td>
@@ -247,7 +319,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                     <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
                         <p>
                             <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Crate Wt (kg) : </span>
-                            <span style="font-size: 12px;font-family: sans-serif;">'.$row['average_cage'].'</span>
+                            <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format((floatval($totalCrate) / floatval($totalCrates)), 2).'</span>
                         </p>
                     </td>
                     <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -267,7 +339,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                     <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
                         <p>
                             <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg) : </span>
-                            <span style="font-size: 12px;font-family: sans-serif;">'.($totalWeight - (float)$row['average_cage']).'</span>
+                            <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format($totalNet, 2).'</span>
                         </p>
                     </td>
                     <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -321,16 +393,15 @@ if(isset($_POST['userID'], $_POST["file"])){
                     </td>
                 </tr>
             </tbody>
-        </table><br>
+        </table><br>';
         
-        <p style="margin: 0px;"><u style="color: blue;">Group No. '.$row['group_no'].'</u></p>
-        <p style="margin: 0px;">'.$row['house_no'].'</p>
-        <table class="table">
+        for ($i=0; $i<count($mapOfWeights); $i++) {
+            $message .= '<p style="margin: 0px;"><u style="color: blue;">Group No. '.$mapOfWeights[$i]['groupNumber'].'</u></p><p style="margin: 0px;">'.$mapOfWeights[$i]['weightList'][0]['houseNumber'].'</p><table class="table">
             <tbody>
                 <tr style="border-top: 1px solid #000000;border-bottom: 1px solid #000000;font-family: sans-serif;">
                     <td style="width: 20%;border-top:0px;padding: 0 0.7rem;">
                         <p>
-                            <span style="font-size: 14px;font-family: sans-serif;font-weight: bold;">Grade '.$row['grade'].'</span>
+                            <span style="font-size: 14px;font-family: sans-serif;font-weight: bold;">Grade '.$mapOfWeights[$i]['weightList'][0]['grade'].'</span>
                         </p>
                     </td>
                     <td colspan="10" style="width: 80%;border-top:0px;padding: 0 0.7rem;">
@@ -339,38 +410,53 @@ if(isset($_POST['userID'], $_POST["file"])){
                         </p>
                     </td>
                 </tr>';
-                
-                $indexCount = 0;
-                $indexCount2 = 11;
-                $indexString = '<td style="border-top:0px;padding: 0 0.7rem;">
+        
+            $count = 0;
+            $indexCount2 = 11;
+            $indexString = '<td style="border-top:0px;padding: 0 0.7rem;">
                 <p>
                     <span style="font-size: 14px;font-family: sans-serif;font-weight: bold;">1</span>
                 </p>
             </td>';
-
-                for($i=0; $i<count($weightData); $i++){
-                    if($indexCount < 10){
-                        $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
+        
+            foreach ($mapOfWeights[$i]['weightList'] as $element) {
+                if ($count < 10) {
+                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
                         <p>
-                            <span style="font-size: 14px;font-family: sans-serif;">'.$weightData[$i].'/'.round((float)$weightData[$i]/(float)$row['average_bird']).'</span><br>
+                            <span style="font-size: 14px;font-family: sans-serif;">'.$element['grossWeight'].'/'.$element['numberOfCages'].'</span>
                         </p>
                     </td>';
-                        $indexCount++;
-                    }
-                    else{
-                        $indexString .= '<tr>'.$indexString.'</tr>';
-                        $indexCount = 0;
-                        $indexString = '<td style="border-top:0px;padding: 0 0.7rem;">
+                    $count++;
+                } 
+                else {
+                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
+                        <p>
+                            <span style="font-size: 14px;font-family: sans-serif;">'.$element['grossWeight'].'/'.$element['numberOfCages'].'</span>
+                        </p>
+                    </td>';
+                    $indexString = '<tr>'.$indexString.'</tr>';
+                        $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
                         <p>
                             <span style="font-size: 14px;font-family: sans-serif;font-weight: bold;">'.$indexCount2.'</span>
                         </p>
                     </td>';
-                        $indexCount2 += 10;
-                    }
+                    $count = 0;
+                    $indexCount2 += 10;
                 }
+            }
 
-                $message .= $indexString;
-                $message .= '</tbody>
+            if($count >0){
+                for ($k = 0; $k < (10 - $count); $k++) {
+                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;"><p><span style="font-size: 14px;font-family: sans-serif;"></span></p></td>';
+                }
+                $indexString = '<tr>'.$indexString.'</tr>';
+            }
+            
+            $message .= $indexString;
+        }
+        
+        
+        $message .= '</tbody>
         </table><br>
         
         <div id="footer">
@@ -392,14 +478,14 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">Crates</td>';
 
                                         if($row['grade'] == 'S'){
-                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.((float)$row['average_cage'] * count($weightData)).'</td>
+                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.((float)number_format((floatval($totalCrate) / floatval($totalCrates)), 2) * count($weightData)).'</td>
                                                     <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">0</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.((float)$row['average_cage'] * count($weightData)).'</td>';
+                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.((float)number_format((floatval($totalCrate) / floatval($totalCrates)), 2) * count($weightData)).'</td>';
                                         }
                                         else{
                                             $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">0</td>
-                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.((float)$row['average_cage'] * count($weightData)).'</td>
-                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.((float)$row['average_cage'] * count($weightData)).'</td>';
+                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.((float)number_format((floatval($totalCrate) / floatval($totalCrates)), 2) * count($weightData)).'</td>
+                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.((float)number_format((floatval($totalCrate) / floatval($totalCrates)), 2) * count($weightData)).'</td>';
                                         }
                                         
                                         
@@ -408,14 +494,14 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         <td style="width: 40%;border-top:0px;">Birds</td>';
 
                                         if($row['grade'] == 'S'){
-                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.((float)$row['average_bird'] * count($weightData)).'</td>
+                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.((float)number_format((((float)($totalGross - (float)$totalCrate)) / (float)$totalBirds), 2) * count($weightData)).'</td>
                                                     <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">0</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.((float)$row['average_bird'] * count($weightData)).'</td>';
+                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.((float)number_format((((float)($totalGross - (float)$totalCrate)) / (float)$totalBirds), 2) * count($weightData)).'</td>';
                                         }
                                         else{
                                             $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">0</td>
-                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.((float)$row['average_bird'] * count($weightData)).'</td>
-                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.((float)$row['average_bird'] * count($weightData)).'</td>';
+                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.((float)number_format((((float)($totalGross - (float)$totalCrate)) / (float)$totalBirds), 2) * count($weightData)).'</td>
+                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.((float)number_format((((float)($totalGross - (float)$totalCrate)) / (float)$totalBirds), 2) * count($weightData)).'</td>';
                                         }
                                         
                                     $message .= '</tr>
@@ -456,9 +542,9 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">5870.5</td>
                                     </tr>
                                 </tbody>
-                            </table><br>
+                            </table>';
 
-                            <table class="table">
+                            /*<table class="table">
                                 <tbody>
                                     <tr>
                                         <th style="width: 20%;border-top:0px;padding: 0 0.7rem;"></th>
@@ -469,21 +555,21 @@ if(isset($_POST['userID'], $_POST["file"])){
                                     </tr>
                                     <tr>
                                         <td style="width: 25%;border-top:0px;padding: 0 0.7rem;">Crates</td>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">0</td>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">0</td>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">332</td>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">332</td>
+                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalMaleCages.'</td>
+                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalFemaleCages.'</td>
+                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalMixedCages.'</td>
+                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalCrates.'</td>
                                     </tr>
                                     <tr>
                                         <td style="width: 25%;border-top:0px;padding: 0 0.7rem;">Birds</td>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">0</td>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">0</td>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">3320</td>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">3320</td>
+                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalMaleBirds.'</td>
+                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalFemaleBirds.'</td>
+                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalMixedBirds.'</td>
+                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalBirds.'</td>
                                     </tr>
                                 </tbody>
-                            </table>
-                        </td>
+                            </table>*/
+                            $message .= '</td>
                         <td style="width: 50%;border-top:0px;">
                             <p><b>SUMMARY - BY HOUSE</b></p>
                             <table class="table">
@@ -494,15 +580,32 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">Birds</th>
                                         <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">Nett (kg)</th>
                                         <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">Average</th>
-                                    </tr>
-                                    <tr>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;">No. 5</td>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">224</td>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">2240</td>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">3950.4</td>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">1.76</td>
-                                    </tr>
-                                </tbody>
+                                    </tr>';
+
+                                    for($j=0; $j<count($mapOfWeights); $j++){
+                                        $group = $mapOfWeights[$j]['groupNumber'];
+                                        $crateIn = 0;
+                                        $birdsIn = 0;
+                                        $nettsIn = 0.0;
+                                        $average = 0.0;
+
+                                        foreach ($mapOfWeights[$j]['weightList'] as $element){
+                                            $crateIn += (int)$element['numberOfCages'];
+                                            $birdsIn += (int)$element['numberOfBirds'];
+                                            $nettsIn += (float)$element['netWeight'];
+                                        }
+
+                                        $average += (float)$element['netWeight'] / (int)$element['numberOfBirds'];
+                                        $message .= '<tr>
+                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;">No. '.$group.'</td>
+                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$crateIn.'</td>
+                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$birdsIn.'</td>
+                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$nettsIn.'</td>
+                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$average.'</td>
+                                        </tr>';
+                                    }
+                                
+                                    $message .= '</tbody>
                             </table>
                         </td>
                     </tr>
@@ -516,8 +619,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                     array(
                         "status" => "success",
                         "message" => $message,
-                        "weightData" => $weightData,
-                        "time" => $weightTime
+                        "string" => $indexString
                     )
                 );
             }

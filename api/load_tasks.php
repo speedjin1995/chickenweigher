@@ -4,10 +4,11 @@ require_once 'db_connect.php';
 $post = json_decode(file_get_contents('php://input'), true);
 
 $userId=$post['userId'];
-$now = date("Y-m-d H:i:s");
+$now = date("Y-m-d 00:00:00");
 
-$stmt = $db->prepare("SELECT * from weighing WHERE created_datetime >= ? AND weighted_by = ?");
-$stmt->bind_param('ss', $today, $userId);
+//$stmt = $db->prepare("SELECT * from weighing WHERE created_datetime >= ?");
+$stmt = $db->prepare("SELECT * from weighing WHERE created_datetime >= ? AND weighted_by = ? AND start_time IS NULL AND end_time IS NULL AND `deleted` = '0'");
+$stmt->bind_param('ss', $now, $userId);
 $stmt->execute();
 $result = $stmt->get_result();
 $message = array();
