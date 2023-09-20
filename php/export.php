@@ -46,9 +46,9 @@ if($_GET['customer'] != null && $_GET['customer'] != '' && $_GET['customer'] != 
 }
 
 // Fetch records from database
-$query = $db->query("select * FROM weighing WHERE deleted = '0'".$searchQuery."");
+$query = $db->query("select * FROM weighing WHERE deleted = '0' AND start_time IS NOT NULL AND end_time IS NOT NULL".$searchQuery."");
 
-
+echo $query->num_rows;
 if($query->num_rows > 0){ 
     // Output each row of the data 
     while($row = $query->fetch_assoc()){ 
@@ -69,7 +69,7 @@ if($query->num_rows > 0){
                 }
             }
         }
-
+        
         for($i=0; $i<count($weight_data); $i++){
             $lineData = array($row['serial_no'], $row['customer'], $row['product'], $row['lorry_no'], $row['driver_name'], $row['farm_id'],
             $weighted_by, $row['start_time'], $row['end_time'], $weight_data[$i]['grossWeight'], $weight_data[$i]['tareWeight'], 
