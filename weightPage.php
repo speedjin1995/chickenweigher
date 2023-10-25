@@ -22,7 +22,9 @@ else{
   $vehicles = $db->query("SELECT * FROM vehicles WHERE deleted = '0'"); // Vehicles
   $products = $db->query("SELECT * FROM products WHERE deleted = '0'"); // Products
   $packages = $db->query("SELECT * FROM packages WHERE deleted = '0'"); // Farms
+  $packages2 = $db->query("SELECT * FROM packages WHERE deleted = '0'"); // Farms
   $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'"); // Customers
+  $customers2 = $db->query("SELECT * FROM customers WHERE deleted = '0'"); // Customers
   $units = $db->query("SELECT * FROM units WHERE deleted = '0'"); // Grades
   $users = $db->query("SELECT * FROM users WHERE deleted = '0'"); // Users
   $transporters = $db->query("SELECT * FROM transporters WHERE deleted = '0'"); // Drivers
@@ -51,71 +53,69 @@ else{
 <!-- Main content -->
 <div class="content">
   <div class="container-fluid">
-    <!--div div class="row">
-      <div class="col-md-3 col-sm-6 col-12">
-        <div class="info-box" id="saleCard">
-          <span class="info-box-icon bg-info">
-            <i class="fas fa-shopping-cart"></i>
-          </span>
-          <div class="info-box-content">
-            <span class="info-box-text">Sales</span>
-            <span class="info-box-number" id="salesInfo">0</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-3 col-sm-6 col-12">
-        <div class="info-box" id="purchaseCard">
-          <span class="info-box-icon bg-success">
-            <i class="fas fa-shopping-basket"></i>
-          </span>
-          <div class="info-box-content">
-            <span class="info-box-text">Purchase</span>
-            <span class="info-box-number" id="purchaseInfo">0</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-3 col-sm-6 col-12">
-        <div class="info-box" id="miscCard">
-          <span class="info-box-icon bg-warning">
-            <i class="fas fa-warehouse" style="color: white;"></i>
-          </span>
-          <div class="info-box-content">
-            <span class="info-box-text">Miscellaneous</span>
-            <span class="info-box-number" id="localInfo">0</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-3 col-sm-6 col-12">
-        <div class="input-group-text color-palette" id="indicatorConnected"><i>Indicator Connected</i></div>
-        <div class="input-group-text bg-danger color-palette" id="checkingConnection"><i>Checking Connection</i></div>
-      </div>
-    </div-->
-
     <div class="row">
-
-      <!-- <div class="col-lg-12">
+      <div class="col-lg-12">
         <div class="card">
-          <div class="card-header">
+          <div class="card-body">
             <div class="row">
-              <div class="col-4">
-                <div class="input-group-text color-palette" id="indicatorConnected"><i>Indicator Connected</i></div>
+              <div class="form-group col-3">
+                <label>From Date:</label>
+                <div class="input-group date" id="fromDatePicker" data-target-input="nearest">
+                  <input type="text" class="form-control datetimepicker-input" data-target="#fromDatePicker" id="fromDate"/>
+                  <div class="input-group-append" data-target="#fromDatePicker" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div></div>
+                </div>
               </div>
-              <div class="col-4">
-                <div class="input-group-text bg-danger color-palette" id="checkingConnection"><i>Checking Connection</i></div>
+
+              <div class="form-group col-3">
+                <label>To Date:</label>
+                <div class="input-group date" id="toDatePicker" data-target-input="nearest">
+                  <input type="text" class="form-control datetimepicker-input" data-target="#toDatePicker" id="toDate"/>
+                  <div class="input-group-append" data-target="#toDatePicker" data-toggle="datetimepicker">
+                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                  </div>
+                </div>
               </div>
-              <div class="col-4">
-                <button type="button" class="btn btn-block bg-gradient-primary"  onclick="setup()">
-                  Setup
+
+              <div class="col-3">
+                <div class="form-group">
+                  <label>Farm</label>
+                  <select class="form-control" id="farmFilter" name="farmFilter" style="width: 100%;">
+                    <option selected="selected">-</option>
+                    <?php while($rowStatus2=mysqli_fetch_assoc($packages2)){ ?>
+                      <option value="<?=$rowStatus2['packages'] ?>"><?=$rowStatus2['packages'] ?></option>
+                    <?php } ?>
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-3">
+                <div class="form-group">
+                  <label>Customer No</label>
+                  <select class="form-control" style="width: 100%;" id="customerFilter" name="customerFilter" style="display: none;">
+                    <option selected="selected">-</option>
+                    <?php while($rowCustomer2=mysqli_fetch_assoc($customers2)){ ?>
+                      <option value="<?=$rowCustomer2['customer_name'] ?>"><?=$rowCustomer2['customer_name'] ?></option>
+                    <?php } ?>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-9"></div>
+              <div class="col-3">
+                <button type="button" class="btn btn-block bg-gradient-warning btn-sm"  id="filterSearch">
+                  <i class="fas fa-search"></i>
+                  Search
                 </button>
               </div>
             </div>
           </div>
         </div>
-      </div> -->
-
+      </div>
+    </div>
+    <div class="row">
       <div class="col-lg-12">
         <div class="card card-primary">
           <div class="card-header">
@@ -135,7 +135,8 @@ else{
               <thead>
                 <tr>
                   <th>No</th>
-                  <th>Serial No</th>
+                  <th>Order No</th>
+                  <th>PO No</th>
                   <th>Customers</th>
                   <th>Product</th>
                   <th>Vehicle No</th>
@@ -166,6 +167,10 @@ else{
         <div class="modal-body">
           <input type="hidden" class="form-control" id="id" name="id">
           <div class="row">
+            <div class="form-group col-4">
+              <label>PO No.</label>
+              <input class="form-control" type="text" placeholder="PO No." id="poNo" name="poNo">
+            </div>
             <div class="col-4">
               <div class="form-group">
                 <label class="labelStatus">Customer No *</label>
@@ -235,10 +240,14 @@ else{
               <label>Max Weight </label>
               <input class="form-control" type="number" placeholder="Max Weight" id="maxWeight" name="maxWeight">
             </div>
+            <div class="form-group col-4">
+              <label>Max Crate </label>
+              <input class="form-control" type="number" placeholder="Max Crate" id="maxCrate" name="maxCrate">
+            </div>
             <div class="col-4">
               <div class="form-group">
-                <label>Assigned To *</label>
-                <select class="form-control" style="width: 100%;" id="assignTo" name="assignTo" required> 
+                <label>Assigned To</label>
+                <select class="form-control" style="width: 100%;" id="assignTo" name="assignTo"> 
                   <option selected="selected">-</option>
                   <?php while($rowusers=mysqli_fetch_assoc($users)){ ?>
                     <option value="<?=$rowusers['id'] ?>"><?=$rowusers['name'] ?></option>
@@ -290,6 +299,7 @@ $(function () {
     'columns': [
       { data: 'no' },
       { data: 'serial_no' },
+      { data: 'po_no' },
       { data: 'customer' },
       { data: 'product' },
       { data: 'lorry_no' },
@@ -308,7 +318,7 @@ $(function () {
       $('td', row).css('background-color', '#E6E6FA');
     },
     "drawCallback": function(settings) {
-      
+      $('#spinnerLoading').hide();
     }
   });
 
@@ -336,44 +346,104 @@ $(function () {
   });
   
   //Date picker
-  $('#fromDate').datetimepicker({
+  $('#fromDatePicker').datetimepicker({
       icons: { time: 'far fa-clock' },
-      format: 'DD/MM/YYYY hh:mm:ss A'
+      format: 'DD/MM/YYYY HH:mm:ss A',
+      defaultDate: new Date
   });
 
-  $('#toDate').datetimepicker({
-      icons: { time: 'far fa-clock' },
-      format: 'DD/MM/YYYY hh:mm:ss A'
+  $('#toDatePicker').datetimepicker({
+    icons: { time: 'far fa-clock' },
+    format: 'DD/MM/YYYY HH:mm:ss A',
+    defaultDate: new Date
   });
 
-  /*$.post('http://127.0.0.1:5002/', $('#setupForm').serialize(), function(data){
-    if(data == "true"){
-      $('#indicatorConnected').addClass('bg-primary');
-      $('#checkingConnection').removeClass('bg-danger');
-      //$('#captureWeight').removeAttr('disabled');
+  $('#filterSearch').on('click', function(){
+    $('#spinnerLoading').show();
+
+    var fromDateValue = '';
+    var toDateValue = '';
+
+    if($('#fromDate').val()){
+      var convert1 = $('#fromDate').val().replace(", ", " ");
+      convert1 = convert1.replace(":", "/");
+      convert1 = convert1.replace(":", "/");
+      convert1 = convert1.replace(" ", "/");
+      convert1 = convert1.replace(" pm", "");
+      convert1 = convert1.replace(" am", "");
+      convert1 = convert1.replace(" PM", "");
+      convert1 = convert1.replace(" AM", "");
+      var convert2 = convert1.split("/");
+      var date  = new Date(convert2[2], convert2[1] - 1, convert2[0], convert2[3], convert2[4], convert2[5]);
+      fromDateValue = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
     }
-    else{
-      $('#indicatorConnected').removeClass('bg-primary');
-      $('#checkingConnection').addClass('bg-danger');
-      //$('#captureWeight').attr('disabled', true);
+    
+    if($('#toDate').val()){
+      var convert3 = $('#toDate').val().replace(", ", " ");
+      convert3 = convert3.replace(":", "/");
+      convert3 = convert3.replace(":", "/");
+      convert3 = convert3.replace(" ", "/");
+      convert3 = convert3.replace(" pm", "");
+      convert3 = convert3.replace(" am", "");
+      convert3 = convert3.replace(" PM", "");
+      convert3 = convert3.replace(" AM", "");
+      var convert4 = convert3.split("/");
+      var date2  = new Date(convert4[2], convert4[1] - 1, convert4[0], convert4[3], convert4[4], convert4[5]);
+      toDateValue = date2.getFullYear() + "-" + (date2.getMonth() + 1) + "-" + date2.getDate() + " " + date2.getHours() + ":" + date2.getMinutes() + ":" + date2.getSeconds();
     }
-  });
-  
-  setInterval(function () {
-    $.post('http://127.0.0.1:5002/handshaking', function(data){
-      if(data != "Error"){
-        console.log("Data Received:" + data);
-        var text = data.split(" ");
-        $('#indicatorWeight').html(text[text.length - 1]);
-        $('#indicatorConnected').addClass('bg-primary');
-        $('#checkingConnection').removeClass('bg-danger');
-      }
-      else{
-        $('#indicatorConnected').removeClass('bg-primary');
-        $('#checkingConnection').addClass('bg-danger');
+
+    var statusFilter = $('#statusFilter').val() ? $('#statusFilter').val() : '';
+    var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
+
+    //Destroy the old Datatable
+    $("#weightTable").DataTable().clear().destroy();
+
+    //Create new Datatable
+    table = $("#weightTable").DataTable({
+      "responsive": true,
+      "autoWidth": false,
+      'processing': true,
+      'serverSide': true,
+      'serverMethod': 'post',
+      'searching': false,
+      'order': [[ 1, 'asc' ]],
+      'columnDefs': [ { orderable: false, targets: [0] }],
+      'ajax': {
+        'type': 'POST',
+        'url':'php/filterWeight.php',
+        'data': {
+          fromDate: fromDateValue,
+          toDate: toDateValue,
+          farm: statusFilter,
+          customer: customerNoFilter,
+        }
+      },
+      'columns': [
+        { data: 'no' },
+        { data: 'serial_no' },
+        { data: 'po_no' },
+        { data: 'customer' },
+        { data: 'product' },
+        { data: 'lorry_no' },
+        { data: 'driver_name' },
+        { data: 'farm_id' },
+        { 
+          className: 'dt-control',
+          orderable: false,
+          data: null,
+          render: function ( data, type, row ) {
+            return '<td class="table-elipse" data-toggle="collapse" data-target="#demo'+row.serialNo+'"><i class="fas fa-angle-down"></i></td>';
+          }
+        }
+      ],
+      "rowCallback": function( row, data, index ) {
+        $('td', row).css('background-color', '#E6E6FA');
+      },
+      "drawCallback": function(settings) {
+        $('#spinnerLoading').hide();
       }
     });
-  }, 500);*/
+  });
 
   $.validator.setDefaults({
     submitHandler: function () {
@@ -506,198 +576,6 @@ $(function () {
     });*/
   });
 
-  $('#saleCard').on('click', function(){
-    var fromDateValue = '';
-    var toDateValue = '';
-    var statusFilter = '1';
-    var customerNoFilter = '';
-    var vehicleFilter = '';
-    var invoiceFilter = '';
-    var batchFilter = '';
-    var productFilter = '';
-
-    //Destroy the old Datatable
-    $("#weightTable").DataTable().clear().destroy();
-
-    //Create new Datatable
-    table = $("#weightTable").DataTable({
-      "responsive": true,
-      "autoWidth": false,
-      'processing': true,
-      'serverSide': true,
-      'serverMethod': 'post',
-      'searching': true,
-      'order': [[ 1, 'asc' ]],
-      'columnDefs': [ { orderable: false, targets: [0] }],
-      'ajax': {
-        'type': 'POST',
-        'url':'php/filterWeight.php',
-        'data': {
-          fromDate: fromDateValue,
-          toDate: toDateValue,
-          status: statusFilter,
-          customer: customerNoFilter,
-          vehicle: vehicleFilter,
-          invoice: invoiceFilter,
-          batch: batchFilter,
-          product: productFilter,
-        } 
-      },
-      'columns': [
-        { data: 'no' },
-        { data: 'pStatus' },
-        { data: 'status' },
-        { data: 'serialNo' },
-        { data: 'veh_number' },
-        { data: 'product_name' },
-        { data: 'currentWeight' },
-        { data: 'inCDateTime' },
-        { data: 'tare' },
-        { data: 'outGDateTime' },
-        { data: 'totalWeight' },
-        { 
-          className: 'dt-control',
-          orderable: false,
-          data: null,
-          render: function ( data, type, row ) {
-            return '<td class="table-elipse" data-toggle="collapse" data-target="#demo'+row.serialNo+'"><i class="fas fa-angle-down"></i></td>';
-          }
-        }
-      ],
-      "rowCallback": function( row, data, index ) {
-        $('td', row).css('background-color', '#E6E6FA');
-      }
-    });
-  });
-
-  $('#purchaseCard').on('click', function(){
-    var fromDateValue = '';
-    var toDateValue = '';
-    var statusFilter = '2';
-    var customerNoFilter = '';
-    var vehicleFilter = '';
-    var invoiceFilter = '';
-    var batchFilter = '';
-    var productFilter = '';
-
-    //Destroy the old Datatable
-    $("#weightTable").DataTable().clear().destroy();
-
-    //Create new Datatable
-    table = $("#weightTable").DataTable({
-      "responsive": true,
-      "autoWidth": false,
-      'processing': true,
-      'serverSide': true,
-      'serverMethod': 'post',
-      'searching': true,
-      'order': [[ 1, 'asc' ]],
-      'columnDefs': [ { orderable: false, targets: [0] }],
-      'ajax': {
-        'type': 'POST',
-        'url':'php/filterWeight.php',
-        'data': {
-          fromDate: fromDateValue,
-          toDate: toDateValue,
-          status: statusFilter,
-          customer: customerNoFilter,
-          vehicle: vehicleFilter,
-          invoice: invoiceFilter,
-          batch: batchFilter,
-          product: productFilter,
-        } 
-      },
-      'columns': [
-        { data: 'no' },
-        { data: 'pStatus' },
-        { data: 'status' },
-        { data: 'serialNo' },
-        { data: 'veh_number' },
-        { data: 'product_name' },
-        { data: 'currentWeight' },
-        { data: 'inCDateTime' },
-        { data: 'tare' },
-        { data: 'outGDateTime' },
-        { data: 'totalWeight' },
-        { 
-          className: 'dt-control',
-          orderable: false,
-          data: null,
-          render: function ( data, type, row ) {
-            return '<td class="table-elipse" data-toggle="collapse" data-target="#demo'+row.serialNo+'"><i class="fas fa-angle-down"></i></td>';
-          }
-        }
-      ],
-      "rowCallback": function( row, data, index ) {
-        $('td', row).css('background-color', '#E6E6FA');
-      }
-    });
-  });
-
-  $('#miscCard').on('click', function(){
-    var fromDateValue = '';
-    var toDateValue = '';
-    var statusFilter = '3';
-    var customerNoFilter = '';
-    var vehicleFilter = '';
-    var invoiceFilter = '';
-    var batchFilter = '';
-    var productFilter = '';
-
-    //Destroy the old Datatable
-    $("#weightTable").DataTable().clear().destroy();
-
-    //Create new Datatable
-    table = $("#weightTable").DataTable({
-      "responsive": true,
-      "autoWidth": false,
-      'processing': true,
-      'serverSide': true,
-      'serverMethod': 'post',
-      'searching': true,
-      'order': [[ 1, 'asc' ]],
-      'columnDefs': [ { orderable: false, targets: [0] }],
-      'ajax': {
-        'type': 'POST',
-        'url':'php/filterWeight.php',
-        'data': {
-          fromDate: fromDateValue,
-          toDate: toDateValue,
-          status: statusFilter,
-          customer: customerNoFilter,
-          vehicle: vehicleFilter,
-          invoice: invoiceFilter,
-          batch: batchFilter,
-          product: productFilter,
-        } 
-      },
-      'columns': [
-        { data: 'no' },
-        { data: 'pStatus' },
-        { data: 'status' },
-        { data: 'serialNo' },
-        { data: 'veh_number' },
-        { data: 'product_name' },
-        { data: 'currentWeight' },
-        { data: 'inCDateTime' },
-        { data: 'tare' },
-        { data: 'outGDateTime' },
-        { data: 'totalWeight' },
-        { 
-          className: 'dt-control',
-          orderable: false,
-          data: null,
-          render: function ( data, type, row ) {
-            return '<td class="table-elipse" data-toggle="collapse" data-target="#demo'+row.serialNo+'"><i class="fas fa-angle-down"></i></td>';
-          }
-        }
-      ],
-      "rowCallback": function( row, data, index ) {
-        $('td', row).css('background-color', '#E6E6FA');
-      }
-    });
-  });
-
   $('#status').on('change', function(){
     if($(this).val() == 'Sales'){
       $('#extendModal').find('#customerNo').html($('select#customerNoHidden').html());
@@ -808,6 +686,8 @@ function newEntry(){
   $('#extendModal').find('#farm').val('');
   $('#extendModal').find('#aveBird').val("");
   $('#extendModal').find('#aveCage').val('');
+  $('#extendModal').find('#poNo').val('');
+  $('#extendModal').find('#maxCrate').val('');
   $('#extendModal').find('#minWeight').val('');
   $('#extendModal').find('#maxWeight').val("");
   $('#extendModal').find('#assignTo').val("");
@@ -840,6 +720,7 @@ function edit(id) {
     
     if(obj.status === 'success'){
       $('#extendModal').find('#id').val(obj.message.id);
+      $('#extendModal').find('#poNo').val(obj.message.po_no);
       $('#extendModal').find('#status').val(obj.message.status);
       $('#extendModal').find('#product').val(obj.message.product);
       $('#extendModal').find('#vehicleNo').val(obj.message.lorry_no);
@@ -849,6 +730,7 @@ function edit(id) {
       $('#extendModal').find('#aveCage').val(obj.message.average_cage);
       $('#extendModal').find('#minWeight').val(obj.message.minimum_weight);
       $('#extendModal').find('#maxWeight').val(obj.message.maximum_weight);
+      $('#extendModal').find('#maxCrate').val(obj.message.max_crate);
       $('#extendModal').find('#assignTo').val(obj.message.weighted_by);
       $('#extendModal').find('#remark').val(obj.message.remark);
 

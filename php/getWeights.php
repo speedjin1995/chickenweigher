@@ -24,6 +24,7 @@ if(isset($_POST['userID'])){
             while ($row = $result->fetch_assoc()) {
                 $message['id'] = $row['id'];
                 $message['status'] = $row['status'];
+                $message['po_no'] = $row['po_no'];
                 $message['group_no'] = $row['group_no'];
                 $message['customer'] = $row['customer'];
                 $message['supplier'] = $row['supplier'];
@@ -37,7 +38,8 @@ if(isset($_POST['userID'])){
                 $message['average_cage'] = $row['average_cage'];
                 $message['average_bird'] = $row['average_bird'];
                 $message['minimum_weight'] = $row['minimum_weight'];
-                $message['maximum_weight'] = $row['maximum_weight'];
+                $message['max_crate'] = $row['max_crate'];
+                $message['group_no'] = $row['group_no'];
                 $message['weighted_by'] = $row['weighted_by'];
                 $message['remark'] = $row['remark'];
             }

@@ -4,15 +4,18 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 session_start();
 
-if(isset($_POST['customerNo'], $_POST['product'], $_POST['vehicleNo'], $_POST['driver'], $_POST['farm'], $_POST['assignTo'])){
+if(isset($_POST['customerNo'], $_POST['product'], $_POST['vehicleNo'], $_POST['driver'], $_POST['farm'])){
 	$userId = $_SESSION['userID'];
 	$status = "Sales";
 	$product = filter_input(INPUT_POST, 'product', FILTER_SANITIZE_STRING);
 	$vehicleNo = filter_input(INPUT_POST, 'vehicleNo', FILTER_SANITIZE_STRING);
 	$driver = filter_input(INPUT_POST, 'driver', FILTER_SANITIZE_STRING);
 	$farm = filter_input(INPUT_POST, 'farm', FILTER_SANITIZE_STRING);
-	$assignTo = filter_input(INPUT_POST, 'assignTo', FILTER_SANITIZE_STRING);
 	
+	$orderNo = null;
+	$poNo = null;
+	$maxCrate = null;
+	$assignTo = null;
 	$grade = null;
 	$houseNo = null;
 	$gender = null;
@@ -34,8 +37,20 @@ if(isset($_POST['customerNo'], $_POST['product'], $_POST['vehicleNo'], $_POST['d
 		$supplierName = filter_input(INPUT_POST, 'customerNo', FILTER_SANITIZE_STRING);
 	}
 
+	if($_POST['maxCrate'] != null && $_POST['maxCrate'] != ''){
+		$maxCrate = filter_input(INPUT_POST, 'maxCrate', FILTER_SANITIZE_STRING);
+	}
+
+	if($_POST['poNo'] != null && $_POST['poNo'] != ''){
+		$poNo = filter_input(INPUT_POST, 'poNo', FILTER_SANITIZE_STRING);
+	}
+
 	if($_POST['aveBird'] != null && $_POST['aveBird'] != ''){
 		$aveBird = filter_input(INPUT_POST, 'aveBird', FILTER_SANITIZE_STRING);
+	}
+
+	if($_POST['assignTo'] != null && $_POST['assignTo'] != ''){
+		$assignTo = filter_input(INPUT_POST, 'assignTo', FILTER_SANITIZE_STRING);
 	}
 
 	if($_POST['aveCage'] != null && $_POST['aveCage'] != ''){
@@ -91,9 +106,10 @@ if(isset($_POST['customerNo'], $_POST['product'], $_POST['vehicleNo'], $_POST['d
 	if($_POST['id'] != null && $_POST['id'] != ''){
 		$id = $_POST['id'];
 		if ($update_stmt = $db->prepare("UPDATE weighing SET group_no=?, customer=?, supplier=?, product=?, driver_name=?, lorry_no=?, farm_id=?, 
-		average_cage=?, average_bird=?, minimum_weight=?, maximum_weight=?, grade=?, gender=?, house_no=?, remark=?, weighted_by=? WHERE id=?")){
-			$update_stmt->bind_param('sssssssssssssssss', $group, $customerName, $supplierName, $product, $driver, $vehicleNo, $farm, $aveCage,
-			$aveBird, $minWeight, $maxWeight, $grade, $gender, $houseNo, $remark, $assignTo, $id);
+		average_cage=?, average_bird=?, minimum_weight=?, maximum_weight=?, grade=?, gender=?, house_no=?, remark=?, weighted_by=?, max_crate=?, 
+		po_no=? WHERE id=?")){
+			$update_stmt->bind_param('sssssssssssssssssss', $group, $customerName, $supplierName, $product, $driver, $vehicleNo, $farm, $aveCage,
+			$aveBird, $minWeight, $maxWeight, $grade, $gender, $houseNo, $remark, $assignTo, $maxCrate, $poNo, $id);
 		
 			// Execute the prepared query.
 			if (! $update_stmt->execute()){
@@ -127,13 +143,13 @@ if(isset($_POST['customerNo'], $_POST['product'], $_POST['vehicleNo'], $_POST['d
 	}
 	else{
 		if ($insert_stmt = $db->prepare("INSERT INTO weighing (serial_no, group_no, customer, supplier, product, driver_name, lorry_no, 
-		farm_id, average_cage, average_bird, minimum_weight, maximum_weight, grade, gender, house_no, remark, weighted_by, status, created_by) 
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){
+		farm_id, average_cage, average_bird, minimum_weight, maximum_weight, grade, gender, house_no, remark, weighted_by, status, 
+		max_crate, po_no, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){
 		    $data = null;
 			$data2 = null;
-			$insert_stmt->bind_param('sssssssssssssssssss', $serialNo, $group, $customerName, $supplierName, $product, $driver, 
+			$insert_stmt->bind_param('sssssssssssssssssssss', $serialNo, $group, $customerName, $supplierName, $product, $driver, 
 			$vehicleNo, $farm, $aveCage, $aveBird, $minWeight, $maxWeight, $grade, $gender, $houseNo, $remark, $assignTo, 
-			$status, $userId);
+			$status, $maxCrate, $poNo, $userId);
 								
 			// Execute the prepared query.
 			if (! $insert_stmt->execute()){
