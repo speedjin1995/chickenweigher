@@ -498,6 +498,7 @@ $(function () {
       'columns': [
         { data: 'no' },
         { data: 'serial_no' },
+        { data: 'po_no' },
         { data: 'customer' },
         { data: 'product' },
         { data: 'lorry_no' },

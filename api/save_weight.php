@@ -41,10 +41,6 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 		$customerName = $post['customerName'];
 	}
 
-	/*if($post['supplierName'] != null && $post['supplierName'] != ''){
-		$supplierName = $post['supplierName'];
-	}*/
-
 	if($post['minWeight'] != null && $post['minWeight'] != ''){
 		$minWeight = $post['minWeight'];
 	}
@@ -93,8 +89,8 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 	}
 
 	if(isset($post['id']) && $post['id'] != null && $post['id'] != ''){
-		if ($update_stmt = $db->prepare("UPDATE weighing SET customer=?, supplier=?, product=?, driver_name=?, lorry_no=?, farm_id=?, average_cage=?, average_bird=?
-		, minimum_weight=?, maximum_weight=?, weight_data=?, remark=?, start_time=?, weight_time=?, end_time=?, cratesCount=?, numberOfCages=?, totalCagesWeight=? WHERE id=?")){
+		if ($update_stmt = $db->prepare("UPDATE weighing SET customer=?, supplier=?, product=?, driver_name=?, lorry_no=?, farm_id=?, average_cage=?, average_bird=?, 
+		minimum_weight=?, maximum_weight=?, weight_data=?, remark=?, start_time=?, weight_time=?, end_time=?, total_cage=?, number_of_cages=?, total_cages_weight=? WHERE id=?")){
 			$id = $post['id'];
 			$data = json_encode($weightDetails);
 			$data2 = json_encode($timestampData);
@@ -135,7 +131,7 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 	else{
 		if ($insert_stmt = $db->prepare("INSERT INTO weighing (serial_no, customer, supplier, product, driver_name, lorry_no, 
 		farm_id, average_cage, average_bird, minimum_weight, maximum_weight, weight_data, remark, start_time, weight_time, end_time,
-		cratesCount, numberOfCages, totalCagesWeight) 
+		total_cage, number_of_cages, total_cages_weight) 
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){
 		    $data = json_encode($weightDetails);
 			$data2 = json_encode($timestampData);
