@@ -30,9 +30,9 @@ else{
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-  <title>SyncWeight </title>
+  <title>CCB </title>
 
-  <link rel="icon" href="assets/logoSmall.png" type="image">
+  <link rel="icon" href="assets/logoSmall.jpeg" type="image">
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
   <!-- IonIcons -->
@@ -303,7 +303,7 @@ to get the desired effect
   <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #3d44c1;">
     <!-- Brand Logo -->
     <a href="#" class="brand-link logo-switch">
-      <img src="assets/logoSmall.png" alt="Sneakercube Logo" class="brand-image-xl logo-xs">
+      <img src="assets/logoSmall.jpeg" alt="Sneakercube Logo" class="brand-image-xl logo-xs">
       <img src="assets/logo.png" alt="Sneakercube Logo" class="brand-image-xl logo-xl">
     </a>
 
@@ -384,6 +384,12 @@ to get the desired effect
                     </a>
                   </li>
                   <li class="nav-item">
+                    <a href="#suppliers" data-file="suppliers.php" class="nav-link link">
+                      <i class="nav-icon fas fa-book"></i>
+                      <p>Supplies</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
                     <a href="#products" data-file="products.php" class="nav-link link">
                       <i class="nav-icon fas fa-shopping-cart"></i>
                       <p>Products</p>
@@ -398,29 +404,30 @@ to get the desired effect
                   <li class="nav-item">
                     <a href="#transporters" data-file="transport.php" class="nav-link link">
                       <i class="nav-icon fas fa-box"></i>
-                      <p>Drivers</p>
+                      <p>Transporters</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="#units" data-file="units.php" class="nav-link link">
+                    <a href="#grades" data-file="units.php" class="nav-link link">
                       <i class="nav-icon fas fa-balance-scale"></i>
                       <p>Grades</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="#packages" data-file="packages.php" class="nav-link link">
+                    <a href="#farms" data-file="farms.php" class="nav-link link">
                       <i class="nav-icon fas fa-shopping-bag"></i>
                       <p>Farms</p>
                     </a>
                   </li>
-                  <li class="nav-item">
-                    <a href="#lots" data-file="lots.php" class="nav-link link">
+                </ul>
+              </li>';
+                  /*<li class="nav-item">
+                    <a href="#groups" data-file="groups.php" class="nav-link link">
                       <i class="nav-icon fas fa-store"></i>
                       <p>Groups</p>
                     </a>
-                  </li>
-                </ul>
-              </li>';
+                  </li>*/
+                
               }
           ?>
           <li class="nav-item has-treeview">
@@ -440,13 +447,6 @@ to get the desired effect
                 </li>';
                 }
               ?>
-
-              <!--li class="nav-item">
-                <a href="#setup" data-file="setup.php" class="nav-link link">
-                  <i class="nav-icon fas fa-user-cog"></i>
-                  <p>Port Setup</p>
-                </a>
-              </li-->
 
               <li class="nav-item">
                 <a href="#myprofile" data-file="myprofile.php" class="nav-link link">
