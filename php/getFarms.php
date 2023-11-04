@@ -6,7 +6,7 @@ session_start();
 if(isset($_POST['userID'])){
 	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
 
-    if ($update_stmt = $db->prepare("SELECT * FROM packages WHERE id=?")) {
+    if ($update_stmt = $db->prepare("SELECT * FROM farms WHERE id=?")) {
         $update_stmt->bind_param('s', $id);
         
         // Execute the prepared query.
@@ -23,8 +23,13 @@ if(isset($_POST['userID'])){
             
             while ($row = $result->fetch_assoc()) {
                 $message['id'] = $row['id'];
-                $message['packages_code'] = $row['packages_code'];
-                $message['packages'] = $row['packages'];
+                $message['packages_code'] = $row['farms_code'];
+                $message['packages'] = $row['name'];
+                $message['address'] = $row['address'];
+                $message['address2'] = $row['address2'];
+                $message['address3'] = $row['address3'];
+                $message['address4'] = $row['address4'];
+                $message['suppliers'] = $row['suppliers'];
             }
             
             echo json_encode(

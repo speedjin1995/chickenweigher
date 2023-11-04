@@ -15,10 +15,17 @@ if(isset($_POST['username'], $_POST['name'], $_POST['userRole'])){
     $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
 	$name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
     $roleCode = filter_input(INPUT_POST, 'userRole', FILTER_SANITIZE_STRING);
+    $farms = array();
+
+    if(isset($_POST['farm']) && $_POST['farm'] != null){
+        $farms = $_POST['farm'];
+    }
+
+    $farms = json_encode($farms);
 
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE users SET username=?, name=?, role_code=? WHERE id=?")) {
-            $update_stmt->bind_param('ssss', $username, $name, $roleCode, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE users SET username=?, name=?, role_code=?, farms=? WHERE id=?")) {
+            $update_stmt->bind_param('sssss', $username, $name, $roleCode, $farms, $_POST['id']);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -36,7 +43,7 @@ if(isset($_POST['username'], $_POST['name'], $_POST['userRole'])){
                 echo json_encode(
                     array(
                         "status"=> "success", 
-                        "message"=> "Updated Successfully!!" 
+                        "message"=> "Updated Successfully"
                     )
                 );
             }
@@ -47,8 +54,8 @@ if(isset($_POST['username'], $_POST['name'], $_POST['userRole'])){
         $password = '123456';
         $password = hash('sha512', $password . $random_salt);
 
-        if ($insert_stmt = $db->prepare("INSERT INTO users (username, name, password, salt, created_by, role_code) VALUES (?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('ssssss', $username, $name, $password, $random_salt, $userId, $roleCode);
+        if ($insert_stmt = $db->prepare("INSERT INTO users (username, name, password, salt, created_by, role_code, farms) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('sssssss', $username, $name, $password, $random_salt, $userId, $roleCode, $farms);
             
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {

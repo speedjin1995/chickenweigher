@@ -4,10 +4,10 @@ require_once 'db_connect.php';
 $lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
 $vehicles = $db->query("SELECT * FROM vehicles WHERE deleted = '0'");
 $products = $db->query("SELECT * FROM products WHERE deleted = '0'");
-$packages = $db->query("SELECT * FROM packages WHERE deleted = '0'");
+$farms = $db->query("SELECT * FROM farms WHERE deleted = '0'");
 $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'");
 $suppliers = $db->query("SELECT * FROM supplies WHERE deleted = '0'");
-$units = $db->query("SELECT * FROM units WHERE deleted = '0'");
+$grades = $db->query("SELECT * FROM grades WHERE deleted = '0'");
 $transporters = $db->query("SELECT * FROM `transporters` WHERE deleted = '0'");
 
 $data1 = array();
@@ -40,10 +40,10 @@ while($row3=mysqli_fetch_assoc($products)){
     );
 }
 
-while($row4=mysqli_fetch_assoc($packages)){
+while($row4=mysqli_fetch_assoc($farms)){
     $data4[] = array( 
         'id'=>$row4['id'],
-        'packages'=>$row4['packages']
+        'name'=>$row4['name']
     );
 }
 
@@ -61,7 +61,7 @@ while($row6=mysqli_fetch_assoc($suppliers)){
     );
 }
 
-while($row7=mysqli_fetch_assoc($units)){
+while($row7=mysqli_fetch_assoc($grades)){
     $data7[] = array( 
         'id'=>$row7['id'],
         'units'=>$row7['units']

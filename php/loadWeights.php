@@ -14,8 +14,8 @@ $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Sear
 ## Search 
 $searchQuery = "";
 if($searchValue != ''){
-   $searchQuery = " and (serial_no like '%".$searchValue."%' or 
-   lorry_no like '%".$searchValue."%' )";
+  $searchQuery = " and (weighing.serial_no like '%".$searchValue."%' or 
+  weighing.lorry_no like '%".$searchValue."%' )";
 }
 
 ## Total number of records without filtering
@@ -24,12 +24,12 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($db,"select count(*) as allcount from weighing WHERE deleted = '0'".$searchQuery);
+$sel = mysqli_query($db,"select count(*) as allcount from weighing, farms WHERE weighing.deleted = '0'".$searchQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from weighing WHERE deleted = '0'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select weighing.*, farms.name from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 $counter = 1;
@@ -46,7 +46,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "product"=>$row['product'],
     "driver_name"=>$row['driver_name'],
     "lorry_no"=>$row['lorry_no'],
-    "farm_id"=>$row['farm_id'],
+    "farm_id"=>$row['name'],
     "average_cage"=>$row['average_cage'],
     "average_bird"=>$row['average_bird'],
     "minimum_weight"=>$row['minimum_weight'],

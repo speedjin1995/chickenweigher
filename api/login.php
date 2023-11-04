@@ -23,6 +23,14 @@ if(($row = $result->fetch_assoc()) !== null){
         $message['username'] = $row['username'];
         $message['name'] = $row['name'];
         $message['role_code'] = $row['role_code'];
+
+        if($row['farms'] != null){
+            $message['farms'] = json_decode($row['farms'], true);
+        }
+        else{
+            $message['farms'] = array();
+        }
+        
 		$stmt->close();
 		$db->close();
 		

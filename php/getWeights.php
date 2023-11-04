@@ -6,7 +6,7 @@ session_start();
 if(isset($_POST['userID'])){
 	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
 
-    if ($update_stmt = $db->prepare("SELECT * FROM weight WHERE id=?")) {
+    if ($update_stmt = $db->prepare("SELECT * FROM weighing WHERE id=?")) {
         $update_stmt->bind_param('s', $id);
         
         // Execute the prepared query.
@@ -40,7 +40,14 @@ if(isset($_POST['userID'])){
                 $message['minimum_weight'] = $row['minimum_weight'];
                 $message['max_crate'] = $row['max_crate'];
                 $message['group_no'] = $row['group_no'];
-                $message['weighted_by'] = $row['weighted_by'];
+
+                if($row['weighted_by'] != null){
+                    $message['weighted_by'] = json_decode($row['weighted_by'], true);
+                }
+                else{
+                    $message['weighted_by'] = array();
+                }
+
                 $message['remark'] = $row['remark'];
             }
             

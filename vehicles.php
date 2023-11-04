@@ -9,6 +9,7 @@ if(!isset($_SESSION['userID'])){
 }
 else{
   $user = $_SESSION['userID'];
+  $transporters = $db->query("SELECT * FROM transporters WHERE deleted = '0'");
 }
 ?>
 
@@ -43,6 +44,9 @@ else{
 								<tr>
 									<th>No.</th>
 									<th>Vehicle No</th>
+                                    <th>Driver</th>
+                                    <th>Attandence 1</th>
+                                    <th>Attandence 2</th>
 									<th>Actions</th>
 								</tr>
 							</thead>
@@ -73,6 +77,23 @@ else{
     					<label for="vehicleNumber">Vehicles No. *</label>
     					<input type="type" class="form-control" name="vehicleNumber" id="vehicleNumber" placeholder="Enter Vehicle Number" required>
     				</div>
+                    <div class="form-group">
+                        <label>Driver *</label>
+                        <select class="form-control" style="width: 100%;" id="driver" name="driver" required>
+                            <option selected="selected">-</option>
+                            <?php while($rowCustomer2=mysqli_fetch_assoc($transporters)){ ?>
+                                <option value="<?=$rowCustomer2['id'] ?>"><?=$rowCustomer2['transporter_name'] ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+    					<label for="attendance1">Attendance 1</label>
+    					<input type="type" class="form-control" name="attendance1" id="attendance1" placeholder="Enter Attendance 1">
+    				</div>
+                    <div class="form-group">
+    					<label for="attendance2">Attendance 2</label>
+    					<input type="type" class="form-control" name="attendance2" id="attendance2" placeholder="Enter Attendance 2">
+    				</div>
     			</div>
             </div>
             <div class="modal-footer justify-content-between">
@@ -102,6 +123,9 @@ $(function () {
         'columns': [
             { data: 'counter' },
             { data: 'veh_number' },
+            { data: 'transporter_name' },
+            { data: 'attandence_1' },
+            { data: 'attandence_2' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -124,11 +148,8 @@ $(function () {
                 if(obj.status === 'success'){
                     $('#vehicleModal').modal('hide');
                     toastr["success"](obj.message, "Success:");
-                    
-                    $.get('vehicles.php', function(data) {
-                        $('#mainContents').html(data);
-                        $('#spinnerLoading').hide();
-                    });
+                    $('#vehicleTable').DataTable().ajax.reload();
+                    $('#spinnerLoading').hide();
                 }
                 else if(obj.status === 'failed'){
                     toastr["error"](obj.message, "Failed:");
@@ -145,6 +166,9 @@ $(function () {
     $('#addVehicles').on('click', function(){
         $('#vehicleModal').find('#id').val("");
         $('#vehicleModal').find('#vehicleNumber').val("");
+        $('#vehicleModal').find('#driver').val("");
+        $('#vehicleModal').find('#attendance1').val("");
+        $('#vehicleModal').find('#attendance2').val("");
         $('#vehicleModal').modal('show');
         
         $('#vehicleForm').validate({
@@ -171,6 +195,9 @@ function edit(id){
         if(obj.status === 'success'){
             $('#vehicleModal').find('#id').val(obj.message.id);
             $('#vehicleModal').find('#vehicleNumber').val(obj.message.veh_number);
+            $('#vehicleModal').find('#driver').val(obj.message.driver);
+            $('#vehicleModal').find('#attendance1').val(obj.message.attandence_1);
+            $('#vehicleModal').find('#attendance2').val(obj.message.attandence_2);
             $('#vehicleModal').modal('show');
             
             $('#vehicleForm').validate({
@@ -204,10 +231,8 @@ function deactivate(id){
         
         if(obj.status === 'success'){
             toastr["success"](obj.message, "Success:");
-            $.get('vehicles.php', function(data) {
-                $('#mainContents').html(data);
-                $('#spinnerLoading').hide();
-            });
+            $('#vehicleTable').DataTable().ajax.reload();
+            $('#spinnerLoading').hide();
         }
         else if(obj.status === 'failed'){
             toastr["error"](obj.message, "Failed:");

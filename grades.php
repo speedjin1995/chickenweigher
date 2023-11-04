@@ -33,7 +33,7 @@ else{
                         <div class="row">
                             <div class="col-9"></div>
                             <div class="col-3">
-                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addUnits">Add Units</button>
+                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addUnits">Add Grades</button>
                             </div>
                         </div>
                     </div>
@@ -71,7 +71,7 @@ else{
     				</div>
     				<div class="form-group">
     					<label for="units">Grades *</label>
-    					<input type="text" class="form-control" name="units" id="units" placeholder="Enter Units" required>
+    					<input type="text" class="form-control" name="units" id="units" placeholder="Enter Grades" required>
     				</div>
     			</div>
             </div>
@@ -97,7 +97,7 @@ $(function () {
         'order': [[ 1, 'asc' ]],
         'columnDefs': [ { orderable: false, targets: [0] }],
         'ajax': {
-            'url':'php/loadUnits.php'
+            'url':'php/loadGrades.php'
         },
         'columns': [
             { data: 'counter' },
@@ -118,17 +118,14 @@ $(function () {
     $.validator.setDefaults({
         submitHandler: function () {
             $('#spinnerLoading').show();
-            $.post('php/units.php', $('#unitForm').serialize(), function(data){
+            $.post('php/grades.php', $('#unitForm').serialize(), function(data){
                 var obj = JSON.parse(data); 
                 
                 if(obj.status === 'success'){
                     $('#unitModal').modal('hide');
                     toastr["success"](obj.message, "Success:");
-                    
-                    $.get('units.php', function(data) {
-                        $('#mainContents').html(data);
-                        $('#spinnerLoading').hide();
-                    });
+                    $('#unitTable').DataTable().ajax.reload();
+                    $('#spinnerLoading').hide();
                 }
                 else if(obj.status === 'failed'){
                     toastr["error"](obj.message, "Failed:");
@@ -165,7 +162,7 @@ $(function () {
 
 function edit(id){
     $('#spinnerLoading').show();
-    $.post('php/getUnits.php', {userID: id}, function(data){
+    $.post('php/getGrades.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
         
         if(obj.status === 'success'){
@@ -199,15 +196,13 @@ function edit(id){
 
 function deactivate(id){
     $('#spinnerLoading').show();
-    $.post('php/deleteUnit.php', {userID: id}, function(data){
+    $.post('php/deleteGrades.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
         
         if(obj.status === 'success'){
             toastr["success"](obj.message, "Success:");
-            $.get('units.php', function(data) {
-                $('#mainContents').html(data);
-                $('#spinnerLoading').hide();
-            });
+            $('#unitTable').DataTable().ajax.reload();
+            $('#spinnerLoading').hide();
         }
         else if(obj.status === 'failed'){
             toastr["error"](obj.message, "Failed:");

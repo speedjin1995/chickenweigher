@@ -21,8 +21,8 @@ else{
   $lots = $db->query("SELECT * FROM lots WHERE deleted = '0'"); // Groups
   $vehicles = $db->query("SELECT * FROM vehicles WHERE deleted = '0'"); // Vehicles
   $products = $db->query("SELECT * FROM products WHERE deleted = '0'"); // Products
-  $packages = $db->query("SELECT * FROM packages WHERE deleted = '0'"); // Farms
-  $packages2 = $db->query("SELECT * FROM packages WHERE deleted = '0'"); // Farms
+  $farms = $db->query("SELECT * FROM farms WHERE deleted = '0'");
+  $farms2 = $db->query("SELECT * FROM farms WHERE deleted = '0'");
   $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'"); // Customers
   $customers2 = $db->query("SELECT * FROM customers WHERE deleted = '0'"); // Customers
   $units = $db->query("SELECT * FROM units WHERE deleted = '0'"); // Grades
@@ -82,8 +82,8 @@ else{
                   <label>Farm</label>
                   <select class="form-control" id="farmFilter" name="farmFilter" style="width: 100%;">
                     <option selected="selected">-</option>
-                    <?php while($rowStatus2=mysqli_fetch_assoc($packages2)){ ?>
-                      <option value="<?=$rowStatus2['packages'] ?>"><?=$rowStatus2['packages'] ?></option>
+                    <?php while($rowStatus2=mysqli_fetch_assoc($farms2)){ ?>
+                      <option value="<?=$rowStatus2['id'] ?>"><?=$rowStatus2['name'] ?></option>
                     <?php } ?>
                   </select>
                 </div>
@@ -195,8 +195,8 @@ else{
             </div>
             <div class="col-4">
               <div class="form-group">
-                <label class="vehicleNo">Vehicle No *</label>
-                <select class="form-control" id="vehicleNo" name="vehicleNo" required>
+                <label class="vehicleNo">Vehicle No</label>
+                <select class="form-control" id="vehicleNo" name="vehicleNo">
                   <option selected="selected">-</option>
                   <?php while($row2=mysqli_fetch_assoc($vehicles)){ ?>
                     <option value="<?=$row2['veh_number'] ?>" ><?=$row2['veh_number'] ?></option>
@@ -205,7 +205,7 @@ else{
               </div>
             </div>
             <div class="form-group col-4">
-              <label>Driver *</label>
+              <label>Driver</label>
               <select class="form-control" style="width: 100%;" id="driver" name="driver">
                   <option selected="selected">-</option>
                   <?php while($row5=mysqli_fetch_assoc($transporters)){ ?>
@@ -218,8 +218,8 @@ else{
                 <label>Farm *</label>
                 <select class="form-control" style="width: 100%;" id="farm" name="farm" required>
                   <option selected="selected">-</option>
-                  <?php while($row6=mysqli_fetch_assoc($packages)){ ?>
-                    <option value="<?=$row6['packages'] ?>"><?=$row6['packages'] ?></option>
+                  <?php while($row6=mysqli_fetch_assoc($farms)){ ?>
+                    <option value="<?=$row6['id'] ?>"><?=$row6['name'] ?></option>
                   <?php } ?>
                 </select>
               </div>
@@ -228,10 +228,10 @@ else{
               <label>Average Bird Weight</label>
               <input class="form-control" type="number" placeholder="Average Bird Weight" id="aveBird" name="aveBird">
             </div>
-            <div class="form-group col-4">
+            <!--div class="form-group col-4">
               <label>Average Cage Weight</label>
               <input class="form-control" type="number" placeholder="Average Cage Weight" id="aveCage" name="aveCage">
-            </div>
+            </div-->
             <div class="form-group col-4">
               <label>Min Weight </label>
               <input class="form-control" type="number" placeholder="Min Weight" id="minWeight" name="minWeight">
@@ -241,14 +241,17 @@ else{
               <input class="form-control" type="number" placeholder="Max Weight" id="maxWeight" name="maxWeight">
             </div>
             <div class="form-group col-4">
+              <label>Min Crate </label>
+              <input class="form-control" type="number" placeholder="Min Crate" id="minCrate" name="minCrate">
+            </div>
+            <div class="form-group col-4">
               <label>Max Crate </label>
               <input class="form-control" type="number" placeholder="Max Crate" id="maxCrate" name="maxCrate">
             </div>
             <div class="col-4">
               <div class="form-group">
                 <label>Assigned To</label>
-                <select class="form-control" style="width: 100%;" id="assignTo" name="assignTo"> 
-                  <option selected="selected">-</option>
+                <select class="select2" style="width: 100%;" id="assignTo" name="assignTo[]" multiple="multiple"> 
                   <?php while($rowusers=mysqli_fetch_assoc($users)){ ?>
                     <option value="<?=$rowusers['id'] ?>"><?=$rowusers['name'] ?></option>
                   <?php } ?>
@@ -283,6 +286,10 @@ var currency = "1";
 $(function () {
   $('#customerNoHidden').hide();
   $('#supplierNoHidden').hide();
+
+  $('.select2').select2({
+    allowClear: true
+  })
 
   var table = $("#weightTable").DataTable({
     "responsive": true,
@@ -660,7 +667,8 @@ function format (row) {
   ' kg</p></div><div class="col-md-3"><p>Average Bird Weight: '+row.average_bird+
   ' kg</p></div><div class="col-md-3"><p>Minimum Weight: '+row.minimum_weight+
   ' kg</p></div><div class="col-md-3"><p>Maximum Weight: '+row.maximum_weight+
-  ' kg</p></div></div><div class="row"><div class="col-3"><button type="button" class="btn btn-danger btn-sm" onclick="deactivate('+row.id+
+  ' kg</p></div></div><div class="row"><div class="col-3"><button type="button" onclick="edit('+row.id+
+  ')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" class="btn btn-danger btn-sm" onclick="deactivate('+row.id+
   ')"><i class="fas fa-trash"></i></button></div><div class="col-3"><button type="button" class="btn btn-info btn-sm" onclick="print('+row.id+
   ')"><i class="fas fa-print"></i></button></div></div></div></div>'+
   '</div>';
@@ -688,10 +696,11 @@ function newEntry(){
   $('#extendModal').find('#aveBird').val("");
   $('#extendModal').find('#aveCage').val('');
   $('#extendModal').find('#poNo').val('');
+  $('#extendModal').find('#minCrate').val('');
   $('#extendModal').find('#maxCrate').val('');
   $('#extendModal').find('#minWeight').val('');
   $('#extendModal').find('#maxWeight').val("");
-  $('#extendModal').find('#assignTo').val("");
+  $('#extendModal').find('#assignTo').select2('destroy').val('').select2();
   $('#extendModal').find('#remark').val("");
   $('#extendModal').modal('show');
   
@@ -722,7 +731,7 @@ function edit(id) {
     if(obj.status === 'success'){
       $('#extendModal').find('#id').val(obj.message.id);
       $('#extendModal').find('#poNo').val(obj.message.po_no);
-      $('#extendModal').find('#status').val(obj.message.status);
+      $('#extendModal').find('#customerNo').val(obj.message.customer);
       $('#extendModal').find('#product').val(obj.message.product);
       $('#extendModal').find('#vehicleNo').val(obj.message.lorry_no);
       $('#extendModal').find('#driver').val(obj.message.driver_name);
@@ -732,7 +741,7 @@ function edit(id) {
       $('#extendModal').find('#minWeight').val(obj.message.minimum_weight);
       $('#extendModal').find('#maxWeight').val(obj.message.maximum_weight);
       $('#extendModal').find('#maxCrate').val(obj.message.max_crate);
-      $('#extendModal').find('#assignTo').val(obj.message.weighted_by);
+      $('#extendModal').find("select[name='assignTo[]']").val(obj.message.weighted_by).trigger('change');
       $('#extendModal').find('#remark').val(obj.message.remark);
 
       /*if($('#extendModal').find('#status').val() == 'Sales'){

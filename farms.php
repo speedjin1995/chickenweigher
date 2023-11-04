@@ -9,6 +9,7 @@ if(!isset($_SESSION['userID'])){
 }
 else{
   $user = $_SESSION['userID'];
+  $suppliers = $db->query("SELECT * FROM supplies WHERE deleted = '0'");
 }
 ?>
 <div class="content-header">
@@ -77,6 +78,31 @@ else{
                   <label for="packages">Farm Name *</label>
                   <input type="text" class="form-control" name="packages" id="packages" placeholder="Enter Packages Number" required>
                 </div>
+                <div class="form-group"> 
+                  <label for="address">Address *</label>
+                  <input type="text" class="form-control" name="address" id="address" placeholder="Enter  Address" required>
+                </div>
+                <div class="form-group"> 
+                  <label for="address">Address 2</label>
+                  <input type="text" class="form-control" name="address2" id="address2" placeholder="Enter  Address">
+                </div>
+                <div class="form-group"> 
+                  <label for="address">Address 3</label>
+                  <input type="text" class="form-control" name="address3" id="address3" placeholder="Enter  Address">
+                </div>
+                <div class="form-group"> 
+                  <label for="address">Address 4</label>
+                  <input type="text" class="form-control" name="address4" id="address4" placeholder="Enter  Address">
+                </div>
+                <div class="form-group">
+                  <label>Supplier No</label>
+                  <select class="form-control" style="width: 100%;" id="supplier" name="supplier">
+                    <option selected="selected">-</option>
+                    <?php while($rowCustomer2=mysqli_fetch_assoc($suppliers)){ ?>
+                      <option value="<?=$rowCustomer2['id'] ?>"><?=$rowCustomer2['supplier_name'] ?></option>
+                    <?php } ?>
+                  </select>
+                </div>
               </div>
             </div>
             <div class="modal-footer justify-content-between">
@@ -101,12 +127,12 @@ $(function () {
         'order': [[ 1, 'asc' ]],
         'columnDefs': [ { orderable: false, targets: [0] }],
         'ajax': {
-            'url':'php/loadPackages.php'
+            'url':'php/loadFarms.php'
         },
         'columns': [
             { data: 'counter' },
-            { data: 'packages_code' },
-            { data: 'packages' },
+            { data: 'farms_code' },
+            { data: 'name' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -123,17 +149,14 @@ $(function () {
     $.validator.setDefaults({
         submitHandler: function () {
             $('#spinnerLoading').show();
-            $.post('php/packages.php', $('#packageForm').serialize(), function(data){
+            $.post('php/farms.php', $('#packageForm').serialize(), function(data){
                 var obj = JSON.parse(data); 
                 
                 if(obj.status === 'success'){
                     $('#packagesModal').modal('hide');
                     toastr["success"](obj.message, "Success:");
-                    
-                    $.get('packages.php', function(data) {
-                        $('#mainContents').html(data);
-                        $('#spinnerLoading').hide();
-                    });
+                    $('#packageTable').DataTable().ajax.reload();
+                    $('#spinnerLoading').hide();
                 }
                 else if(obj.status === 'failed'){
                     toastr["error"](obj.message, "Failed:");
@@ -151,6 +174,11 @@ $(function () {
         $('#packagesModal').find('#id').val("");
         $('#packagesModal').find('#code').val("");
         $('#packagesModal').find('#packages').val("");
+        $('#packagesModal').find('#address').val("");
+        $('#packagesModal').find('#address2').val("");
+        $('#packagesModal').find('#address3').val("");
+        $('#packagesModal').find('#address4').val("");
+        $('#packagesModal').find('#supplier').val("");
         $('#packagesModal').modal('show');
         
         $('#packageForm').validate({
@@ -171,13 +199,18 @@ $(function () {
 
 function edit(id){
     $('#spinnerLoading').show();
-    $.post('php/getPackages.php', {userID: id}, function(data){
+    $.post('php/getFarms.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
         
         if(obj.status === 'success'){
             $('#packagesModal').find('#id').val(obj.message.id);
             $('#packagesModal').find('#code').val(obj.message.packages_code);
             $('#packagesModal').find('#packages').val(obj.message.packages);
+            $('#packagesModal').find('#address').val(obj.message.address);
+            $('#packagesModal').find('#address2').val(obj.message.address2);
+            $('#packagesModal').find('#address3').val(obj.message.address3);
+            $('#packagesModal').find('#address4').val(obj.message.address4);
+            $('#packagesModal').find('#supplier').val(obj.message.suppliers);
             $('#packagesModal').modal('show');
             
             $('#packageForm').validate({
@@ -206,15 +239,13 @@ function edit(id){
 
 function deactivate(id){
     $('#spinnerLoading').show();
-    $.post('php/deletePackages.php', {userID: id}, function(data){
+    $.post('php/deleteFarms.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
         
         if(obj.status === 'success'){
             toastr["success"](obj.message, "Success:");
-            $.get('packages.php', function(data) {
-                $('#mainContents').html(data);
-                $('#spinnerLoading').hide();
-            });
+            $('#packageTable').DataTable().ajax.reload();
+            $('#spinnerLoading').hide();
         }
         else if(obj.status === 'failed'){
             toastr["error"](obj.message, "Failed:");

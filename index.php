@@ -408,7 +408,7 @@ to get the desired effect
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="#grades" data-file="units.php" class="nav-link link">
+                    <a href="#grades" data-file="grades.php" class="nav-link link">
                       <i class="nav-icon fas fa-balance-scale"></i>
                       <p>Grades</p>
                     </a>

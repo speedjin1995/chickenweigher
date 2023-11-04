@@ -126,11 +126,8 @@ $(function () {
                 if(obj.status === 'success'){
                     $('#addModal').modal('hide');
                     toastr["success"](obj.message, "Success:");
-                    
-                    $.get('transport.php', function(data) {
-                        $('#mainContents').html(data);
-                        $('#spinnerLoading').hide();
-                    });
+                    $('#transporterTable').DataTable().ajax.reload();
+                    $('#spinnerLoading').hide();
                 }
                 else if(obj.status === 'failed'){
                     toastr["error"](obj.message, "Failed:");
@@ -208,10 +205,8 @@ function deactivate(id){
         
         if(obj.status === 'success'){
             toastr["success"](obj.message, "Success:");
-            $.get('transport.php', function(data) {
-                $('#mainContents').html(data);
-                $('#spinnerLoading').hide();
-            });
+            $('#transporterTable').DataTable().ajax.reload();
+            $('#spinnerLoading').hide();
         }
         else if(obj.status === 'failed'){
             toastr["error"](obj.message, "Failed:");

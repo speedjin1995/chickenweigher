@@ -8,13 +8,12 @@ if(!isset($_SESSION['userID'])){
     echo 'window.location.href = "../login.html";</script>';
 }
 
-if(isset($_POST['code'], $_POST['packages'])){
-    $code = filter_input(INPUT_POST, 'code', FILTER_SANITIZE_STRING);
-    $packages = filter_input(INPUT_POST, 'packages', FILTER_SANITIZE_STRING);
+if(isset($_POST['units'])){
+    $lotsNumber = filter_input(INPUT_POST, 'units', FILTER_SANITIZE_STRING);
 
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE packages SET packages_code=?, packages=? WHERE id=?")) {
-            $update_stmt->bind_param('sss', $code, $packages, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE grades SET units=? WHERE id=?")) {
+            $update_stmt->bind_param('ss', $lotsNumber, $_POST['id']);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -39,8 +38,8 @@ if(isset($_POST['code'], $_POST['packages'])){
         }
     }
     else{
-        if ($insert_stmt = $db->prepare("INSERT INTO packages (packages_code, packages) VALUES (?, ?)")) {
-            $insert_stmt->bind_param('ss', $code, $packages);
+        if ($insert_stmt = $db->prepare("INSERT INTO grades (units) VALUES (?)")) {
+            $insert_stmt->bind_param('s', $lotsNumber);
             
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {

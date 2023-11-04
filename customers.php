@@ -9,6 +9,7 @@ if(!isset($_SESSION['userID'])){
 }
 else{
   $user = $_SESSION['userID'];
+  $states = $db->query("SELECT * FROM states");
 }
 ?>
 
@@ -96,6 +97,14 @@ else{
                   <input type="text" class="form-control" name="address4" id="address4" placeholder="Enter  Address">
                 </div>
                 <div class="form-group">
+                  <label>States *</label>
+                  <select class="form-control" style="width: 100%;" id="states" name="states" required>
+                    <?php while($rowCustomer2=mysqli_fetch_assoc($states)){ ?>
+                      <option value="<?=$rowCustomer2['id'] ?>"><?=$rowCustomer2['states'] ?></option>
+                    <?php } ?>
+                  </select>
+                </div>
+                <div class="form-group">
                   <label for="phone">Phone *</label>
                   <input type="text" class="form-control" name="phone" id="phone" placeholder="01x-xxxxxxx" required>
                 </div>
@@ -155,11 +164,8 @@ $(function () {
                 if(obj.status === 'success'){
                     $('#addModal').modal('hide');
                     toastr["success"](obj.message, "Success:");
-                    
-                    $.get('customers.php', function(data) {
-                        $('#mainContents').html(data);
-                        $('#spinnerLoading').hide();
-                    });
+                    $('#customerTable').DataTable().ajax.reload();
+                    $('#spinnerLoading').hide();
                 }
                 else if(obj.status === 'failed'){
                     toastr["error"](obj.message, "Failed:");
@@ -181,6 +187,7 @@ $(function () {
         $('#addModal').find('#address2').val("");
         $('#addModal').find('#address3').val("");
         $('#addModal').find('#address4').val("");
+        $('#addModal').find('#states').val("");
         $('#addModal').find('#phone').val("");
         $('#addModal').find('#email').val("");
         $('#addModal').modal('show');
@@ -214,6 +221,7 @@ function edit(id){
             $('#addModal').find('#address2').val(obj.message.customer_address2);
             $('#addModal').find('#address3').val(obj.message.customer_address3);
             $('#addModal').find('#address4').val(obj.message.customer_address4);
+            $('#addModal').find('#states').val(obj.message.states);
             $('#addModal').find('#phone').val(obj.message.customer_phone);
             $('#addModal').find('#email').val(obj.message.pic);
             $('#addModal').modal('show');
@@ -249,10 +257,8 @@ function deactivate(id){
         
         if(obj.status === 'success'){
             toastr["success"](obj.message, "Success:");
-            $.get('customers.php', function(data) {
-                $('#mainContents').html(data);
-                $('#spinnerLoading').hide();
-            });
+            $('#customerTable').DataTable().ajax.reload();
+            $('#spinnerLoading').hide();
         }
         else if(obj.status === 'failed'){
             toastr["error"](obj.message, "Failed:");

@@ -8,12 +8,34 @@ if(!isset($_SESSION['userID'])){
     echo 'window.location.href = "../login.html";</script>';
 }
 
-if(isset($_POST['units'])){
-    $lotsNumber = filter_input(INPUT_POST, 'units', FILTER_SANITIZE_STRING);
+if(isset($_POST['code'], $_POST['packages'], $_POST['address'])){
+    $code = filter_input(INPUT_POST, 'code', FILTER_SANITIZE_STRING);
+    $packages = filter_input(INPUT_POST, 'packages', FILTER_SANITIZE_STRING);
+    $address = filter_input(INPUT_POST, 'address', FILTER_SANITIZE_STRING);
+    $address2 = null;
+    $address3 = null;
+    $address4 = null;
+    $supplier = null;
+
+    if($_POST['address2'] != null && $_POST['address2'] != ''){
+        $address2 = filter_input(INPUT_POST, 'address2', FILTER_SANITIZE_STRING);
+    }
+
+    if($_POST['address3'] != null && $_POST['address3'] != ''){
+        $address3 = filter_input(INPUT_POST, 'address3', FILTER_SANITIZE_STRING);
+    }
+
+    if($_POST['address4'] != null && $_POST['address4'] != ''){
+        $address4 = filter_input(INPUT_POST, 'address4', FILTER_SANITIZE_STRING);
+    }
+
+    if(isset($_POST['supplier']) && $_POST['supplier'] != null && $_POST['supplier'] != ''){
+        $supplier = filter_input(INPUT_POST, 'supplier', FILTER_SANITIZE_STRING);
+    }
 
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE units SET units=? WHERE id=?")) {
-            $update_stmt->bind_param('ss', $lotsNumber, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE farms SET farms_code=?, name=?, address=?, address2=?, address3=?, address4=?, suppliers=? WHERE id=?")) {
+            $update_stmt->bind_param('ssssssss', $code, $packages, $address, $address2, $address3, $address4, $supplier, $_POST['id']);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -38,8 +60,8 @@ if(isset($_POST['units'])){
         }
     }
     else{
-        if ($insert_stmt = $db->prepare("INSERT INTO units (units) VALUES (?)")) {
-            $insert_stmt->bind_param('s', $lotsNumber);
+        if ($insert_stmt = $db->prepare("INSERT INTO farms (farms_code, name, address, address2, address3, address4, suppliers) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('sssssss', $code, $packages, $address, $address2, $address3, $address4, $supplier);
             
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {

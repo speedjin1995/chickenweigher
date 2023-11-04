@@ -15,6 +15,7 @@ else{
     $stmt2 = $db->prepare("SELECT * FROM roles");
     $stmt2->execute();
     $result2 = $stmt2->get_result();
+    $farms = $db->query("SELECT * FROM farms WHERE deleted = '0'");
 }
 ?>
 
@@ -94,6 +95,14 @@ else{
 							<?php } ?>
 						</select>
 					</div>
+                    <div class="form-group">
+						<label>Farm</label>
+						<select class="select2" id="farm[]" name="farm[]" multiple="multiple">
+						    <?php while($rowCustomer2=mysqli_fetch_assoc($farms)){ ?>
+    							<option value="<?= $rowCustomer2['id'] ?>"><?= $rowCustomer2['name'] ?></option>
+							<?php } ?>
+						</select>
+					</div>
     			</div>
             </div>
             <div class="modal-footer justify-content-between">
@@ -109,6 +118,10 @@ else{
 
 <script>
 $(function () {
+    $('.select2').select2({
+        allowClear: true
+    })
+
     $("#memberTable").DataTable({
         "responsive": true,
         "autoWidth": false,
@@ -145,11 +158,8 @@ $(function () {
                 if(obj.status === 'success'){
                     $('#addModal').modal('hide');
                     toastr["success"](obj.message, "Success:");
-                    
-                    $.get('users.php', function(data) {
-                        $('#mainContents').html(data);
-                        $('#spinnerLoading').hide();
-                    });
+                    $('#memberTable').DataTable().ajax.reload();
+                    $('#spinnerLoading').hide();
                 }
                 else if(obj.status === 'failed'){
                     toastr["error"](obj.message, "Failed:");
@@ -168,6 +178,7 @@ $(function () {
         $('#addModal').find('#username').val("");
         $('#addModal').find('#name').val("");
         $('#addModal').find('#userRole').val("");
+        $('#addModal').find('#farm[]').select2('destroy').val('').select2();
         $('#addModal').modal('show');
         
         $('#memberForm').validate({
@@ -196,6 +207,7 @@ function edit(id){
             $('#addModal').find('#username').val(obj.message.username);
             $('#addModal').find('#name').val(obj.message.name);
             $('#addModal').find('#userRole').val(obj.message.role_code);
+            $('#addModal').find("select[name='farm[]']").val(obj.message.farms).trigger('change');
             $('#addModal').modal('show');
             
             $('#memberForm').validate({
@@ -229,10 +241,8 @@ function deactivate(id){
         
         if(obj.status === 'success'){
             toastr["success"](obj.message, "Success:");
-            $.get('users.php', function(data) {
-                $('#mainContents').html(data);
-                $('#spinnerLoading').hide();
-            });
+            $('#memberTable').DataTable().ajax.reload();
+            $('#spinnerLoading').hide();
         }
         else if(obj.status === 'failed'){
             toastr["error"](obj.message, "Failed:");
