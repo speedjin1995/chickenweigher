@@ -18,14 +18,12 @@ else{
     $role = $row['role_code'];
   }
 
-  $lots = $db->query("SELECT * FROM lots WHERE deleted = '0'"); // Groups
   $vehicles = $db->query("SELECT * FROM vehicles WHERE deleted = '0'"); // Vehicles
   $products = $db->query("SELECT * FROM products WHERE deleted = '0'"); // Products
   $farms = $db->query("SELECT * FROM farms WHERE deleted = '0'");
   $farms2 = $db->query("SELECT * FROM farms WHERE deleted = '0'");
   $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'"); // Customers
   $customers2 = $db->query("SELECT * FROM customers WHERE deleted = '0'"); // Customers
-  $units = $db->query("SELECT * FROM units WHERE deleted = '0'"); // Grades
   $users = $db->query("SELECT * FROM users WHERE deleted = '0'"); // Users
   $transporters = $db->query("SELECT * FROM transporters WHERE deleted = '0'"); // Drivers
 }
