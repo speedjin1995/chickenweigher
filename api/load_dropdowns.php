@@ -1,7 +1,7 @@
 <?php
 require_once 'db_connect.php';
 
-$lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
+//$lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
 $vehicles = $db->query("SELECT * FROM vehicles WHERE deleted = '0'");
 $products = $db->query("SELECT * FROM products WHERE deleted = '0'");
 $farms = $db->query("SELECT * FROM farms WHERE deleted = '0'");
@@ -19,12 +19,12 @@ $data6 = array();
 $data7 = array();
 $data9 = array();
 
-while($row1=mysqli_fetch_assoc($lots)){
+/*while($row1=mysqli_fetch_assoc($lots)){
     $data1[] = array( 
         'id'=>$row1['id'],
         'lots_no'=>$row1['lots_no']
     );
-}
+}*/
 
 while($row2=mysqli_fetch_assoc($vehicles)){
     $data2[] = array( 
