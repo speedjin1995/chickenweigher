@@ -15,6 +15,7 @@ if(isset($_POST['code'], $_POST['packages'], $_POST['address'])){
     $address2 = null;
     $address3 = null;
     $address4 = null;
+    $states = filter_input(INPUT_POST, 'states', FILTER_SANITIZE_STRING);
     $supplier = null;
 
     if($_POST['address2'] != null && $_POST['address2'] != ''){
@@ -34,8 +35,8 @@ if(isset($_POST['code'], $_POST['packages'], $_POST['address'])){
     }
 
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE farms SET farms_code=?, name=?, address=?, address2=?, address3=?, address4=?, suppliers=? WHERE id=?")) {
-            $update_stmt->bind_param('ssssssss', $code, $packages, $address, $address2, $address3, $address4, $supplier, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE farms SET farms_code=?, name=?, address=?, address2=?, address3=?, address4=?, states=?, suppliers=? WHERE id=?")) {
+            $update_stmt->bind_param('sssssssss', $code, $packages, $address, $address2, $address3, $address4, $states, $supplier, $_POST['id']);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -60,8 +61,8 @@ if(isset($_POST['code'], $_POST['packages'], $_POST['address'])){
         }
     }
     else{
-        if ($insert_stmt = $db->prepare("INSERT INTO farms (farms_code, name, address, address2, address3, address4, suppliers) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('sssssss', $code, $packages, $address, $address2, $address3, $address4, $supplier);
+        if ($insert_stmt = $db->prepare("INSERT INTO farms (farms_code, name, address, address2, address3, address4, states, suppliers) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('ssssssss', $code, $packages, $address, $address2, $address3, $address4, $states, $supplier);
             
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {

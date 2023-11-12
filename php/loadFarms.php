@@ -34,19 +34,39 @@ $data = array();
 $counter = 1;
 
 while($row = mysqli_fetch_assoc($empRecords)) {
-    $data[] = array( 
-      "counter"=>$counter,
-      "id"=>$row['id'],
-      "farms_code"=>$row['farms_code'],
-      "name"=>$row['name'],
-      "address"=>$row['address'],
-      "address2"=>$row['address2'],
-      "address3"=>$row['address3'],
-      "address4"=>$row['address4'],
-      "suppliers"=>$row['suppliers']
-    );
+  $states = '';
 
-    $counter++;
+  if($row['states']!=null && $row['states']!=''){
+    $id = $row['states'];
+
+    if ($update_stmt = $db->prepare("SELECT * FROM states WHERE id=?")) {
+      $update_stmt->bind_param('s', $id);
+      
+      // Execute the prepared query.
+      if ($update_stmt->execute()) {
+        $result1 = $update_stmt->get_result();
+        
+        if ($row1 = $result1->fetch_assoc()) {
+          $states = $row1['states'];
+        }
+      }
+    }
+  }
+
+  $data[] = array( 
+    "counter"=>$counter,
+    "id"=>$row['id'],
+    "farms_code"=>$row['farms_code'],
+    "name"=>$row['name'],
+    "address"=>$row['address'],
+    "address2"=>$row['address2'],
+    "address3"=>$row['address3'],
+    "address4"=>$row['address4'],
+    "states"=>$states,
+    "suppliers"=>$row['suppliers']
+  );
+
+  $counter++;
 }
 
 ## Response

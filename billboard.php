@@ -18,7 +18,7 @@ else{
     $role = $row['role_code'];
   }
 
-  $packages = $db->query("SELECT * FROM packages WHERE deleted = '0'");
+  $packages = $db->query("SELECT * FROM farms WHERE deleted = '0'");
   $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'");
 }
 ?>
@@ -75,7 +75,7 @@ else{
                   <select class="form-control" id="farmFilter" name="farmFilter" style="width: 100%;">
                     <option selected="selected">-</option>
                     <?php while($rowStatus=mysqli_fetch_assoc($packages)){ ?>
-                      <option value="<?=$rowStatus['packages'] ?>"><?=$rowStatus['packages'] ?></option>
+                      <option value="<?=$rowStatus['id'] ?>"><?=$rowStatus['name'] ?></option>
                     <?php } ?>
                   </select>
                 </div>

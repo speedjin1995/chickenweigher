@@ -119,12 +119,22 @@ else{
           <div class="card-header">
             <div class="row">
               <div class="col-6"></div>
-              <div class="col-3">
-                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="refreshBtn">Refresh</button>
-              </div>
-              <div class="col-3">
-                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" onclick="newEntry()">Add New Weight</button>
-              </div>
+              <?php 
+                if($role == "ADMIN" || $role == "MANAGER"){
+                  echo '<div class="col-3">
+                  <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="refreshBtn">Refresh</button>
+                </div>
+                <div class="col-3">
+                  <button type="button" class="btn btn-block bg-gradient-warning btn-sm" onclick="newEntry()">Add New Weight</button>
+                </div>';
+                }
+                else{
+                  echo '<div class="col-3"></div><div class="col-3">
+                  <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="refreshBtn">Refresh</button>
+                </div>
+                ';
+                }
+              ?>
             </div>
           </div>
 
@@ -172,7 +182,7 @@ else{
             <div class="col-4">
               <div class="form-group">
                 <label class="labelStatus">Customer No *</label>
-                <select class="form-control" style="width: 100%;" id="customerNo" name="customerNo" required>
+                <select class="form-control select2" style="width: 100%;" id="customerNo" name="customerNo" required>
                   <option value="" selected disabled hidden>Please Select</option>
                   <?php while($rowCustomer=mysqli_fetch_assoc($customers)){ ?>
                     <option value="<?=$rowCustomer['customer_name'] ?>"><?=$rowCustomer['customer_name'] ?></option>
@@ -183,7 +193,7 @@ else{
             <div class="col-4">
               <div class="form-group">
                 <label>Product *</label>
-                <select class="form-control" style="width: 100%;" id="product" name="product" required>
+                <select class="form-control select2" style="width: 100%;" id="product" name="product" required>
                   <option selected="selected">-</option>
                   <?php while($row5=mysqli_fetch_assoc($products)){ ?>
                     <option value="<?=$row5['product_name'] ?>"><?=$row5['product_name'] ?></option>
@@ -194,7 +204,7 @@ else{
             <div class="col-4">
               <div class="form-group">
                 <label class="vehicleNo">Vehicle No</label>
-                <select class="form-control" id="vehicleNo" name="vehicleNo">
+                <select class="form-control select2" id="vehicleNo" name="vehicleNo">
                   <option selected="selected">-</option>
                   <?php while($row2=mysqli_fetch_assoc($vehicles)){ ?>
                     <option value="<?=$row2['veh_number'] ?>" ><?=$row2['veh_number'] ?></option>
@@ -204,7 +214,7 @@ else{
             </div>
             <div class="form-group col-4">
               <label>Driver</label>
-              <select class="form-control" style="width: 100%;" id="driver" name="driver">
+              <select class="form-control select2" style="width: 100%;" id="driver" name="driver">
                   <option selected="selected">-</option>
                   <?php while($row5=mysqli_fetch_assoc($transporters)){ ?>
                     <option value="<?=$row5['transporter_name'] ?>"><?=$row5['transporter_name'] ?></option>
@@ -214,7 +224,7 @@ else{
             <div class="col-4">
               <div class="form-group">
                 <label>Farm *</label>
-                <select class="form-control" style="width: 100%;" id="farm" name="farm" required>
+                <select class="form-control select2" style="width: 100%;" id="farm" name="farm" required>
                   <option selected="selected">-</option>
                   <?php while($row6=mysqli_fetch_assoc($farms)){ ?>
                     <option value="<?=$row6['id'] ?>"><?=$row6['name'] ?></option>
@@ -343,8 +353,11 @@ $(function () {
         if($role == "ADMIN"){
           echo 'row.child( format(row.data()) ).show();tr.addClass("shown");';
         }
-        else{
+        else if($role == "MANAGER"){
           echo 'row.child( formatNormal(row.data()) ).show();tr.addClass("shown");';
+        }
+        else{
+          echo 'row.child( formatNormal2(row.data()) ).show();tr.addClass("shown");';
         }
       ?>
     }
@@ -677,8 +690,18 @@ function formatNormal (row) {
   ' kg</p></div><div class="col-md-3"><p>Average Bird Weight: '+row.average_bird+
   ' kg</p></div><div class="col-md-3"><p>Minimum Weight: '+row.minimum_weight+
   ' kg</p></div><div class="col-md-3"><p>Maximum Weight: '+row.maximum_weight+
-  ' kg</p></div></div><div class="row"><div class="col-3"><button type="button" class="btn btn-danger btn-sm" onclick="deactivate('+row.id+
-  ')"><i class="fas fa-trash"></i></button></div><div class="col-3"><button type="button" class="btn btn-info btn-sm" onclick="print('+row.id+
+  ' kg</p></div></div><div class="row"><div class="col-3"><button type="button" onclick="edit('+row.id+
+  ')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"></div><div class="col-3"><button type="button" class="btn btn-info btn-sm" onclick="print('+row.id+
+  ')"><i class="fas fa-print"></i></button></div></div></div></div>'+
+  '</div>';
+}
+
+function formatNormal2 (row) {
+  return '<div class="row"><div class="col-md-3"><p>Average Cage Weight: '+row.average_cage+
+  ' kg</p></div><div class="col-md-3"><p>Average Bird Weight: '+row.average_bird+
+  ' kg</p></div><div class="col-md-3"><p>Minimum Weight: '+row.minimum_weight+
+  ' kg</p></div><div class="col-md-3"><p>Maximum Weight: '+row.maximum_weight+
+  ' kg</p></div></div><div class="row"><div class="col-3"></div><div class="col-3"></div><div class="col-3"><button type="button" class="btn btn-info btn-sm" onclick="print('+row.id+
   ')"><i class="fas fa-print"></i></button></div></div></div></div>'+
   '</div>';
 }

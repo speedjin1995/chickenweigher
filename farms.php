@@ -10,6 +10,7 @@ if(!isset($_SESSION['userID'])){
 else{
   $user = $_SESSION['userID'];
   $suppliers = $db->query("SELECT * FROM supplies WHERE deleted = '0'");
+  $states = $db->query("SELECT * FROM states");
 }
 ?>
 <div class="content-header">
@@ -42,8 +43,9 @@ else{
 							<thead>
 								<tr>
 									<th>No.</th>
-                                    <th>Code</th>
-									<th>Farm.</th>
+                  <th>Code</th>
+                  <th>States</th>
+									<th>Farm</th>
 									<th>Actions</th>
 								</tr>
 							</thead>
@@ -95,6 +97,14 @@ else{
                   <input type="text" class="form-control" name="address4" id="address4" placeholder="Enter  Address">
                 </div>
                 <div class="form-group">
+                  <label>States *</label>
+                  <select class="form-control" style="width: 100%;" id="states" name="states" required>
+                    <?php while($rowCustomer2=mysqli_fetch_assoc($states)){ ?>
+                      <option value="<?=$rowCustomer2['id'] ?>"><?=$rowCustomer2['states'] ?></option>
+                    <?php } ?>
+                  </select>
+                </div>
+                <div class="form-group">
                   <label>Supplier No</label>
                   <select class="form-control" style="width: 100%;" id="supplier" name="supplier">
                     <option selected="selected">-</option>
@@ -132,6 +142,7 @@ $(function () {
         'columns': [
             { data: 'counter' },
             { data: 'farms_code' },
+            { data: 'states' },
             { data: 'name' },
             { 
                 data: 'id',
@@ -178,6 +189,7 @@ $(function () {
         $('#packagesModal').find('#address2').val("");
         $('#packagesModal').find('#address3').val("");
         $('#packagesModal').find('#address4').val("");
+        $('#packagesModal').find('#states').val("");
         $('#packagesModal').find('#supplier').val("");
         $('#packagesModal').modal('show');
         
@@ -210,6 +222,7 @@ function edit(id){
             $('#packagesModal').find('#address2').val(obj.message.address2);
             $('#packagesModal').find('#address3').val(obj.message.address3);
             $('#packagesModal').find('#address4').val(obj.message.address4);
+            $('#packagesModal').find('#states').val(obj.message.states);
             $('#packagesModal').find('#supplier').val(obj.message.suppliers);
             $('#packagesModal').modal('show');
             

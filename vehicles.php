@@ -79,7 +79,7 @@ else{
     				</div>
                     <div class="form-group">
                         <label>Driver *</label>
-                        <select class="form-control" style="width: 100%;" id="driver" name="driver" required>
+                        <select class="form-control select2" style="width: 100%;" id="driver" name="driver" required>
                             <option selected="selected">-</option>
                             <?php while($rowCustomer2=mysqli_fetch_assoc($transporters)){ ?>
                                 <option value="<?=$rowCustomer2['id'] ?>"><?=$rowCustomer2['transporter_name'] ?></option>
@@ -109,6 +109,8 @@ else{
 
 <script>
 $(function () {
+    $('.select2').select2();
+
     $("#vehicleTable").DataTable({
         "responsive": true,
         "autoWidth": false,
