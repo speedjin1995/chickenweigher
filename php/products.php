@@ -8,7 +8,7 @@ if(!isset($_SESSION['userID'])){
     echo 'window.location.href = "../login.html";</script>';
 }
 
-if(isset($_POST['code'], $_POST['product'], $_POST['price'])){
+if(isset($_POST['code'], $_POST['product'])){
     $code = filter_input(INPUT_POST, 'code', FILTER_SANITIZE_STRING);
     $product = filter_input(INPUT_POST, 'product', FILTER_SANITIZE_STRING);
     $remark = null;
