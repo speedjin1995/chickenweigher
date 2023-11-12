@@ -9,6 +9,7 @@ if(!isset($_SESSION['userID'])){
 }
 else{
   $user = $_SESSION['userID'];
+  $states = $db->query("SELECT * FROM states");
 }
 ?>
 
@@ -97,6 +98,14 @@ else{
                   <input type="text" class="form-control" name="address4" id="address4" placeholder="Enter  Address">
                 </div>
                 <div class="form-group">
+                  <label>States *</label>
+                  <select class="form-control" style="width: 100%;" id="states" name="states" required>
+                    <?php while($rowCustomer2=mysqli_fetch_assoc($states)){ ?>
+                      <option value="<?=$rowCustomer2['id'] ?>"><?=$rowCustomer2['states'] ?></option>
+                    <?php } ?>
+                  </select>
+                </div>
+                <div class="form-group">
                   <label for="phone">Phone *</label>
                   <input type="text" class="form-control" name="phone" id="phone" placeholder="Enter Phone" required>
                 </div>
@@ -179,6 +188,7 @@ $(function () {
         $('#addModal').find('#address2').val("");
         $('#addModal').find('#address3').val("");
         $('#addModal').find('#address4').val("");
+        $('#addModal').find('#states').val("");
         $('#addModal').find('#phone').val("");
         $('#addModal').find('#email').val("");
         $('#addModal').modal('show');
@@ -212,6 +222,7 @@ function edit(id){
             $('#addModal').find('#address2').val(obj.message.supplier_address2);
             $('#addModal').find('#address3').val(obj.message.supplier_address3);
             $('#addModal').find('#address4').val(obj.message.supplier_address4);
+            $('#addModal').find('#states').val(obj.message.states);
             $('#addModal').find('#phone').val(obj.message.supplier_phone);
             $('#addModal').find('#email').val(obj.message.pic);
             $('#addModal').modal('show');
@@ -241,23 +252,25 @@ function edit(id){
 }
 
 function deactivate(id){
-    $('#spinnerLoading').show();
-    $.post('php/deleteSupplier.php', {userID: id}, function(data){
-        var obj = JSON.parse(data);
-        
-        if(obj.status === 'success'){
-            toastr["success"](obj.message, "Success:");
-            $('#supplierTable').DataTable().ajax.reload();
-            $('#spinnerLoading').hide();
-        }
-        else if(obj.status === 'failed'){
-            toastr["error"](obj.message, "Failed:");
-            $('#spinnerLoading').hide();
-        }
-        else{
-            toastr["error"]("Something wrong when activate", "Failed:");
-            $('#spinnerLoading').hide();
-        }
-    });
+    if (confirm('Are you sure you want to delete this items?')) {
+        $('#spinnerLoading').show();
+        $.post('php/deleteSupplier.php', {userID: id}, function(data){
+            var obj = JSON.parse(data);
+            
+            if(obj.status === 'success'){
+                toastr["success"](obj.message, "Success:");
+                $('#supplierTable').DataTable().ajax.reload();
+                $('#spinnerLoading').hide();
+            }
+            else if(obj.status === 'failed'){
+                toastr["error"](obj.message, "Failed:");
+                $('#spinnerLoading').hide();
+            }
+            else{
+                toastr["error"]("Something wrong when activate", "Failed:");
+                $('#spinnerLoading').hide();
+            }
+        });
+    }
 }
 </script>

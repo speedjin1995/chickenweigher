@@ -31,18 +31,18 @@ else{
 			<div class="col-12">
 				<div class="card">
 					<div class="card-header">
-                        <div class="row">
-                            <div class="col-9"></div>
-                            <div class="col-3">
-                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addCustomers">Add Customers</button>
-                            </div>
-                        </div>
-                    </div>
+              <div class="row">
+                  <div class="col-9"></div>
+                  <div class="col-3">
+                      <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addCustomers">Add Customers</button>
+                  </div>
+              </div>
+          </div>
 					<div class="card-body">
 						<table id="customerTable" class="table table-bordered table-striped">
 							<thead>
 								<tr>
-                                    <th>Code</th>
+                  <th>Code</th>
 									<th>Name</th>
 									<th>Address</th>
 									<th>Phone</th>
@@ -251,6 +251,7 @@ function edit(id){
 }
 
 function deactivate(id){
+  if (confirm('Are you sure you want to delete this items?')) {
     $('#spinnerLoading').show();
     $.post('php/deleteCustomer.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
@@ -269,5 +270,6 @@ function deactivate(id){
             $('#spinnerLoading').hide();
         }
     });
+  }
 }
 </script>

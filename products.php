@@ -43,7 +43,6 @@ else{
 								<tr>
                                     <th>Code</th>
 									<th>Chicken Description</th>
-									<th>Farm ID</th>
                                     <th>Remark</th>
 									<th>Actions</th>
 								</tr>
@@ -80,10 +79,6 @@ else{
                   <input type="text" class="form-control" name="product" id="product" placeholder="Enter Product Name" required>
                 </div>
                 <div class="form-group"> 
-                  <label for="price">Farm ID *</label>
-                  <input type="text"  class="form-control" id="price" name="price" placeholder="Enter Farm Id" required>
-                </div>
-                <div class="form-group"> 
                   <label for="remark">Remark </label>
                   <textarea class="form-control" id="remark" name="remark" placeholder="Enter your remark"></textarea>
                 </div>
@@ -114,7 +109,6 @@ $(function () {
         'columns': [
             { data: 'product_code' },
             { data: 'product_name' },
-            { data: 'farm_id' },
             { data: 'remark' },
             { 
                 data: 'id',
@@ -160,7 +154,6 @@ $(function () {
         $('#addModal').find('#id').val("");
         $('#addModal').find('#code').val("");
         $('#addModal').find('#product').val("");
-        $('#addModal').find('#price').val("");
         $('#addModal').find('#remark').val("");
         $('#addModal').modal('show');
         
@@ -189,7 +182,6 @@ function edit(id){
             $('#addModal').find('#id').val(obj.message.id);
             $('#addModal').find('#code').val(obj.message.product_code);
             $('#addModal').find('#product').val(obj.message.product_name);
-            $('#addModal').find('#price').val(obj.message.farm_id);
             $('#addModal').find('#remark').val(obj.message.remark);
             $('#addModal').modal('show');
             
@@ -218,25 +210,27 @@ function edit(id){
 }
 
 function deactivate(id){
-    $('#spinnerLoading').show();
-    $.post('php/deleteProduct.php', {userID: id}, function(data){
-        var obj = JSON.parse(data);
-        
-        if(obj.status === 'success'){
-            toastr["success"](obj.message, "Success:");
-            $.get('products.php', function(data) {
-                $('#mainContents').html(data);
+    if (confirm('Are you sure you want to delete this items?')) {
+        $('#spinnerLoading').show();
+        $.post('php/deleteProduct.php', {userID: id}, function(data){
+            var obj = JSON.parse(data);
+            
+            if(obj.status === 'success'){
+                toastr["success"](obj.message, "Success:");
+                $.get('products.php', function(data) {
+                    $('#mainContents').html(data);
+                    $('#spinnerLoading').hide();
+                });
+            }
+            else if(obj.status === 'failed'){
+                toastr["error"](obj.message, "Failed:");
                 $('#spinnerLoading').hide();
-            });
-        }
-        else if(obj.status === 'failed'){
-            toastr["error"](obj.message, "Failed:");
-            $('#spinnerLoading').hide();
-        }
-        else{
-            toastr["error"]("Something wrong when activate", "Failed:");
-            $('#spinnerLoading').hide();
-        }
-    });
+            }
+            else{
+                toastr["error"]("Something wrong when activate", "Failed:");
+                $('#spinnerLoading').hide();
+            }
+        });
+    }
 }
 </script>

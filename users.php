@@ -97,7 +97,7 @@ else{
 					</div>
                     <div class="form-group">
 						<label>Farm</label>
-						<select class="select2" id="farm[]" name="farm[]" multiple="multiple">
+						<select class="select2" id="farm" name="farm[]" multiple="multiple">
 						    <?php while($rowCustomer2=mysqli_fetch_assoc($farms)){ ?>
     							<option value="<?= $rowCustomer2['id'] ?>"><?= $rowCustomer2['name'] ?></option>
 							<?php } ?>
@@ -178,7 +178,7 @@ $(function () {
         $('#addModal').find('#username').val("");
         $('#addModal').find('#name').val("");
         $('#addModal').find('#userRole').val("");
-        $('#addModal').find('#farm[]').select2('destroy').val('').select2();
+        $('#addModal').find('#farm').select2('destroy').val('').select2();
         $('#addModal').modal('show');
         
         $('#memberForm').validate({
@@ -235,23 +235,25 @@ function edit(id){
 }
 
 function deactivate(id){
-    $('#spinnerLoading').show();
-    $.post('php/deleteUser.php', {userID: id}, function(data){
-        var obj = JSON.parse(data);
-        
-        if(obj.status === 'success'){
-            toastr["success"](obj.message, "Success:");
-            $('#memberTable').DataTable().ajax.reload();
-            $('#spinnerLoading').hide();
-        }
-        else if(obj.status === 'failed'){
-            toastr["error"](obj.message, "Failed:");
-            $('#spinnerLoading').hide();
-        }
-        else{
-            toastr["error"]("Something wrong when activate", "Failed:");
-            $('#spinnerLoading').hide();
-        }
-    });
+    if (confirm('Are you sure you want to delete this items?')) {
+        $('#spinnerLoading').show();
+        $.post('php/deleteUser.php', {userID: id}, function(data){
+            var obj = JSON.parse(data);
+            
+            if(obj.status === 'success'){
+                toastr["success"](obj.message, "Success:");
+                $('#memberTable').DataTable().ajax.reload();
+                $('#spinnerLoading').hide();
+            }
+            else if(obj.status === 'failed'){
+                toastr["error"](obj.message, "Failed:");
+                $('#spinnerLoading').hide();
+            }
+            else{
+                toastr["error"]("Something wrong when activate", "Failed:");
+                $('#spinnerLoading').hide();
+            }
+        });
+    }
 }
 </script>

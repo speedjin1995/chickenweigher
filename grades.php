@@ -195,23 +195,25 @@ function edit(id){
 }
 
 function deactivate(id){
-    $('#spinnerLoading').show();
-    $.post('php/deleteGrades.php', {userID: id}, function(data){
-        var obj = JSON.parse(data);
-        
-        if(obj.status === 'success'){
-            toastr["success"](obj.message, "Success:");
-            $('#unitTable').DataTable().ajax.reload();
-            $('#spinnerLoading').hide();
-        }
-        else if(obj.status === 'failed'){
-            toastr["error"](obj.message, "Failed:");
-            $('#spinnerLoading').hide();
-        }
-        else{
-            toastr["error"]("Something wrong when activate", "Failed:");
-            $('#spinnerLoading').hide();
-        }
-    });
+    if (confirm('Are you sure you want to delete this items?')) {
+        $('#spinnerLoading').show();
+        $.post('php/deleteGrades.php', {userID: id}, function(data){
+            var obj = JSON.parse(data);
+            
+            if(obj.status === 'success'){
+                toastr["success"](obj.message, "Success:");
+                $('#unitTable').DataTable().ajax.reload();
+                $('#spinnerLoading').hide();
+            }
+            else if(obj.status === 'failed'){
+                toastr["error"](obj.message, "Failed:");
+                $('#spinnerLoading').hide();
+            }
+            else{
+                toastr["error"]("Something wrong when activate", "Failed:");
+                $('#spinnerLoading').hide();
+            }
+        });
+    }
 }
 </script>
