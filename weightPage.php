@@ -207,7 +207,7 @@ else{
                 <select class="form-control select2" id="vehicleNo" name="vehicleNo">
                   <option selected="selected">-</option>
                   <?php while($row2=mysqli_fetch_assoc($vehicles)){ ?>
-                    <option value="<?=$row2['veh_number'] ?>" ><?=$row2['veh_number'] ?></option>
+                    <option value="<?=$row2['veh_number'] ?>" data-driver="<?=$row2['driver'] ?>"><?=$row2['veh_number'] ?></option>
                   <?php } ?>
                 </select>
               </div>
@@ -217,7 +217,7 @@ else{
               <select class="form-control select2" style="width: 100%;" id="driver" name="driver">
                   <option selected="selected">-</option>
                   <?php while($row5=mysqli_fetch_assoc($transporters)){ ?>
-                    <option value="<?=$row5['transporter_name'] ?>"><?=$row5['transporter_name'] ?></option>
+                    <option value="<?=$row5['transporter_name'] ?>" data-id="<?=$row5['id'] ?>"><?=$row5['transporter_name'] ?></option>
                   <?php } ?>
               </select>
             </div>
@@ -595,14 +595,12 @@ $(function () {
     });*/
   });
 
-  $('#status').on('change', function(){
-    if($(this).val() == 'Sales'){
-      $('#extendModal').find('#customerNo').html($('select#customerNoHidden').html());
-      $('#extendModal').find('.labelStatus').text('Customer *');
-    }
-    else{
-      $('#extendModal').find('#customerNo').html($('select#supplierNoHidden').html());
-      $('#extendModal').find('.labelStatus').text('Supplier *');
+  $('#vehicleNo').on('change', function(){
+    var dataId = $(this).find('option:selected').attr('data-driver');
+    
+    if (dataId) {
+      $('#driver').find('option[data-id="' + dataId + '"]').prop('selected', true);
+      $('#driver').trigger('change');
     }
   });
 });
