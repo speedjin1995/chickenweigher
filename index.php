@@ -270,6 +270,11 @@ else{
       -o-animation: uil-ring-anim 1s linear infinite;
       animation: uil-ring-anim 1s linear infinite;
     }
+
+    /*.nav-item.has-treeview.menu-is-opening.menu-open {
+      background-color: #00501a; /* Replace "your-color" with the desired background color 
+    }*/
+
   </style>
 </head>
 <!--
@@ -291,20 +296,21 @@ to get the desired effect
 
 <div class="wrapper">
   <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand navbar-primary navbar-light" >
+  <nav class="main-header navbar navbar-expand navbar-primary navbar-light" style="background-color: white;">
     <!-- Left navbar links -->
     <ul class="navbar-nav">
       <li class="nav-item">
-        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars bg-primary"></i></a>
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars bg-success"></i></a>
       </li>
     </ul>
   </nav>
   <!-- Main Sidebar Container -->
+  <!--aside class="main-sidebar sidebar-dark-primary elevation-4"  style="background-color: #ffffff;"-->
   <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #3d44c1;">
     <!-- Brand Logo -->
-    <a href="#" class="brand-link logo-switch">
+    <a href="#" class="brand-link logo-switch" style="line-height: 5;">
       <img src="assets/logoSmall.jpeg" alt="Sneakercube Logo" class="brand-image-xl logo-xs">
-      <img src="assets/logo.png" alt="Sneakercube Logo" class="brand-image-xl logo-xl">
+      <img src="assets/logoSmall.jpeg" alt="Sneakercube Logo" class="brand-image-xl logo-xl" style="width: 40%;max-height: max-content;">
     </a>
 
     <!-- Sidebar -->
