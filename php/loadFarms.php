@@ -14,7 +14,7 @@ $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Sear
 ## Search 
 $searchQuery = " ";
 if($searchValue != ''){
-   $searchQuery = " AND (name like '%".$searchValue."%' OR farms_code like '%".$searchValue."%')";
+   $searchQuery = " WHERE (name like '%".$searchValue."%' OR farms_code like '%".$searchValue."%')";
 }
 
 ## Total number of records without filtering
@@ -23,12 +23,12 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($db,"select count(*) as allcount from farms WHERE deleted = '0'".$searchQuery);
+$sel = mysqli_query($db,"select count(*) as allcount from farms".$searchQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from farms WHERE deleted = '0'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from farms".$searchQuery." order by deleted, ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 $counter = 1;
@@ -63,7 +63,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "address3"=>$row['address3'],
     "address4"=>$row['address4'],
     "states"=>$states,
-    "suppliers"=>$row['suppliers']
+    "suppliers"=>$row['suppliers'],
+    "deleted"=>$row['deleted']
   );
 
   $counter++;

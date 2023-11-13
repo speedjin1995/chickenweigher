@@ -42,7 +42,8 @@ else{
 						<table id="supplierTable" class="table table-bordered table-striped">
 							<thead>
 								<tr>
-                                    <th>Code</th>
+                  <th>Code</th>
+                  <th>Reg No.</th>
 									<th>Name</th>
 									<th>Address</th>
 									<th>Phone</th>
@@ -78,12 +79,16 @@ else{
                   <input type="text" class="form-control" name="code" id="code" placeholder="Enter Supplier Code" required>
                 </div>
                 <div class="form-group">
+                  <label for="name">Reg No. *</label>
+                  <input type="text" class="form-control" name="reg_no" id="reg_no" placeholder="Enter Registration No" required>
+                </div>
+                <div class="form-group">
                   <label for="name">Supplier Name *</label>
                   <input type="text" class="form-control" name="name" id="name" placeholder="Enter Supplier Name" required>
                 </div>
                 <div class="form-group"> 
-                  <label for="address">Address *</label>
-                  <input type="text" class="form-control" name="address" id="address" placeholder="Enter  Address" required>
+                  <label for="address">Address </label>
+                  <input type="text" class="form-control" name="address" id="address" placeholder="Enter  Address">
                 </div>
                 <div class="form-group"> 
                   <label for="address">Address 2</label>
@@ -98,20 +103,21 @@ else{
                   <input type="text" class="form-control" name="address4" id="address4" placeholder="Enter  Address">
                 </div>
                 <div class="form-group">
-                  <label>States *</label>
-                  <select class="form-control" style="width: 100%;" id="states" name="states" required>
+                  <label>States</label>
+                  <option selected="selected">-</option>
+                  <select class="form-control" style="width: 100%;" id="states" name="states">
                     <?php while($rowCustomer2=mysqli_fetch_assoc($states)){ ?>
                       <option value="<?=$rowCustomer2['id'] ?>"><?=$rowCustomer2['states'] ?></option>
                     <?php } ?>
                   </select>
                 </div>
                 <div class="form-group">
-                  <label for="phone">Phone *</label>
-                  <input type="text" class="form-control" name="phone" id="phone" placeholder="Enter Phone" required>
+                  <label for="phone">Phone </label>
+                  <input type="text" class="form-control" name="phone" id="phone" placeholder="Enter Phone" >
                 </div>
                 <div class="form-group"> 
-                  <label for="email">PIC *</label>
-                  <input type="text" class="form-control" id="email" name="email" placeholder="Enter your pic" required>
+                  <label for="email">PIC </label>
+                  <input type="text" class="form-control" id="email" name="email" placeholder="Enter your pic" >
                 </div>
               </div>
             </div>
@@ -138,21 +144,26 @@ $(function () {
             'url':'php/loadSupplier.php'
         },
         'columns': [
-            { data: 'supplier_code' },
-            { data: 'supplier_name' },
-            { data: 'supplier_address' },
-            { data: 'supplier_phone' },
-            { data: 'pic' },
-            { 
-                data: 'id',
-                render: function ( data, type, row ) {
-                    return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                }
+          { data: 'supplier_code' },
+          { data: 'reg_no' },
+          { data: 'supplier_name' },
+          { data: 'supplier_address' },
+          { data: 'supplier_phone' },
+          { data: 'pic' },
+          { 
+            data: 'deleted',
+            render: function (data, type, row) {
+              if (data == 0) {
+                return '<div class="row"><div class="col-3"><button type="button" id="edit' + row.id + '" onclick="edit(' + row.id + ')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="delete' + row.id + '" onclick="deactivate(' + row.id + ')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
+              } 
+              else{
+                return '<button type="button" id="reactivate' + row.id + '" onclick="reactivate(' + row.id + ')" class="btn btn-warning btn-sm">Reactivate</button>';
+              }
             }
+          }
         ],
         "rowCallback": function( row, data, index ) {
-
-            $('td', row).css('background-color', '#E6E6FA');
+          $('td', row).css('background-color', '#E6E6FA');
         },
     });
     
@@ -183,6 +194,7 @@ $(function () {
     $('#addSuppliers').on('click', function(){
         $('#addModal').find('#id').val("");
         $('#addModal').find('#code').val("");
+        $('#addModal').find('#reg_no').val("");
         $('#addModal').find('#name').val("");
         $('#addModal').find('#address').val("");
         $('#addModal').find('#address2').val("");
@@ -217,6 +229,7 @@ function edit(id){
         if(obj.status === 'success'){
             $('#addModal').find('#id').val(obj.message.id);
             $('#addModal').find('#code').val(obj.message.supplier_code);
+            $('#addModal').find('#reg_no').val(obj.message.reg_no);
             $('#addModal').find('#name').val(obj.message.supplier_name);
             $('#addModal').find('#address').val(obj.message.supplier_address);
             $('#addModal').find('#address2').val(obj.message.supplier_address2);
@@ -272,5 +285,28 @@ function deactivate(id){
             }
         });
     }
+}
+
+function reactivate(id){
+  if (confirm('Are you sure you want to reactivate this items?')) {
+    $('#spinnerLoading').show();
+    $.post('php/reactivateSupplier.php', {userID: id}, function(data){
+        var obj = JSON.parse(data);
+        
+        if(obj.status === 'success'){
+            toastr["success"](obj.message, "Success:");
+            $('#supplierTable').DataTable().ajax.reload();
+            $('#spinnerLoading').hide();
+        }
+        else if(obj.status === 'failed'){
+            toastr["error"](obj.message, "Failed:");
+            $('#spinnerLoading').hide();
+        }
+        else{
+            toastr["error"]("Something wrong when activate", "Failed:");
+            $('#spinnerLoading').hide();
+        }
+    });
+  }
 }
 </script>

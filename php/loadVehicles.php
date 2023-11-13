@@ -14,21 +14,21 @@ $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Sear
 ## Search 
 $searchQuery = " ";
 if($searchValue != ''){
-   $searchQuery = " AND vehicles.veh_number like '%".$searchValue."%'";
+  $searchQuery = " AND vehicles.veh_number like '%".$searchValue."%'";
 }
 
 ## Total number of records without filtering
-$sel = mysqli_query($db,"select count(*) as allcount from vehicles WHERE deleted = '0'");
+$sel = mysqli_query($db,"select count(*) as allcount from vehicles");
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($db,"select count(*) as allcount from vehicles, transporters WHERE vehicles.driver=transporters.id AND vehicles.deleted = '0'".$searchQuery);
+$sel = mysqli_query($db,"select count(*) as allcount from vehicles, transporters WHERE vehicles.driver=transporters.id ".$searchQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select vehicles.*, transporters.transporter_name from vehicles, transporters WHERE vehicles.driver=transporters.id AND vehicles.deleted = '0'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select vehicles.*, transporters.transporter_name from vehicles, transporters WHERE vehicles.driver=transporters.id ".$searchQuery." order by vehicles.deleted, ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 $counter = 1;
@@ -40,7 +40,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       "veh_number"=>$row['veh_number'],
       "transporter_name"=>$row['transporter_name'],
       "attandence_1"=>$row['attandence_1'],
-      "attandence_2"=>$row['attandence_2']
+      "attandence_2"=>$row['attandence_2'],
+      "deleted"=>$row['deleted']
     );
 
     $counter++;

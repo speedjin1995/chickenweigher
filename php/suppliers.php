@@ -14,13 +14,17 @@ else{
 if(isset($_POST['code'], $_POST['name'], $_POST['address'], $_POST['states'], $_POST['phone'], $_POST['email'])){
     $code = filter_input(INPUT_POST, 'code', FILTER_SANITIZE_STRING);
     $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
-	$address = filter_input(INPUT_POST, 'address', FILTER_SANITIZE_STRING);
+	$address = null;
     $address2 = null;
     $address3 = null;
     $address4 = null;
-    $states = filter_input(INPUT_POST, 'states', FILTER_SANITIZE_STRING);
-    $phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_STRING);
-    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_STRING);
+    $states = null;
+    $phone = null;
+    $email = null;
+
+    if(isset($_POST['address']) && $_POST['address'] != null && $_POST['address'] != ''){
+        $address = filter_input(INPUT_POST, 'address', FILTER_SANITIZE_STRING);
+    }
 
     if(isset($_POST['address2']) && $_POST['address2'] != null && $_POST['address2'] != ''){
         $address2 = filter_input(INPUT_POST, 'address2', FILTER_SANITIZE_STRING);
@@ -34,9 +38,21 @@ if(isset($_POST['code'], $_POST['name'], $_POST['address'], $_POST['states'], $_
         $address4 = filter_input(INPUT_POST, 'address4', FILTER_SANITIZE_STRING);
     }
 
+    if(isset($_POST['states']) && $_POST['states'] != null && $_POST['states'] != ''){
+        $states = filter_input(INPUT_POST, 'states', FILTER_SANITIZE_STRING);
+    }
+
+    if(isset($_POST['phone']) && $_POST['phone'] != null && $_POST['phone'] != ''){
+        $phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_STRING);
+    }
+
+    if(isset($_POST['email']) && $_POST['email'] != null && $_POST['email'] != ''){
+        $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_STRING);
+    }
+
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE supplies SET supplier_code=?, supplier_name=?, supplier_address=?, supplier_address2=?, supplier_address3=?, supplier_address4=?, states=?, supplier_phone=?, pic=? WHERE id=?")) {
-            $update_stmt->bind_param('ssssssssss', $code, $name, $address, $address2, $address3, $address4, $states, $phone, $email, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE supplies SET supplier_code=?, reg_no=?, supplier_name=?, supplier_address=?, supplier_address2=?, supplier_address3=?, supplier_address4=?, states=?, supplier_phone=?, pic=? WHERE id=?")) {
+            $update_stmt->bind_param('sssssssssss', $code, $reg_no, $name, $address, $address2, $address3, $address4, $states, $phone, $email, $_POST['id']);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -61,8 +77,8 @@ if(isset($_POST['code'], $_POST['name'], $_POST['address'], $_POST['states'], $_
         }
     }
     else{
-        if ($insert_stmt = $db->prepare("INSERT INTO supplies (supplier_code, supplier_name, supplier_address, supplier_address2, supplier_address3, supplier_address4, states, supplier_phone, pic) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('sssssssss', $code, $name, $address, $address2, $address3, $address4, $states, $phone, $email);
+        if ($insert_stmt = $db->prepare("INSERT INTO supplies (supplier_code, reg_no, supplier_name, supplier_address, supplier_address2, supplier_address3, supplier_address4, states, supplier_phone, pic) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('ssssssssss', $code, $reg_no, $name, $address, $address2, $address3, $address4, $states, $phone, $email);
             
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {

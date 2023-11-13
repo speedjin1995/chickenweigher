@@ -43,6 +43,7 @@ else{
 							<thead>
 								<tr>
                   <th>Code</th>
+                  <th>Reg No.</th>
 									<th>Name</th>
 									<th>Address</th>
 									<th>Phone</th>
@@ -78,12 +79,16 @@ else{
                   <input type="text" class="form-control" name="code" id="code" placeholder="Enter Customer Code" maxlength="10" required>
                 </div>
                 <div class="form-group">
+                  <label for="name">Reg No. *</label>
+                  <input type="text" class="form-control" name="reg_no" id="reg_no" placeholder="Enter Registration No" required>
+                </div>
+                <div class="form-group">
                   <label for="name">Customer Name *</label>
                   <input type="text" class="form-control" name="name" id="name" placeholder="Enter Customer Name" required>
                 </div>
                 <div class="form-group"> 
-                  <label for="address">Address *</label>
-                  <input type="text" class="form-control" name="address" id="address" placeholder="Enter  Address" required>
+                  <label for="address">Address </label>
+                  <input type="text" class="form-control" name="address" id="address" placeholder="Enter  Address">
                 <div class="form-group"> 
                   <label for="address">Address 2</label>
                   <input type="text" class="form-control" name="address2" id="address2" placeholder="Enter  Address">
@@ -97,20 +102,21 @@ else{
                   <input type="text" class="form-control" name="address4" id="address4" placeholder="Enter  Address">
                 </div>
                 <div class="form-group">
-                  <label>States *</label>
-                  <select class="form-control" style="width: 100%;" id="states" name="states" required>
+                  <label>States</label>
+                  <select class="form-control" style="width: 100%;" id="states" name="states">
+                    <option selected="selected">-</option>
                     <?php while($rowCustomer2=mysqli_fetch_assoc($states)){ ?>
                       <option value="<?=$rowCustomer2['id'] ?>"><?=$rowCustomer2['states'] ?></option>
                     <?php } ?>
                   </select>
                 </div>
                 <div class="form-group">
-                  <label for="phone">Phone *</label>
-                  <input type="text" class="form-control" name="phone" id="phone" placeholder="01x-xxxxxxx" required>
+                  <label for="phone">Phone </label>
+                  <input type="text" class="form-control" name="phone" id="phone" placeholder="01x-xxxxxxx">
                 </div>
                 <div class="form-group"> 
-                  <label for="email">PIC *</label>
-                  <input type="text" class="form-control" id="email" name="email" placeholder="Enter your PIC" required>
+                  <label for="email">PIC </label>
+                  <input type="text" class="form-control" id="email" name="email" placeholder="Enter your PIC">
                 </div>
               </div>
             </div>
@@ -134,20 +140,26 @@ $(function () {
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {
-            'url':'php/loadCustomers.php'
+          'url':'php/loadCustomers.php'
         },
         'columns': [
-            { data: 'customer_code' },
-            { data: 'customer_name' },
-            { data: 'customer_address' },
-            { data: 'customer_phone' },
-            { data: 'pic' },
-            { 
-                data: 'id',
-                render: function ( data, type, row ) {
-                    return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                }
+          { data: 'customer_code' },
+          { data: 'reg_no' },
+          { data: 'customer_name' },
+          { data: 'customer_address' },
+          { data: 'customer_phone' },
+          { data: 'pic' },
+          { 
+            data: 'deleted',
+            render: function (data, type, row) {
+              if (data == 0) {
+                return '<div class="row"><div class="col-3"><button type="button" id="edit' + row.id + '" onclick="edit(' + row.id + ')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="delete' + row.id + '" onclick="deactivate(' + row.id + ')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
+              } 
+              else{
+                return '<button type="button" id="reactivate' + row.id + '" onclick="reactivate(' + row.id + ')" class="btn btn-warning btn-sm">Reactivate</button>';
+              }
             }
+          }
         ],
         "rowCallback": function( row, data, index ) {
 
@@ -180,31 +192,32 @@ $(function () {
     });
 
     $('#addCustomers').on('click', function(){
-        $('#addModal').find('#id').val("");
-        $('#addModal').find('#code').val("");
-        $('#addModal').find('#name').val("");
-        $('#addModal').find('#address').val("");
-        $('#addModal').find('#address2').val("");
-        $('#addModal').find('#address3').val("");
-        $('#addModal').find('#address4').val("");
-        $('#addModal').find('#states').val("");
-        $('#addModal').find('#phone').val("");
-        $('#addModal').find('#email').val("");
-        $('#addModal').modal('show');
-        
-        $('#customerForm').validate({
-            errorElement: 'span',
-            errorPlacement: function (error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-group').append(error);
-            },
-            highlight: function (element, errorClass, validClass) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function (element, errorClass, validClass) {
-                $(element).removeClass('is-invalid');
-            }
-        });
+      $('#addModal').find('#id').val("");
+      $('#addModal').find('#code').val("");
+      $('#addModal').find('#reg_no').val("");
+      $('#addModal').find('#name').val("");
+      $('#addModal').find('#address').val("");
+      $('#addModal').find('#address2').val("");
+      $('#addModal').find('#address3').val("");
+      $('#addModal').find('#address4').val("");
+      $('#addModal').find('#states').val("");
+      $('#addModal').find('#phone').val("");
+      $('#addModal').find('#email').val("");
+      $('#addModal').modal('show');
+      
+      $('#customerForm').validate({
+          errorElement: 'span',
+          errorPlacement: function (error, element) {
+              error.addClass('invalid-feedback');
+              element.closest('.form-group').append(error);
+          },
+          highlight: function (element, errorClass, validClass) {
+              $(element).addClass('is-invalid');
+          },
+          unhighlight: function (element, errorClass, validClass) {
+              $(element).removeClass('is-invalid');
+          }
+      });
     });
 });
 
@@ -216,6 +229,7 @@ function edit(id){
         if(obj.status === 'success'){
             $('#addModal').find('#id').val(obj.message.id);
             $('#addModal').find('#code').val(obj.message.customer_code);
+            $('#addModal').find('#reg_no').val(obj.message.reg_no);
             $('#addModal').find('#name').val(obj.message.customer_name);
             $('#addModal').find('#address').val(obj.message.customer_address);
             $('#addModal').find('#address2').val(obj.message.customer_address2);
@@ -254,6 +268,29 @@ function deactivate(id){
   if (confirm('Are you sure you want to delete this items?')) {
     $('#spinnerLoading').show();
     $.post('php/deleteCustomer.php', {userID: id}, function(data){
+        var obj = JSON.parse(data);
+        
+        if(obj.status === 'success'){
+            toastr["success"](obj.message, "Success:");
+            $('#customerTable').DataTable().ajax.reload();
+            $('#spinnerLoading').hide();
+        }
+        else if(obj.status === 'failed'){
+            toastr["error"](obj.message, "Failed:");
+            $('#spinnerLoading').hide();
+        }
+        else{
+            toastr["error"]("Something wrong when activate", "Failed:");
+            $('#spinnerLoading').hide();
+        }
+    });
+  }
+}
+
+function reactivate(id){
+  if (confirm('Are you sure you want to reactivate this items?')) {
+    $('#spinnerLoading').show();
+    $.post('php/reactivateCustomer.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
         
         if(obj.status === 'success'){

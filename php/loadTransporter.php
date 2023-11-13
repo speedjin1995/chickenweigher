@@ -14,7 +14,7 @@ $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Sear
 ## Search 
 $searchQuery = " ";
 if($searchValue != ''){
-   $searchQuery = " AND (transporter_name like '%".$searchValue."%' OR transporter_code like '%".$searchValue."%')";
+   $searchQuery = " WHERE (transporter_name like '%".$searchValue."%' OR transporter_code like '%".$searchValue."%')";
 }
 
 ## Total number of records without filtering
@@ -23,12 +23,12 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($db,"select count(*) as allcount from transporters WHERE deleted = '0'".$searchQuery);
+$sel = mysqli_query($db,"select count(*) as allcount from transporters".$searchQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from transporters WHERE deleted = '0'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from transporters".$searchQuery." order by deleted, ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 
@@ -36,7 +36,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     $data[] = array( 
       "id"=>$row['id'],
       "transporter_code"=>$row['transporter_code'],
-      "transporter_name"=>$row['transporter_name']
+      "transporter_name"=>$row['transporter_name'],
+      "deleted"=>$row['deleted']
     );
 }
 

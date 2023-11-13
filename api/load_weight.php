@@ -6,7 +6,7 @@ session_start();
 $post = json_decode(file_get_contents('php://input'), true);
 $now = date("Y-m-d H:i:s");
 
-$stmt = $db->prepare("SELECT * from weighing WHERE deleted = '0' AND start_time IS NOT NULL AND end_time IS NOT NULL");
+$stmt = $db->prepare("SELECT * from weighing WHERE deleted = '0' AND status='Complete' ORDER BY `created_datetime`");
 $stmt->execute();
 $result = $stmt->get_result();
 $message = array();

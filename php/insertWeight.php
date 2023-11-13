@@ -6,7 +6,7 @@ session_start();
 
 if(isset($_POST['customerNo'], $_POST['product'], $_POST['farm'])){
 	$userId = $_SESSION['userID'];
-	$status = "Sales";
+	$status = "Pending";
 	$product = filter_input(INPUT_POST, 'product', FILTER_SANITIZE_STRING);
 	$farm = filter_input(INPUT_POST, 'farm', FILTER_SANITIZE_STRING);
 	
@@ -36,13 +36,7 @@ if(isset($_POST['customerNo'], $_POST['product'], $_POST['farm'])){
     }
 
     $assignTo = json_encode($assignTo);
-	
-	if($status == 'Sales'){
-		$customerName = filter_input(INPUT_POST, 'customerNo', FILTER_SANITIZE_STRING);
-	}
-	else{
-		$supplierName = filter_input(INPUT_POST, 'customerNo', FILTER_SANITIZE_STRING);
-	}
+	$customerName = filter_input(INPUT_POST, 'customerNo', FILTER_SANITIZE_STRING);
 
 	if($_POST['minCrate'] != null && $_POST['minCrate'] != ''){
 		$minCrate = filter_input(INPUT_POST, 'minCrate', FILTER_SANITIZE_STRING);

@@ -19,7 +19,7 @@ if(($row2 = $stmt2->fetch_assoc()) !== null){
 }
 
 //$stmt = $db->prepare("SELECT * from weighing WHERE created_datetime >= ?");
-$stmt = $db->prepare("SELECT * from weighing WHERE created_datetime >= ? AND created_datetime <= ? AND start_time IS NULL AND end_time IS NULL AND `deleted` = '0' ORDER BY `created_datetime`");
+$stmt = $db->prepare("SELECT * from weighing WHERE created_datetime >= ? AND created_datetime <= ? AND status<>'Complete' AND `deleted` = '0' ORDER BY `created_datetime`");
 $stmt->bind_param('ss', $now, $end);
 $stmt->execute();
 $result = $stmt->get_result();
