@@ -672,26 +672,49 @@ function updateWeights(){
 }
 
 function format (row) {
-  return '<div class="row"><div class="col-md-3"><p>Average Cage Weight: '+row.average_cage+
+  var returnString = '<div class="row"><div class="col-md-3"><p>Average Cage Weight: '+row.average_cage+
   ' kg</p></div><div class="col-md-3"><p>Average Bird Weight: '+row.average_bird+
   ' kg</p></div><div class="col-md-3"><p>Minimum Weight: '+row.minimum_weight+
   ' kg</p></div><div class="col-md-3"><p>Maximum Weight: '+row.maximum_weight+
-  ' kg</p></div></div><div class="row"><div class="col-3"><button type="button" onclick="edit('+row.id+
+  ' kg</p></div></div>';
+  
+  if(row.status == 'Pending'){
+    returnString += '<div class="row"><div class="col-3"><button type="button" onclick="edit('+row.id+
   ')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" class="btn btn-danger btn-sm" onclick="deactivate('+row.id+
   ')"><i class="fas fa-trash"></i></button></div><div class="col-3"><button type="button" class="btn btn-info btn-sm" onclick="print('+row.id+
   ')"><i class="fas fa-print"></i></button></div></div></div></div>'+
   '</div>';
+  }
+  else{
+    returnString += '<div class="row"><div class="col-3"></div><div class="col-3"><button type="button" class="btn btn-danger btn-sm" onclick="deactivate('+row.id+
+  ')"><i class="fas fa-trash"></i></button></div><div class="col-3"><button type="button" class="btn btn-info btn-sm" onclick="print('+row.id+
+  ')"><i class="fas fa-print"></i></button></div></div></div></div>'+
+  '</div>';
+  }
+
+  return returnString;
 }
 
 function formatNormal (row) {
-  return '<div class="row"><div class="col-md-3"><p>Average Cage Weight: '+row.average_cage+
+  var returnString = '<div class="row"><div class="col-md-3"><p>Average Cage Weight: '+row.average_cage+
   ' kg</p></div><div class="col-md-3"><p>Average Bird Weight: '+row.average_bird+
   ' kg</p></div><div class="col-md-3"><p>Minimum Weight: '+row.minimum_weight+
   ' kg</p></div><div class="col-md-3"><p>Maximum Weight: '+row.maximum_weight+
-  ' kg</p></div></div><div class="row"><div class="col-3"><button type="button" onclick="edit('+row.id+
+  ' kg</p></div></div>';
+  
+  if(row.status == 'Pending'){
+    returnString += '<div class="row"><div class="col-3"><button type="button" onclick="edit('+row.id+
   ')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"></div><div class="col-3"><button type="button" class="btn btn-info btn-sm" onclick="print('+row.id+
   ')"><i class="fas fa-print"></i></button></div></div></div></div>'+
   '</div>';
+  }
+  else{
+    returnString += '<div class="row"><div class="col-3"></div><div class="col-3"></div><div class="col-3"><button type="button" class="btn btn-info btn-sm" onclick="print('+row.id+
+  ')"><i class="fas fa-print"></i></button></div></div></div></div>'+
+  '</div>';
+  }
+
+  return returnString;
 }
 
 function formatNormal2 (row) {

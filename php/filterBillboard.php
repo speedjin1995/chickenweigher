@@ -34,76 +34,48 @@ if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] 
 	$searchQuery .= " and customer = '".$_POST['customer']."'";
 }
 
+if($searchValue != ''){
+  $searchQuery = " and (weighing.serial_no like '%".$searchValue."%' or 
+  weighing.lorry_no like '%".$searchValue."%' )";
+}
+
 ## Total number of records without filtering
-$sel = mysqli_query($db,"select count(*) as allcount from weighing WHERE deleted = '0'");
+$sel = mysqli_query($db,"select count(*) as allcount from weighing WHERE deleted = '0' AND status='Complete'");
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($db,"select count(*) as allcount from weighing WHERE deleted = '0' AND start_time IS NOT NULL AND end_time IS NOT NULL".$searchQuery);
+$sel = mysqli_query($db,"select count(*) as allcount from weighing, farms WHERE weighing.deleted = '0' AND weighing.status='Complete'".$searchQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * FROM weighing WHERE deleted = '0' AND start_time IS NOT NULL AND end_time IS NOT NULL".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
-
+$empQuery = "select weighing.*, farms.name from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 $counter = 1;
-$done = 0;
-$inprogress = 0;
-$total = 0;
 
 while($row = mysqli_fetch_assoc($empRecords)) {
-  $weighted_by = '';
-  $created_datetime = '';
-    
-  if ($update_stmt = $db->prepare("SELECT * FROM users WHERE id=?")) {
-    $userId = $row['weighted_by'];
-    $update_stmt->bind_param('s', $userId);
-    
-    // Execute the prepared query.
-    if ($update_stmt->execute()) {
-      $result = $update_stmt->get_result();
-        
-      if ($row2 = $result->fetch_assoc()) {
-        $weighted_by = $row2['name'];
-      }
-    }
-  }
-
-  if($row['created_datetime'] != null || $row['created_datetime'] != ''){
-    $dateInt = new DateTime($row['created_datetime']);
-    $created_datetime = date_format($dateInt,"d/m/Y H:i:s A");
-  }
-
-  if($row['start_time'] != null && $row['end_time'] != null){
-    $done++;
-    $total++;
-  }
-  else {
-    $inprogress++;
-    $total++;
-  }
-
   $data[] = array( 
     "no"=>$counter,
     "id"=>$row['id'],
+    "status"=>$row['status'],
     "serial_no"=>$row['serial_no'],
+    "po_no"=>$row['po_no'],
     "group_no"=>$row['group_no'],
     "customer"=>$row['customer'],
     "supplier"=>$row['supplier'],
     "product"=>$row['product'],
     "driver_name"=>$row['driver_name'],
     "lorry_no"=>$row['lorry_no'],
-    "farm_id"=>$row['farm_id'],
+    "farm_id"=>$row['name'],
     "average_cage"=>$row['average_cage'],
     "average_bird"=>$row['average_bird'],
     "minimum_weight"=>$row['minimum_weight'],
     "maximum_weight"=>$row['maximum_weight'],
+    "max_crate"=>$row['max_crate'],
     "weight_data"=>json_decode($row['weight_data'], true),
-    "created_datetime"=>$created_datetime,
-    "weighted_by"=>$weighted_by,
+    "created_datetime"=>$row['created_datetime'],
     "start_time"=>$row['start_time'],
     "end_time"=>$row['end_time']
   );
@@ -116,10 +88,7 @@ $response = array(
   "draw" => intval($draw),
   "iTotalRecords" => $totalRecords,
   "iTotalDisplayRecords" => $totalRecordwithFilter,
-  "aaData" => $data,
-  "done" => $done,
-  "inprogress" => $inprogress,
-  "total" => $total
+  "aaData" => $data
 );
 
 echo json_encode($response);

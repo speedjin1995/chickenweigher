@@ -388,32 +388,33 @@ if(isset($_POST['userID'], $_POST["file"])){
                     </td>
                     <td colspan="2" style="width: 70%;border-top:0px;padding: 0 0.7rem;">
                         <p>
-                            <span style="font-size: 14px;font-family: sans-serif;">'.$row['average_cage'].'/1</span>
+                            <span style="font-size: 14px;font-family: sans-serif;">'.$row['average_cage'].'/'.$row['number_of_cages'].'</span>
                         </p>
                     </td>
                 </tr>
             </tbody>
         </table><br>';
         
-        for ($i=0; $i<count($mapOfWeights); $i++) {
-            $message .= '<p style="margin: 0px;"><u style="color: blue;">Group No. '.$mapOfWeights[$i]['groupNumber'].'</u></p><p style="margin: 0px;">'.$mapOfWeights[$i]['weightList'][0]['houseNumber'].'</p><table class="table">
-            <tbody>
-                <tr style="border-top: 1px solid #000000;border-bottom: 1px solid #000000;font-family: sans-serif;">
-                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;">
-                        <p>
-                            <span style="font-size: 14px;font-family: sans-serif;font-weight: bold;">Grade '.$mapOfWeights[$i]['weightList'][0]['grade'].'</span>
-                        </p>
-                    </td>
-                    <td colspan="10" style="width: 80%;border-top:0px;padding: 0 0.7rem;">
-                        <p>
-                            <span style="font-size: 14px;font-family: sans-serif;font-weight: bold;">Weight (kg) / Bird (Nos)</span>
-                        </p>
-                    </td>
-                </tr>';
+        for ($i = 0; $i < count($mapOfWeights); $i++) {
+            $message .= '<p style="margin: 0px;"><u style="color: blue;">Group No. ' . $mapOfWeights[$i]['groupNumber'] . '</u></p><p style="margin: 0px;">' . $mapOfWeights[$i]['weightList'][0]['houseNumber'] . '</p>
+            <table class="table">
+                <tbody>
+                    <tr style="border-top: 1px solid #000000;border-bottom: 1px solid #000000;font-family: sans-serif;">
+                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;">
+                            <p>
+                                <span style="font-size: 14px;font-family: sans-serif;font-weight: bold;">Grade ' . $mapOfWeights[$i]['weightList'][0]['grade'] . '</span>
+                            </p>
+                        </td>
+                        <td colspan="10" style="width: 80%;border-top:0px;padding: 0 0.7rem;">
+                            <p>
+                                <span style="font-size: 14px;font-family: sans-serif;font-weight: bold;">Weight (kg) / Bird (Nos)</span>
+                            </p>
+                        </td>
+                    </tr>';
         
             $count = 0;
             $indexCount2 = 11;
-            $indexString = '<td style="border-top:0px;padding: 0 0.7rem;">
+            $indexString = '<tr><td style="border-top:0px;padding: 0 0.7rem;">
                 <p>
                     <span style="font-size: 14px;font-family: sans-serif;font-weight: bold;">1</span>
                 </p>
@@ -423,43 +424,36 @@ if(isset($_POST['userID'], $_POST["file"])){
                 if ($count < 10) {
                     $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
                         <p>
-                            <span style="font-size: 14px;font-family: sans-serif;">'.$element['grossWeight'].'/'.$element['numberOfCages'].'</span>
+                            <span style="font-size: 14px;font-family: sans-serif;">' . $element['grossWeight'] . '/' . $element['numberOfCages'] . '</span>
                         </p>
                     </td>';
                     $count++;
                 } 
                 else {
+                    $indexString .= '</tr><tr>'; // Move this line outside of the else block
+                    $indexCount2 += 10;
                     $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
                         <p>
-                            <span style="font-size: 14px;font-family: sans-serif;">'.$element['grossWeight'].'/'.$element['numberOfCages'].'</span>
-                        </p>
-                    </td>';
-                    $indexString = '<tr>'.$indexString.'</tr>';
-                        $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
-                        <p>
-                            <span style="font-size: 14px;font-family: sans-serif;font-weight: bold;">'.$indexCount2.'</span>
+                            <span style="font-size: 14px;font-family: sans-serif;font-weight: bold;">' . $indexCount2 . '</span>
                         </p>
                     </td>';
                     $count = 0;
-                    $indexCount2 += 10;
                 }
             }
-
-            if($count >0){
+        
+            if ($count > 0) {
                 for ($k = 0; $k < (10 - $count); $k++) {
                     $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;"><p><span style="font-size: 14px;font-family: sans-serif;"></span></p></td>';
                 }
-                $indexString = '<tr>'.$indexString.'</tr>';
+                $indexString .= '</tr>';
             }
-            
+        
             $message .= $indexString;
+            $message .= '</tbody></table><br>';
         }
         
         
-        $message .= '</tbody>
-        </table><br>
-        
-        <div id="footer">
+        $message .= '<div id="footer">
             <hr>
             <table class="table">
                 <tbody>

@@ -61,12 +61,7 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 	}
 
 	if($post['serialNo'] == null || $post['serialNo'] == ''){
-		if($status == 'Sales'){
-			$serialNo = 'S'.date("Ymd");
-		}
-		else{
-			$serialNo = 'P'.date("Ymd");
-		}
+		$serialNo = 'S'.date("Ymd");
 
 		if ($select_stmt = $db->prepare("SELECT COUNT(*) FROM weighing WHERE created_datetime >= ?")) {
             $select_stmt->bind_param('s', $today);

@@ -189,8 +189,7 @@ else{
                   <th>Vehicle No.</th>
                   <th>Driver Name</th>
                   <th>Farm</th>
-                  <th>Weighted By</th>
-                  <th>Created Date Time</th>
+                  <th>Created <br>Date Time</th>
                   <th></th>
                 </tr>
               </thead>
@@ -231,12 +230,13 @@ $(function () {
       { data: 'lorry_no' },
       { data: 'driver_name' },
       { data: 'farm_id' },
-      { data: 'weighted_by' },
       { data: 'created_datetime' },
       { 
         data: 'id',
         render: function ( data, type, row ) {
-          return '<div class="row"><div class="col-3"><button type="button" id="print'+data+'" onclick="print('+data+')" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div></div>';
+          return '<div class="row"><div class="col-3"><button type="button" id="print'+data+'" onclick="print('+data
+          +')" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2'+data
+          +'" onclick="print2('+data+')" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
         }
       }
       /*{ 
@@ -340,12 +340,13 @@ $(function () {
         { data: 'lorry_no' },
         { data: 'driver_name' },
         { data: 'farm_id' },
-        { data: 'weighted_by' },
         { data: 'created_datetime' },
         { 
           data: 'id',
           render: function ( data, type, row ) {
-            return '<div class="row"><div class="col-3"><button type="button" id="print'+data+'" onclick="print('+data+')" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div></div>';
+            return '<div class="row"><div class="col-3"><button type="button" id="print'+data+'" onclick="print('+data
+            +')" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2'+data
+            +'" onclick="print2('+data+')" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
           }
         }
       ],
@@ -600,11 +601,29 @@ function print(id) {
       setTimeout(function(){
         printWindow.print();
         printWindow.close();
-      }, 500);
+      }, 1000);
+    }
+    else if(obj.status === 'failed'){
+      toastr["error"](obj.message, "Failed:");
+    }
+    else{
+      toastr["error"]("Something wrong when activate", "Failed:");
+    }
+  });
+}
 
-      /*$.get('weightPage.php', function(data) {
-        $('#mainContents').html(data);
-      });*/
+function print2(id) {
+  $.post('php/printportrait.php', {userID: id, file: 'weight'}, function(data){
+    var obj = JSON.parse(data);
+
+    if(obj.status === 'success'){
+      var printWindow = window.open('', '', 'height=400,width=800');
+      printWindow.document.write(obj.message);
+      printWindow.document.close();
+      setTimeout(function(){
+        printWindow.print();
+        printWindow.close();
+      }, 1000);
     }
     else if(obj.status === 'failed'){
       toastr["error"](obj.message, "Failed:");
