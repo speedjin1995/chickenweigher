@@ -14,18 +14,35 @@ $stmt2 = $stmt2->get_result();
 
 if(($row2 = $stmt2->fetch_assoc()) !== null){
     if($row2['farms'] != null){
-        $values = json_decode($row['farms'], true);
+        $values = json_decode($row2['farms'], true);
     }  
 }
 
 //$stmt = $db->prepare("SELECT * from weighing WHERE created_datetime >= ?");
-$stmt = $db->prepare("SELECT * from weighing WHERE created_datetime >= ? AND created_datetime <= ? AND status<>'Complete' AND `deleted` = '0' ORDER BY `created_datetime`");
-$stmt->bind_param('ss', $now, $end);
+$stmt = $db->prepare("SELECT * from weighing WHERE status<>'Complete' AND `deleted` = '0' ORDER BY `created_datetime`");
+//$stmt->bind_param('ss', $now, $end);
 $stmt->execute();
 $result = $stmt->get_result();
 $message = array();
 
 while($row = $result->fetch_assoc()){
+    $farmId=$row['farm_id'];
+    $farmName='';
+    
+    if ($update_stmt = $db->prepare("SELECT * FROM farms WHERE id=?")) {
+        $update_stmt->bind_param('s', $farmId);
+        
+        if ($update_stmt->execute()) {
+            $result3 = $update_stmt->get_result();
+            
+            if ($row3 = $result3->fetch_assoc()) {
+                $farmName=$row3['name'];
+            }
+        }
+    }
+    
+    $update_stmt->close();
+    
     if($row['weighted_by'] != null){
         $temp = json_decode($row['weighted_by'], true);
 
@@ -39,7 +56,8 @@ while($row = $result->fetch_assoc()){
                 'product'=>$row['product'],
                 'driver_name'=>$row['driver_name'],
                 'lorry_no'=>$row['lorry_no'],
-                'farm_id'=>$row['farm_id'],
+                'farm_id'=>$farmId,
+                'farm_name'=>$farmName,
                 'average_cage'=>$row['average_cage'],
                 'average_bird'=>$row['average_bird'],
                 'minimum_weight'=>$row['minimum_weight'],
@@ -57,7 +75,7 @@ while($row = $result->fetch_assoc()){
             );
         }
     }
-    else if(in_array($row['farm_id'], $value)){
+    else if(in_array($row['farm_id'], $values)){
         $message[] = array( 
             'id'=>$row['id'],
             'serial_no'=>$row['serial_no'],
@@ -67,7 +85,8 @@ while($row = $result->fetch_assoc()){
             'product'=>$row['product'],
             'driver_name'=>$row['driver_name'],
             'lorry_no'=>$row['lorry_no'],
-            'farm_id'=>$row['farm_id'],
+            'farm_id'=>$farmId,
+            'farm_name'=>$farmName,
             'average_cage'=>$row['average_cage'],
             'average_bird'=>$row['average_bird'],
             'minimum_weight'=>$row['minimum_weight'],

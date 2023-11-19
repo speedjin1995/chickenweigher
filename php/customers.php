@@ -11,10 +11,10 @@ else{
     $userId = $_SESSION['userID'];
 }
 
-if(isset($_POST['code'], $_POST['name'], $_POST['reg_no'])){
+if(isset($_POST['code'], $_POST['name'])){
     $code = filter_input(INPUT_POST, 'code', FILTER_SANITIZE_STRING);
     $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
-    $reg_no = filter_input(INPUT_POST, 'reg_no', FILTER_SANITIZE_STRING);
+    $reg_no = null;
 	$address = null;
     $address2 = null;
     $address3 = null;
@@ -22,6 +22,10 @@ if(isset($_POST['code'], $_POST['name'], $_POST['reg_no'])){
     $states = null;
     $phone = null;
     $email = null;
+
+    if(isset($_POST['reg_no']) && $_POST['reg_no'] != null && $_POST['reg_no'] != ''){
+        $reg_no = filter_input(INPUT_POST, 'reg_no', FILTER_SANITIZE_STRING);
+    }
 
     if(isset($_POST['address']) && $_POST['address'] != null && $_POST['address'] != ''){
         $address = filter_input(INPUT_POST, 'address', FILTER_SANITIZE_STRING);
@@ -78,7 +82,7 @@ if(isset($_POST['code'], $_POST['name'], $_POST['reg_no'])){
         }
     }
     else{
-        if ($insert_stmt = $db->prepare("INSERT INTO customers (customer_code, reg_no, customer_name, customer_address, customer_address2, customer_address3, customer_address4, states, customer_phone, pic) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+        if ($insert_stmt = $db->prepare("INSERT INTO customers (customer_code, reg_no, customer_name, customer_address, customer_address2, customer_address3, customer_address4, states, customer_phone, pic) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
             $insert_stmt->bind_param('ssssssssss', $code, $reg_no, $name, $address, $address2, $address3, $address4, $states, $phone, $email);
             
             // Execute the prepared query.

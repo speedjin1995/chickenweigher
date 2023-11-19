@@ -79,8 +79,8 @@ else{
                   <input type="text" class="form-control" name="code" id="code" placeholder="Enter Supplier Code" required>
                 </div>
                 <div class="form-group">
-                  <label for="name">Reg No. *</label>
-                  <input type="text" class="form-control" name="reg_no" id="reg_no" placeholder="Enter Registration No" required>
+                  <label for="name">Reg No. </label>
+                  <input type="text" class="form-control" name="reg_no" id="reg_no" placeholder="Enter Registration No">
                 </div>
                 <div class="form-group">
                   <label for="name">Supplier Name *</label>
@@ -104,8 +104,8 @@ else{
                 </div>
                 <div class="form-group">
                   <label>States</label>
-                  <option selected="selected">-</option>
                   <select class="form-control" style="width: 100%;" id="states" name="states">
+                    <option selected="selected">-</option>
                     <?php while($rowCustomer2=mysqli_fetch_assoc($states)){ ?>
                       <option value="<?=$rowCustomer2['id'] ?>"><?=$rowCustomer2['states'] ?></option>
                     <?php } ?>

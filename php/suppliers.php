@@ -11,9 +11,10 @@ else{
     $userId = $_SESSION['userID'];
 }
 
-if(isset($_POST['code'], $_POST['name'], $_POST['address'], $_POST['states'], $_POST['phone'], $_POST['email'])){
+if(isset($_POST['code'], $_POST['name'])){
     $code = filter_input(INPUT_POST, 'code', FILTER_SANITIZE_STRING);
     $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
+    $reg_no = null;
 	$address = null;
     $address2 = null;
     $address3 = null;
@@ -21,6 +22,10 @@ if(isset($_POST['code'], $_POST['name'], $_POST['address'], $_POST['states'], $_
     $states = null;
     $phone = null;
     $email = null;
+
+    if(isset($_POST['reg_no']) && $_POST['reg_no'] != null && $_POST['reg_no'] != ''){
+        $reg_no = filter_input(INPUT_POST, 'reg_no', FILTER_SANITIZE_STRING);
+    }
 
     if(isset($_POST['address']) && $_POST['address'] != null && $_POST['address'] != ''){
         $address = filter_input(INPUT_POST, 'address', FILTER_SANITIZE_STRING);

@@ -79,8 +79,8 @@ else{
                   <input type="text" class="form-control" name="code" id="code" placeholder="Enter Customer Code" maxlength="10" required>
                 </div>
                 <div class="form-group">
-                  <label for="name">Reg No. *</label>
-                  <input type="text" class="form-control" name="reg_no" id="reg_no" placeholder="Enter Registration No" required>
+                  <label for="name">Reg No. </label>
+                  <input type="text" class="form-control" name="reg_no" id="reg_no" placeholder="Enter Registration No">
                 </div>
                 <div class="form-group">
                   <label for="name">Customer Name *</label>

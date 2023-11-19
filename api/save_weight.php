@@ -41,12 +41,12 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 		$max_crates = (int)$post['max_crates'];
 	}
 
-	if((int)$cratesCount >= $max_crates){
+	/*if((int)$cratesCount >= $max_crates){
 		$status = "Complete";
 	}
 	else{
 		$status = "Picking";
-	}
+	}*/
 
 	if($post['customerName'] != null && $post['customerName'] != ''){
 		$customerName = $post['customerName'];
