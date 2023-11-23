@@ -75,7 +75,8 @@ while($row = $result->fetch_assoc()){
             );
         }
     }
-    else if(in_array($row['farm_id'], $values)){
+    
+    if(in_array($row['farm_id'], $values)){
         $message[] = array( 
             'id'=>$row['id'],
             'serial_no'=>$row['serial_no'],

@@ -29,7 +29,10 @@ $data9 = array();
 while($row2=mysqli_fetch_assoc($vehicles)){
     $data2[] = array( 
         'id'=>$row2['id'],
-        'veh_number'=>$row2['veh_number']
+        'veh_number'=>$row2['veh_number'],
+        'driver'=>$row2['driver'],
+        'attandence_1'=>$row2['attandence_1'],
+        'attandence_2'=>$row2['attandence_2']
     );
 }
 

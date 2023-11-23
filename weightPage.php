@@ -143,6 +143,7 @@ else{
               <thead>
                 <tr>
                   <th>No</th>
+                  <th>Created Datetime</th>
                   <th>Order No</th>
                   <th>PO No</th>
                   <th>Customers</th>
@@ -313,6 +314,7 @@ $(function () {
     },
     'columns': [
       { data: 'no' },
+      { data: 'created_datetime' },
       { data: 'serial_no' },
       { data: 'po_no' },
       { data: 'customer' },
@@ -438,6 +440,7 @@ $(function () {
       },
       'columns': [
         { data: 'no' },
+        { data: 'created_datetime' },
         { data: 'serial_no' },
         { data: 'po_no' },
         { data: 'customer' },
