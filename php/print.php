@@ -424,7 +424,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                 if ($count < 10) {
                     $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
                         <p>
-                            <span style="font-size: 14px;font-family: sans-serif;">' . $element['grossWeight'] . '/' . $element['numberOfCages'] . '</span>
+                            <span style="font-size: 14px;font-family: sans-serif;">' . $element['grossWeight'] . '/' . $element['numberOfBirds'] . '</span>
                         </p>
                     </td>';
                     $count++;
@@ -595,7 +595,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                             <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$crateIn.'</td>
                                             <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$birdsIn.'</td>
                                             <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$nettsIn.'</td>
-                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$average.'</td>
+                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.number_format($average, 2, '.', '').'</td>
                                         </tr>';
                                     }
                                 
