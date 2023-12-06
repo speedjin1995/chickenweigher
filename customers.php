@@ -174,18 +174,18 @@ $(function () {
                 var obj = JSON.parse(data); 
                 
                 if(obj.status === 'success'){
-                    $('#addModal').modal('hide');
-                    toastr["success"](obj.message, "Success:");
-                    $('#customerTable').DataTable().ajax.reload();
-                    $('#spinnerLoading').hide();
+                  $('#addModal').modal('hide');
+                  toastr["success"](obj.message, "Success:");
+                  $('#customerTable').DataTable().ajax.reload();
+                  $('#spinnerLoading').hide();
                 }
                 else if(obj.status === 'failed'){
-                    toastr["error"](obj.message, "Failed:");
-                    $('#spinnerLoading').hide();
+                  toastr["error"](obj.message, "Failed:");
+                  $('#spinnerLoading').hide();
                 }
                 else{
-                    toastr["error"]("Something wrong when edit", "Failed:");
-                    $('#spinnerLoading').hide();
+                  toastr["error"]("Something wrong when edit", "Failed:");
+                  $('#spinnerLoading').hide();
                 }
             });
         }
