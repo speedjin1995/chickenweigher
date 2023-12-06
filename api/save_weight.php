@@ -30,6 +30,7 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 	$startTime = $post['startTime'];
 	$endTime = $post['endTime'];
 
+    $doNo = null;
 	$customerName = null;
 	$supplierName = null;
 	$minWeight = null;
@@ -38,39 +39,36 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 	$attandence2 = null;
 	$serialNo = "";
 	$today = date("Y-m-d 00:00:00");
+	
+	if(isset($post['doNo']) && $post['doNo'] != null && $post['doNo'] != ''){
+		$doNo = $post['doNo'];
+	}
 
-	if($post['max_crates'] != null && $post['max_crates'] != ''){
+	if(isset($post['max_crates']) && $post['max_crates'] != null && $post['max_crates'] != ''){
 		$max_crates = (int)$post['max_crates'];
 	}
 
-	/*if((int)$cratesCount >= $max_crates){
-		$status = "Complete";
-	}
-	else{
-		$status = "Picking";
-	}*/
-
-	if($post['customerName'] != null && $post['customerName'] != ''){
+	if(isset($post['customerName']) && $post['customerName'] != null && $post['customerName'] != ''){
 		$customerName = $post['customerName'];
 	}
 
-	if($post['minWeight'] != null && $post['minWeight'] != ''){
+	if(isset($post['minWeight']) && $post['minWeight'] != null && $post['minWeight'] != ''){
 		$minWeight = $post['minWeight'];
 	}
 
-	if($post['maxWeight'] != null && $post['maxWeight'] != ''){
+	if(isset($post['maxWeight']) && $post['maxWeight'] != null && $post['maxWeight'] != ''){
 		$maxWeight = $post['maxWeight'];
 	}
 
-	if($post['attandence1'] != null && $post['attandence1'] != ''){
+	if(isset($post['attandence1']) && $post['attandence1'] != null && $post['attandence1'] != ''){
 		$attandence1 = $post['attandence1'];
 	}
 
-	if($post['attandence2'] != null && $post['attandence2'] != ''){
+	if(isset($post['attandence2']) && $post['attandence2'] != null && $post['attandence2'] != ''){
 		$attandence2 = $post['attandence2'];
 	}
 
-	if($post['serialNo'] == null || $post['serialNo'] == ''){
+	if(isset($post['serialNo']) && $post['serialNo'] == null || $post['serialNo'] == ''){
 		$serialNo = 'S'.date("Ymd");
 
 		if ($select_stmt = $db->prepare("SELECT COUNT(*) FROM weighing WHERE created_datetime >= ?")) {
@@ -111,10 +109,10 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 
 		if ($update_stmt = $db->prepare("UPDATE weighing SET customer=?, supplier=?, product=?, driver_name=?, lorry_no=?, farm_id=?, average_cage=?, average_bird=?, 
 		minimum_weight=?, maximum_weight=?, weight_data=?, remark=?, start_time=?, weight_time=?, end_time=?, total_cage=?, number_of_cages=?, total_cages_weight=?, 
-		follower1=?, follower2=? WHERE id=?")){
-			$update_stmt->bind_param('sssssssssssssssssssss', $customerName, $supplierName, $product, $driverName, 
+		follower1=?, follower2=?, status=?, po_no=? WHERE id=?")){
+			$update_stmt->bind_param('sssssssssssssssssssssss', $customerName, $supplierName, $product, $driverName, 
 			$vehicleNumber, $farmId, $averageCage, $averageBird, $minWeight, $maxWeight, $data, $remark, $startTime, 
-			$data2, $endTime, $cratesCount, $numberOfCages, $totalCagesWeight, $attandence1, $attandence2, $id);
+			$data2, $endTime, $cratesCount, $numberOfCages, $totalCagesWeight, $attandence1, $attandence2, $status, $doNo, $id);
 		
 			// Execute the prepared query.
 			if (! $update_stmt->execute()){
@@ -131,7 +129,8 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 				echo json_encode(
 					array(
 						"status"=> "success", 
-						"message"=> "Updated Successfully!!" 
+						"message"=> "Updated Successfully!!",
+						"serialNo" => $post['serialNo']
 					)
 				);
 			}
@@ -161,10 +160,10 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 
 		if ($insert_stmt = $db->prepare("INSERT INTO weighing (serial_no, customer, supplier, product, driver_name, lorry_no, 
 		farm_id, average_cage, average_bird, minimum_weight, maximum_weight, weight_data, remark, start_time, weight_time, end_time,
-		total_cage, number_of_cages, total_cages_weight, follower1, follower2) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){		    
-			$insert_stmt->bind_param('sssssssssssssssssssss', $serialNo, $customerName, $supplierName, $product, $driverName, 
+		total_cage, number_of_cages, total_cages_weight, follower1, follower2, status, po_no) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){		    
+			$insert_stmt->bind_param('sssssssssssssssssssssss', $serialNo, $customerName, $supplierName, $product, $driverName, 
 			$vehicleNumber, $farmId, $averageCage, $averageBird, $minWeight, $maxWeight, $data, $remark, $startTime, $data2, $endTime,
-			$cratesCount, $numberOfCages, $totalCagesWeight, $attandence1, $attandence2);		
+			$cratesCount, $numberOfCages, $totalCagesWeight, $attandence1, $attandence2, $status, $doNo);		
 			// Execute the prepared query.
 			if (! $insert_stmt->execute()){
 				echo json_encode(
@@ -181,7 +180,8 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 				echo json_encode(
 					array(
 						"status"=> "success", 
-						"message"=> "Added Successfully!!" 
+						"message"=> "Added Successfully!!",
+						"serialNo"=> $serialNo
 					)
 				);
 			}

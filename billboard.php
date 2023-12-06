@@ -203,6 +203,10 @@ else{
 
 <script>
 $(function () {
+  const today = new Date();
+  const sevenDaysAgo = new Date(today);
+  sevenDaysAgo.setDate(today.getDate() - 7);
+
   var table = $("#weightTable").DataTable({
     "responsive": true,
     "autoWidth": false,
@@ -223,22 +227,20 @@ $(function () {
       } 
     },
     'columns': [
-      { data: 'no' },
-      { data: 'serial_no' },
-      { data: 'customer' },
-      { data: 'product' },
-      { data: 'lorry_no' },
-      { data: 'driver_name' },
-      { data: 'farm_id' },
-      { data: 'created_datetime' },
-      { 
-        data: 'id',
-        render: function ( data, type, row ) {
-          return '<div class="row"><div class="col-3"><button type="button" id="print'+data+'" onclick="print('+data
-          +')" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2'+data
-          +'" onclick="print2('+data+')" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
+        { data: 'no' },
+        { data: 'serial_no' },
+        { data: 'customer' },
+        { data: 'product' },
+        { data: 'lorry_no' },
+        { data: 'driver_name' },
+        { data: 'farm_id' },
+        { data: 'created_datetime' },
+        {
+          data: 'id',
+          render: function (data, type, row) {
+            return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/print.php?userID=' + data + '\', \'_blank\');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/printportrait.php?userID=' + data + '\', \'_blank\');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
+          }
         }
-      }
       /*{ 
         className: 'dt-control',
         orderable: false,
@@ -263,7 +265,7 @@ $(function () {
   $('#fromDatePicker').datetimepicker({
       icons: { time: 'far fa-clock' },
       format: 'DD/MM/YYYY HH:mm:ss A',
-      defaultDate: new Date
+      defaultDate: sevenDaysAgo
   });
 
   $('#toDatePicker').datetimepicker({
@@ -341,12 +343,10 @@ $(function () {
         { data: 'driver_name' },
         { data: 'farm_id' },
         { data: 'created_datetime' },
-        { 
+        {
           data: 'id',
-          render: function ( data, type, row ) {
-            return '<div class="row"><div class="col-3"><button type="button" id="print'+data+'" onclick="print('+data
-            +')" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2'+data
-            +'" onclick="print2('+data+')" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
+          render: function (data, type, row) {
+            return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/print.php?userID=' + data + '\', \'_blank\');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/printportrait.php?userID=' + data + '\', \'_blank\');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
           }
         }
       ],

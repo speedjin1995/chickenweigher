@@ -1,6 +1,6 @@
 <?php
 
-require_once 'db_connect.php';
+require_once 'php/db_connect.php';
 
 $compids = '1';
 $compname = 'SYNCTRONIX TECHNOLOGY (M) SDN BHD';
@@ -88,8 +88,8 @@ function rearrangeList($weightDetails) {
 }
 
 
-if(isset($_POST['userID'], $_POST["file"])){
-    $id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
+if(isset($_GET['userID'])){
+    $id = $_GET['userID'];
 
     if ($select_stmt = $db->prepare("select weighing.*, farms.name FROM weighing, farms WHERE weighing.farm_id = farms.id AND weighing.id=?")) {
         $select_stmt->bind_param('s', $id);
@@ -231,16 +231,16 @@ if(isset($_POST['userID'], $_POST["file"])){
         </style>
     </head>
     
-    <body>';
-        /*<table class="table">
+    <body>
+        <table class="table">
             <tbody>
                 <tr>
                     <td style="width: 100%;border-top:0px;text-align:center;"><img src="assets/header.png" width="100%" height="auto" /></td>
                 </tr>
             </tbody>
-        </table>*/
+        </table>
         
-        $message .= '<table class="table">
+        <table class="table">
             <tbody>
                 <tr>
                     <td style="width: 50%;border-top:0px;">';
@@ -427,13 +427,13 @@ if(isset($_POST['userID'], $_POST["file"])){
                     </tbody>
                 </table></div></html>';
 
-                echo json_encode(
-                    array(
-                        "status" => "success",
-                        "message" => $message,
-                        "string" => $indexString
-                    )
-                );
+                echo $message;
+                echo '<script>
+                    setTimeout(function(){
+                        window.print();
+                        window.close();
+                  }, 1000);
+               </script>';
             }
             else{
                 echo json_encode(
