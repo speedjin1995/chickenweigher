@@ -235,7 +235,7 @@ if(isset($_GET['userID'])){
         <table class="table">
             <tbody>
                 <tr>
-                    <td style="width: 100%;border-top:0px;text-align:center;"><img src="assets/header.png" width="100%" height="auto" /></td>
+                    <td style="width: 100%;border-top:0px;text-align:center;"><img src="https://ccb.syncweigh.com/assets/header.png" width="100%" height="auto" /></td>
                 </tr>
             </tbody>
         </table>
@@ -428,12 +428,12 @@ if(isset($_GET['userID'])){
                 </table></div></html>';
 
                 echo $message;
-                echo '<script>
+                /*echo '<script>
                     setTimeout(function(){
                         window.print();
                         window.close();
                   }, 1000);
-               </script>';
+               </script>';*/
             }
             else{
                 echo json_encode(
