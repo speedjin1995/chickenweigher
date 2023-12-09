@@ -31,7 +31,13 @@ else{
 				<div class="card">
 					<div class="card-header">
                         <div class="row">
-                            <div class="col-9"></div>
+                            <div class="col-5"></div>
+                            <div class="col-2">
+                                <input type="file" id="fileInput" accept=".xlsx, .xls" />
+                            </div>
+                            <div class="col-2">
+                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="importExcelbtn">Import Excel</button>
+                            </div>                            
                             <div class="col-3">
                                 <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addTransporter">Add Transporter</button>
                             </div>
@@ -166,6 +172,56 @@ $(function () {
             }
         });
     });
+
+    document.getElementById('fileInput').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+
+        const sheetName = workbook.SheetNames[5];
+        const sheet = workbook.Sheets[sheetName];
+        jsonData = XLSX.utils.sheet_to_json(sheet);
+        console.log(jsonData);
+        };
+        reader.readAsArrayBuffer(file);
+    });
+
+    $('#importExcelbtn').on('click', function(){
+        jsonData.forEach(function(row) {
+            $.ajax({
+                url: 'php/importExcelTransport.php',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(row),
+                success: function(response) {
+                    debugger;
+                    var obj = JSON.parse(response); 
+                    
+                    if(obj.status === 'success'){
+                        $('#addModal').modal('hide');
+                        toastr["success"](obj.message, "Success:");
+                        $('#transporterTable').DataTable().ajax.reload();
+                        $('#spinnerLoading').hide();
+                    }
+                    else if(obj.status === 'failed'){
+                        toastr["error"](obj.message, "Failed:");
+                        $('#spinnerLoading').hide();
+                    }
+                    else{
+                        toastr["error"]("Something wrong when import", "Failed:");
+                        $('#spinnerLoading').hide();
+                    }
+                },
+                error: function(error) {
+                    toastr["error"](obj.message, "Failed:");
+                    $('#spinnerLoading').hide();
+                }
+            })
+        })
+    });     
 });
 
 function edit(id){

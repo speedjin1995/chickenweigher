@@ -504,6 +504,7 @@ to get the desired effect
 <script src="plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
 <script src="plugins/chart.js/Chart.min.js"></script>
 <script src="plugins/daterangepicker/daterangepicker.js"></script>
+<script src="plugins/sheets/xlsx.full.min.js"></script>
 
 <script>
 $(function () {
