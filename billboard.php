@@ -238,7 +238,7 @@ $(function () {
         {
           data: 'id',
           render: function (data, type, row) {
-            return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/print.php?userID=' + data + '\', \'_blank\');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/printportrait.php?userID=' + data + '\', \'_blank\');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
+            return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/print.php?userID=' + data + '\');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/printportrait.php?userID=' + data + '\');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
           }
         }
       /*{ 
@@ -346,7 +346,7 @@ $(function () {
         {
           data: 'id',
           render: function (data, type, row) {
-            return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/print.php?userID=' + data + '\', \'_blank\');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/printportrait.php?userID=' + data + '\', \'_blank\');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
+            return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/print.php?userID=' + data + '\');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/printportrait.php?userID=' + data + '\'s);" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
           }
         }
       ],
