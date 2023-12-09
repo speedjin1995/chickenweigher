@@ -428,12 +428,12 @@ if(isset($_GET['userID'])){
                 </table></div></html>';
 
                 echo $message;
-                /*echo '<script>
+                echo '<script>
                     setTimeout(function(){
                         window.print();
                         window.close();
                   }, 1000);
-               </script>';*/
+               </script>';
             }
             else{
                 echo json_encode(

@@ -686,12 +686,12 @@ if(isset($_GET['userID'])){
 </html>';
                 
                 echo $message;
-                echo '<script>
+                /*echo '<script>
                     setTimeout(function(){
                         window.print();
                         window.close();
                   }, 1000);
-               </script>';
+               </script>';*/
             }
             else{
                 echo json_encode(
