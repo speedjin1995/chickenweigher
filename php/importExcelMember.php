@@ -20,8 +20,24 @@ if ($data !== null) {
     $username =  $data['username'];
     $name = $data['name'];
     $roleCode = $data['role_code'];
-    $farms = $data['farms'];
+    $farms = [];
+    $farmsCode = $data['farms'];
+    $array = json_decode($farmsCode, true);
 
+    if ($array !== null) {
+        foreach ($array as $value) {
+            $empQuery = "SELECT * FROM farms WHERE deleted = '0' and farms_code like '%".$value."%'";
+            $empRecords = mysqli_query($db, $empQuery);
+            
+            while($row = mysqli_fetch_assoc($empRecords)) {
+                array_push($farms, $row['id']);
+            }
+        }
+    } else {
+        echo "Invalid JSON data.";
+    }
+
+    $farms = json_encode($farms);
     $random_salt = hash('sha512', uniqid(openssl_random_pseudo_bytes(16), TRUE));
     $password = '123456';
     $password = hash('sha512', $password . $random_salt);
