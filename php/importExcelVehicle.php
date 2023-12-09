@@ -18,36 +18,36 @@ if ($data !== null) {
     $driverCode = $data['driver'];
     $attendance1 = $data['attandence_1'];
     $attendance2 = $data['attandence_2'];
+    $driver = "";
 
     $empQuery = "SELECT * FROM transporters WHERE deleted = '0' and transporter_code like '%".$driverCode."%'";
     $empRecords = mysqli_query($db, $empQuery);
-    
     while($row = mysqli_fetch_assoc($empRecords)) {
         $driver = $row['id'];
+    }
 
-        if ($insert_stmt = $db->prepare("INSERT INTO vehicles (veh_number, driver, attandence_1, attandence_2) VALUES (?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('ssss', $vehicleNumber, $driver, $attendance1, $attendance2);
+    if ($insert_stmt = $db->prepare("INSERT INTO vehicles (veh_number, driver, attandence_1, attandence_2) VALUES (?, ?, ?, ?)")) {
+        $insert_stmt->bind_param('ssss', $vehicleNumber, $driver, $attendance1, $attendance2);
+        
+        // Execute the prepared query.
+        if (! $insert_stmt->execute()) {
+            echo json_encode(
+                array(
+                    "status"=> "failed", 
+                    "message"=> $insert_stmt->error
+                )
+            );
+        }
+        else{
+            $insert_stmt->close();
+            $db->close();
             
-            // Execute the prepared query.
-            if (! $insert_stmt->execute()) {
-                echo json_encode(
-                    array(
-                        "status"=> "failed", 
-                        "message"=> $insert_stmt->error
-                    )
-                );
-            }
-            else{
-                $insert_stmt->close();
-                $db->close();
-                
-                echo json_encode(
-                    array(
-                        "status"=> "success", 
-                        "message"=> "Added Successfully!!" 
-                    )
-                );
-            }
+            echo json_encode(
+                array(
+                    "status"=> "success", 
+                    "message"=> "Added Successfully!!" 
+                )
+            );
         }
     }
 }
