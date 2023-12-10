@@ -206,6 +206,7 @@ $(function () {
   const today = new Date();
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(today.getDate() - 7);
+  
 
   var table = $("#weightTable").DataTable({
     "responsive": true,
@@ -220,7 +221,7 @@ $(function () {
       'type': 'POST',
       'url':'php/filterBillboard.php',
       'data': {
-        fromDate:  new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate() + " 00:00:00",
+        fromDate:  sevenDaysAgo.getFullYear() + "-" + (sevenDaysAgo.getMonth() + 1) + "-" + sevenDaysAgo.getDate() + " 00:00:00",
         toDate: new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate() + " 23:59:59",
         farm: '',
         customer: ''

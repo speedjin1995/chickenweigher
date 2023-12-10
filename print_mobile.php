@@ -479,26 +479,31 @@ if(isset($_GET['userID'])){
                     </tr>';
         
                         $count = 0;
+                        $newRow = false;
                         $indexCount2 = 11;
+                        $oldWeight = "";
                         $indexString = '<tr><td style="border-top:0px;padding: 0 0.7rem;">
                             <p>
                                 <span style="font-size: 14px;font-family: sans-serif;font-weight: bold;">1</span>
                             </p>
                         </td>';
-        
-                        /*foreach ($house['weightList'] as $element) {
-                            if ($count < 10) {
-                                $message .= '<td class="weight-cell">' . $element['grossWeight'] . '/' . $element['numberOfBirds'] . '</td>';
-                                $count++;
-                            } else {
-                                $message .= '</tr><tr>';
-                                $indexCount2 += 10;
-                                $message .= '<td class="index-cell">' . $indexCount2 . '</td>';
-                                $count = 0;
-                            }
-                        }*/
                         
                         foreach ($house['weightList'] as $element) {
+                            if($newRow){
+                                $indexString .= '<tr><td style="border-top:0px;padding: 0 0.7rem;">
+                                    <p>
+                                        <span style="font-size: 14px;font-family: sans-serif;font-weight: bold;">' . $indexCount2 . '</span>
+                                    </p>
+                                </td>';
+                                $indexCount2 += 10;
+                                $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
+                                    <p>
+                                        <span style="font-size: 14px;font-family: sans-serif;">' . $oldWeight . '</span>
+                                    </p>
+                                </td>';
+                                $count++;
+                            }
+                            
                             if ($count < 10) {
                                 $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
                                     <p>
@@ -506,16 +511,13 @@ if(isset($_GET['userID'])){
                                     </p>
                                 </td>';
                                 $count++;
-                            } 
+                                $newRow = false;
+                            }
                             else {
-                                $indexString .= '</tr><tr>'; // Move this line outside of the else block
-                                $indexCount2 += 10;
-                                $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
-                                    <p>
-                                        <span style="font-size: 14px;font-family: sans-serif;font-weight: bold;">' . $indexCount2 . '</span>
-                                    </p>
-                                </td>';
+                                $indexString .= '</tr>'; // Move this line outside of the else block
                                 $count = 0;
+                                $newRow = true;
+                                $oldWeight = $element['grossWeight'] . '/' . $element['numberOfBirds'];
                             }
                         }
         
