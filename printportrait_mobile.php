@@ -291,7 +291,7 @@ if(isset($_GET['userID'])){
                     <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
                         <p>
                             <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Average Crate Wt. : </span>
-                            <span style="font-size: 12px;font-family: sans-serif;">'.$row['average_cage'].'</span>
+                            <span style="font-size: 12px;font-family: sans-serif;">'.number_format($row['average_cage'], 2, '.', '').'</span>
                         </p>
                     </td>
                 </tr>
@@ -363,7 +363,7 @@ if(isset($_GET['userID'])){
                                         </tr>
                                         <tr>
                                             <td>Total Net Wt. </td>
-                                            <td>'.number_format($totalNet, 1, '.', '').'</td>
+                                            <td>'.number_format(($totalWeight - $totalCrate), 1, '.', '').'</td>
                                         </tr>
                                         <tr>
                                             <td>Unit Price</td>
@@ -428,12 +428,6 @@ if(isset($_GET['userID'])){
                 </table></div></html>';
 
                 echo $message;
-                /*echo '<script>
-                    setTimeout(function(){
-                        window.print();
-                        window.close();
-                  }, 1000);
-               </script>';*/
             }
             else{
                 echo json_encode(

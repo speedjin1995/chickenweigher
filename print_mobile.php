@@ -571,12 +571,6 @@ if(isset($_GET['userID'])){
                                         <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalAGross.'</td>
                                         <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalGross.'</td>
                                     </tr>';
-                                    /*<tr>
-                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">Weight (kg)</th>
-                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">8559.7</td>
-                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">0.0</td>
-                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">8559.7</td>
-                                    </tr>*/
                                     $message .= '<tr>
                                         <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">Crates Wt (kg)</td>
                                         <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalSCrate.'</td>
@@ -609,9 +603,9 @@ if(isset($_GET['userID'])){
                                     $message.= '</tr>
                                     <tr>
                                         <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">Nett Wt (kg)</td>
-                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalSNet.'</td>
-                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalANet.'</td>
-                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalNet.'</td>
+                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.number_format($totalSGross - $totalSCrate, 1, '.', '').'</td>
+                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.number_format($totalAGross - $totalACrate, 1, '.', '').'</td>
+                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.number_format($totalGross - $totalCrate, 1, '.', '').'</td>
                                     </tr>
                                 </tbody>
                             </table>';
@@ -688,12 +682,6 @@ if(isset($_GET['userID'])){
 </html>';
                 
                 echo $message;
-                /*echo '<script>
-                    setTimeout(function(){
-                        window.print();
-                        window.close();
-                  }, 1000);
-               </script>';*/
             }
             else{
                 echo json_encode(
