@@ -14,13 +14,32 @@ $input = file_get_contents('php://input');
 $data = json_decode($input, true); // 'true' to decode as associative arrays
 
 if ($data !== null) {
-    $vehicleNumber =  $data['veh_number'];
-    $driverCode = $data['driver'];
-    $attendance1 = $data['attandence_1'];
-    $attendance2 = $data['attandence_2'];
+
+    $vehicleNumber =  null;
+    $driverName = null;
+    $attendance1 = null;
+	$attendance2 = null;
+    $address2 = null;
+
+    if(isset($data['veh_number']) && $data['veh_number'] != null && $data['veh_number'] != ''){
+        $vehicleNumber = $data['veh_number'];
+    }
+    if(isset($data['driver']) && $data['driver'] != null && $data['driver'] != ''){
+        $driverName = $data['driver'];
+    }
+    if(isset($data['attandence_1']) && $data['attandence_1'] != null && $data['attandence_1'] != ''){
+        $attendance1 = $data['attandence_1'];
+    }
+    if(isset($data['attandence_2']) && $data['attandence_2'] != null && $data['attandence_2'] != ''){
+        $attendance2 = $data['attandence_2'];
+    }
+    if(isset($data['address2']) && $data['reg_no'] != null && $data['address2'] != ''){
+        $address2 = $data['address2'];
+    }
+
     $driver = "";
 
-    $empQuery = "SELECT * FROM transporters WHERE deleted = '0' and transporter_code like '%".$driverCode."%'";
+    $empQuery = "SELECT * FROM transporters WHERE deleted = '0' and transporter_name like '%".$driverName."%'";
     $empRecords = mysqli_query($db, $empQuery);
     while($row = mysqli_fetch_assoc($empRecords)) {
         $driver = $row['id'];

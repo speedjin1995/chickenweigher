@@ -17,11 +17,26 @@ $input = file_get_contents('php://input');
 $data = json_decode($input, true); // 'true' to decode as associative arrays
 
 if ($data !== null) {
-    $username =  $data['username'];
-    $name = $data['name'];
-    $roleCode = $data['role_code'];
+
+    $username =  null;
+    $name = null;
+    $roleCode = null;
+	$farmsCode = null;
+
+    if(isset($data['username']) && $data['username'] != null && $data['username'] != ''){
+        $username = $data['username'];
+    }
+    if(isset($data['name']) && $data['name'] != null && $data['name'] != ''){
+        $name = $data['name'];
+    }
+    if(isset($data['role_code']) && $data['role_code'] != null && $data['role_code'] != ''){
+        $roleCode = $data['role_code'];
+    }
+    if(isset($data['farms']) && $data['farms'] != null && $data['farms'] != ''){
+        $farmsCode = $data['farms'];
+    }
+
     $farms = [];
-    $farmsCode = $data['farms'];
     $array = json_decode($farmsCode, true);
 
     if ($array !== null) {

@@ -15,8 +15,16 @@ $input = file_get_contents('php://input');
 $data = json_decode($input, true); // 'true' to decode as associative arrays
 
 if ($data !== null) {
-    $code =  $data['code'];
-    $transporter = $data['transporter'];
+
+    $code =  null;
+    $transporter = null;
+
+    if(isset($data['code']) && $data['code'] != null && $data['code'] != ''){
+        $code = $data['code'];
+    }
+    if(isset($data['transporter']) && $data['transporter'] != null && $data['transporter'] != ''){
+        $transporter = $data['transporter'];
+    }
 
     if ($insert_stmt = $db->prepare("INSERT INTO transporters (transporter_code, transporter_name) VALUES (?, ?)")) {
         $insert_stmt->bind_param('ss', $code, $transporter);

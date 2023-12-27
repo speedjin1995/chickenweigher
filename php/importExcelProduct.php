@@ -13,9 +13,20 @@ $input = file_get_contents('php://input');
 $data = json_decode($input, true); // 'true' to decode as associative arrays
 
 if ($data !== null) {
-    $code =  $data['code'];
-    $product = $data['product'];
-    $remark = $data['remark'];
+
+    $code =  null;
+    $product = null;
+	$remark = null;
+
+    if(isset($data['code']) && $data['code'] != null && $data['code'] != ''){
+        $code = $data['code'];
+    }
+    if(isset($data['product']) && $data['product'] != null && $data['product'] != ''){
+        $product = $data['product'];
+    }
+    if(isset($data['remark']) && $data['remark'] != null && $data['remark'] != ''){
+        $remark = $data['remark'];
+    }
 
     if ($insert_stmt = $db->prepare("INSERT INTO products (product_code, product_name, remark) VALUES (?, ?, ?)")) {
         $insert_stmt->bind_param('sss', $code, $product, $remark);
