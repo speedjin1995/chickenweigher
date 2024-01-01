@@ -113,7 +113,7 @@ if(isset($_GET['userID'])){
                 $seconds = $duration % 60;
                 
                 // Format minutes and seconds
-                $time = sprintf('%d mins %d secs', $minutes, $seconds);
+                $time = sprintf('%d m %d s', $minutes, $seconds);
                 $weightData = json_decode($row['weight_data'], true);
                 $totalWeight = totalWeight($weightData);
                 rearrangeList($weightData);

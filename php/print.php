@@ -226,7 +226,6 @@ if(isset($_GET['ids'])){
             }
             
             #footer {
-                position: fixed;
                 padding: 10px 10px 0px 10px;
                 bottom: 0;
                 width: 100%;
@@ -591,16 +590,16 @@ if(isset($_GET['ids'])){
                                                 </tr>
                                                 <tr>
                                                     <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">Gross Wt (kg)</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalSGross.'</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalAGross.'</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalGross.'</td>
+                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.number_format($totalSGross, 1, '.', '').'</td>
+                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.number_format($totalAGross, 1, '.', '').'</td>
+                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.number_format($totalGross, 1, '.', '').'</td>
                                                 </tr>';
                                                 
                                                 $message .= '<tr>
                                                     <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">Crates Wt (kg)</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalSCrate.'</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalACrate.'</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalCrate.'</td>
+                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.number_format($totalSCrate, 1, '.', '').'</td>
+                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.number_format($totalACrate, 1, '.', '').'</td>
+                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.number_format($totalCrate, 1, '.', '').'</td>
                                                 </tr>
                                                 <tr>
                                                     <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">Avg kg/Bird</td>';
