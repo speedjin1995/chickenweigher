@@ -242,11 +242,11 @@ else{
               <input class="form-control" type="number" placeholder="Average Cage Weight" id="aveCage" name="aveCage">
             </div-->
             <div class="form-group col-4">
-              <label>Min Weight </label>
+              <label>Min Avg. Weight </label>
               <input class="form-control" type="number" placeholder="Min Weight" id="minWeight" name="minWeight">
             </div>
             <div class="form-group col-4">
-              <label>Max Weight </label>
+              <label>Max Avg. Weight </label>
               <input class="form-control" type="number" placeholder="Max Weight" id="maxWeight" name="maxWeight">
             </div>
             <div class="form-group col-4">

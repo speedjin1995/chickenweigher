@@ -87,53 +87,11 @@ function rearrangeList($weightDetails) {
     // Now you can work with $mapOfWeights and the calculated totals as needed.
 }
 
+if(isset($_GET['ids'])){
+    $idsParam = $_GET['ids'];
+    $idsArray = json_decode($idsParam, true);
 
-if(isset($_POST['userID'], $_POST["file"])){
-    $id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
-
-    if ($select_stmt = $db->prepare("select weighing.*, farms.name FROM weighing, farms WHERE weighing.farm_id = farms.id AND weighing.id=?")) {
-        $select_stmt->bind_param('s', $id);
-
-        if (! $select_stmt->execute()) {
-            echo json_encode(
-                array(
-                    "status" => "failed",
-                    "message" => "Something went wrong went execute"
-                )); 
-        }
-        else{
-            $result = $select_stmt->get_result();
-
-            if ($row = $result->fetch_assoc()) { 
-                $assigned_seconds = strtotime ( $row['start_time'] );
-                $completed_seconds = strtotime ( $row['end_time'] );
-                $duration = $completed_seconds - $assigned_seconds;
-                //$time = date ( 'j g:i:s', $duration );
-                $minutes = floor($duration / 60);
-                $seconds = $duration % 60;
-                
-                // Format minutes and seconds
-                $time = sprintf('%d mins %d secs', $minutes, $seconds);
-                $weightData = json_decode($row['weight_data'], true);
-                $totalWeight = totalWeight($weightData);
-                rearrangeList($weightData);
-                $weightTime = json_decode($row['weight_time'], true);
-                $userName = "Pri Name";
-
-                if ($select_stmt2 = $db->prepare("select * FROM users WHERE id=?")) {
-                    $uid = $row['weighted_by'];
-                    $select_stmt2->bind_param('s', $uid);
-
-                    if ($select_stmt2->execute()) {
-                        $result2 = $select_stmt2->get_result();
-
-                        if ($row2= $result2->fetch_assoc()) { 
-                            $userName = $row2['name'];
-                        }
-                    }
-                }
-
-                $message = '<html>
+    $message = '<html>
     <head>
         <style>
             @media print {
@@ -230,227 +188,271 @@ if(isset($_POST['userID'], $_POST["file"])){
             }
         </style>
     </head>
-    
     <body>';
-        /*<table class="table">
-            <tbody>
-                <tr>
-                    <td style="width: 100%;border-top:0px;text-align:center;"><img src="assets/header.png" width="100%" height="auto" /></td>
-                </tr>
-            </tbody>
-        </table>*/
-        
-        $message .= '<table class="table">
-            <tbody>
-                <tr>
-                    <td style="width: 50%;border-top:0px;">';
-
-                    $message .= '<p>
-                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Customer : </span>
-                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['customer'].'</span>
-                    </p>';
-                        
-                    $message .= '</td>
-                    <td style="width: 50%;border-top:0px;">
-                        <p>
-                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">CCBSB No.: </span>
-                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['serial_no'].'</span>
-                        </p>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="width: 50%;border-top:0px;padding: 0 0.7rem;">
-                        <p>
-                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Farm : </span>
-                            <span style="font-size: 12px;font-family: sans-serif;">'.$row['name'].'</span>
-                        </p>
-                    </td>
-                    <td style="width: 50%;border-top:0px;padding: 0 0.7rem;">
-                        <p>
-                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Date : </span>
-                            <span style="font-size: 12px;font-family: sans-serif;">'.$row['start_time'].'</span>
-                        </p>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="width: 50%;border-top:0px;padding: 0 0.7rem;">
-                        <p>
-                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Total Crates : </span>
-                            <span style="font-size: 12px;font-family: sans-serif;">'.$row['total_cage'].'</span>
-                        </p>
-                    </td>
-                    <td style="width: 50%;border-top:0px;padding: 0 0.7rem;">
-                        <p>
-                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Lorry No : </span>
-                            <span style="font-size: 12px;font-family: sans-serif;">'.$row['lorry_no'].'</span>
-                        </p>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="width: 50%;border-top:0px;padding: 0 0.7rem;"></td>
-                    <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
-                        <p>
-                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Average Crate Wt. : </span>
-                            <span style="font-size: 12px;font-family: sans-serif;">'.$row['average_cage'].'</span>
-                        </p>
-                    </td>
-                </tr>
-            </tbody>
-        </table><br>';
         
 
-        for ($j = 0; $j < count($mapOfWeights); $j++) {
-            $message .= '<p style="margin: 0px;"><u style="color: blue;">Group No. ' . $mapOfWeights[$j]['groupNumber'] . '</u></p>';
-            $message .= '<table class="table-bordered"><tbody>';
-            $weightData = $mapOfWeights[$j]['weightList'];
+    for($counter=0; $counter<count($idsArray); $counter++){
+        $id = $idsArray[$counter];
 
-            $count = 1;
-            $rowCount = 0;
-            $rowTotal = 0;
-            $allTotal = 0;
-            $indexString = '<tr>';
-            
-            for ($i = 0; $i < count($weightData); $i++) {
-                $indexString .= '<td style="width: 4%;text-align: center;"><b>'.$count.'</b></td><td style="width: 5%;text-align: center;">'.$weightData[$i]['grossWeight'].'</td>';
-                $rowTotal += (float)$weightData[$i]['grossWeight'];
-                $allTotal += (float)$weightData[$i]['grossWeight'];
+        if ($select_stmt = $db->prepare("select weighing.*, farms.name FROM weighing, farms WHERE weighing.farm_id = farms.id AND weighing.id=?")) {
+            $select_stmt->bind_param('s', $id);
+    
+            if ($select_stmt->execute()) {
+                $result = $select_stmt->get_result();
 
-                if($count % 10 == 0){
-                    $indexString .= '<td style="width: 10%;text-align: center;">'.$rowTotal.'</td></tr>';
-                    $rowTotal = 0;
-                    $rowCount = 0;
+                if ($row = $result->fetch_assoc()) { 
+                    // Re-initiate
+                    $mapOfWeights = array();
+                    $totalGross = 0.0;
+                    $totalCrate = 0.0;
+                    $totalReduce = 0.0;
+                    $totalNet = 0.0;
+                    $totalCrates = 0;
+                    $totalBirds = 0;
+                    $totalMaleBirds = 0;
+                    $totalMaleCages = 0;
+                    $totalFemaleBirds = 0;
+                    $totalFemaleCages = 0;
+                    $totalMixedBirds = 0;
+                    $totalMixedCages = 0;
 
-                    if($count < count($weightData)){
-                        $indexString .= '<tr>';
+                    // Start Process
+                    $assigned_seconds = strtotime ($row['start_time']);
+                    $completed_seconds = strtotime ($row['end_time']);
+                    $duration = $completed_seconds - $assigned_seconds;
+                    $minutes = floor($duration / 60);
+                    $seconds = $duration % 60;
+                    
+                    // Format minutes and seconds
+                    $time = sprintf('%d mins %d secs', $minutes, $seconds);
+                    $weightData = json_decode($row['weight_data'], true);
+                    $totalWeight = totalWeight($weightData);
+                    rearrangeList($weightData);
+                    $weightTime = json_decode($row['weight_time'], true);
+                    $userName = "Pri Name";
+    
+                    if ($select_stmt2 = $db->prepare("select * FROM users WHERE id=?")) {
+                        $uid = $row['weighted_by'];
+                        $select_stmt2->bind_param('s', $uid);
+    
+                        if ($select_stmt2->execute()) {
+                            $result2 = $select_stmt2->get_result();
+    
+                            if ($row2= $result2->fetch_assoc()) { 
+                                $userName = $row2['name'];
+                            }
+                        }
                     }
-                }
-                else{
-                    $rowCount++;
-                }
-                
-                $count++;
-            }
 
-            if ($rowCount > 0) {
-                for ($k = 0; $k < (10 - $rowCount); $k++) {
-                    if($k == ((10 - $rowCount) - 1)){
-                        $indexString .= '<td style="width: 4%;text-align: center;"></td><td style="width: 5%;text-align: center;"></td><td style="width: 10%;text-align: center;">'.$rowTotal.'</td>';
-                    }
-                    else{
-                        $indexString .= '<td></td><td></td>';
-                    }
-                }
-                $indexString .= '</tr>';
-            }
-            
-            $message .= $indexString;
-            $message .= '</tbody><tfoot><th colspan="20" style="text-align: right;">Total</th><th>'.$allTotal.'</th></tfoot></table><br>';
-        }
-        
-        $message .= '<div id="footer"><table class="table">
+                    $message .= '<table class="table">
                     <tbody>
                         <tr>
-                            <td style="width: 40%;">
-                                <table class="table-full" style="width: 90%;">
-                                    <tbody>
-                                        <tr>
-                                            <td>Total Gross Wt.</td>
-                                            <td>'.number_format($totalWeight, 1, '.', '').'</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Total Crate Wt.</td>
-                                            <td>'.number_format($totalCrate, 1, '.', '').'</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Total Net Wt. </td>
-                                            <td>'.number_format($totalNet, 1, '.', '').'</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Unit Price</td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Amount</td>
-                                            <td></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                            <td style="width: 30%;">
-                                <table class="table-full" style="width: 90%;">
-                                    <tbody>
-                                        <tr>
-                                            <td>Mix.</td>
-                                            <td>'.$totalMixedBirds.'</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Male</td>
-                                            <td>'.$totalMaleBirds.'</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Female</td>
-                                            <td>'.$totalFemaleBirds.'</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Total Birds</td>
-                                            <td>'.$totalBirds.'</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Avg. Bird Wt.</td>
-                                            <td>'.number_format((float)$row['average_bird'], 2, '.', '').'</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                            <td style="width: 30%;">
-                                <table class="table-full" style="width: 90%;">
-                                    <tbody>
-                                        <tr>
-                                            <td>Loading Start</td>
-                                        </tr>
-                                        <tr>
-                                            <td>'.$row['start_time'].'</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Loading End</td>
-                                        </tr>
-                                        <tr>
-                                            <td>'.$row['end_time'].'</td>
-                                        </tr>
-                                        <tr>
-                                            <td>'.$time.'</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </td> 
+                            <td style="width: 100%;border-top:0px;text-align:center;"><img src="https://ccb.syncweigh.com/assets/header.png" width="100%" height="auto" /></td>
                         </tr>
                     </tbody>
-                </table></div></html>';
-
-                echo json_encode(
-                    array(
-                        "status" => "success",
-                        "message" => $message,
-                        "string" => $indexString
-                    )
-                );
-            }
-            else{
-                echo json_encode(
-                    array(
-                        "status" => "failed",
-                        "message" => "Data Not Found"
-                    )); 
+                </table>
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td style="width: 50%;border-top:0px;">';
+        
+                            $message .= '<p>
+                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Customer : </span>
+                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['customer'].'</span>
+                            </p>';
+                                
+                            $message .= '</td>
+                            <td style="width: 50%;border-top:0px;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">CCBSB No.: </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['serial_no'].'</span>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 50%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Farm : </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;">'.$row['name'].'</span>
+                                </p>
+                            </td>
+                            <td style="width: 50%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Date : </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;">'.$row['start_time'].'</span>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 50%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Total Crates : </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;">'.$row['total_cage'].'</span>
+                                </p>
+                            </td>
+                            <td style="width: 50%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Lorry No : </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;">'.$row['lorry_no'].'</span>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 50%;border-top:0px;padding: 0 0.7rem;"></td>
+                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Average Crate Wt. : </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;">'.$row['average_cage'].'</span>
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table><br>';
+        
+                for ($j = 0; $j < count($mapOfWeights); $j++) {
+                    $message .= '<p style="margin: 0px;"><u style="color: blue;">Group No. ' . $mapOfWeights[$j]['groupNumber'] . '</u></p>';
+                    $message .= '<table class="table-bordered"><tbody>';
+                    $weightData = $mapOfWeights[$j]['weightList'];
+        
+                    $count = 1;
+                    $rowCount = 0;
+                    $rowTotal = 0;
+                    $allTotal = 0;
+                    $indexString = '<tr>';
+                    
+                    for ($i = 0; $i < count($weightData); $i++) {
+                        $indexString .= '<td style="width: 4%;text-align: center;"><b>'.$count.'</b></td><td style="width: 5%;text-align: center;">'.$weightData[$i]['grossWeight'].'</td>';
+                        $rowTotal += (float)$weightData[$i]['grossWeight'];
+                        $allTotal += (float)$weightData[$i]['grossWeight'];
+        
+                        if($count % 10 == 0){
+                            $indexString .= '<td style="width: 10%;text-align: center;">'.$rowTotal.'</td></tr>';
+                            $rowTotal = 0;
+                            $rowCount = 0;
+        
+                            if($count < count($weightData)){
+                                $indexString .= '<tr>';
+                            }
+                        }
+                        else{
+                            $rowCount++;
+                        }
+                        
+                        $count++;
+                    }
+        
+                    if ($rowCount > 0) {
+                        for ($k = 0; $k < (10 - $rowCount); $k++) {
+                            if($k == ((10 - $rowCount) - 1)){
+                                $indexString .= '<td style="width: 4%;text-align: center;"></td><td style="width: 5%;text-align: center;"></td><td style="width: 10%;text-align: center;">'.$rowTotal.'</td>';
+                            }
+                            else{
+                                $indexString .= '<td></td><td></td>';
+                            }
+                        }
+                        $indexString .= '</tr>';
+                    }
+                    
+                    $message .= $indexString;
+                    $message .= '</tbody><tfoot><th colspan="20" style="text-align: right;">Total</th><th>'.$allTotal.'</th></tfoot></table><br>';
+                }
+                
+                $message .= '
+                    <div id="footer">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td style="width: 40%;">
+                                        <table class="table-full" style="width: 90%;">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Total Gross Wt.</td>
+                                                    <td>'.number_format($totalWeight, 1, '.', '').'</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Total Crate Wt.</td>
+                                                    <td>'.number_format($totalCrate, 1, '.', '').'</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Total Net Wt. </td>
+                                                    <td>'.number_format($totalNet, 1, '.', '').'</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Unit Price</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Amount</td>
+                                                    <td></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td style="width: 30%;">
+                                        <table class="table-full" style="width: 90%;">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Mix.</td>
+                                                    <td>'.$totalMixedBirds.'</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Male</td>
+                                                    <td>'.$totalMaleBirds.'</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Female</td>
+                                                    <td>'.$totalFemaleBirds.'</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Total Birds</td>
+                                                    <td>'.$totalBirds.'</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Avg. Bird Wt.</td>
+                                                    <td>'.number_format((float)$row['average_bird'], 2, '.', '').'</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td style="width: 30%;">
+                                        <table class="table-full" style="width: 90%;">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Loading Start</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>'.$row['start_time'].'</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Loading End</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>'.$row['end_time'].'</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>'.$time.'</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td> 
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p style="page-break-after: always;">&nbsp;</p>';
+                }
             }
         }
     }
-    else{
-        echo json_encode(
-            array(
-                "status" => "failed",
-                "message" => "Something went wrong"
-            )); 
-    }
+
+    $message .= '</body></html>';
+    echo $message;
+    echo '<script>
+        setTimeout(function(){
+            window.print();
+            window.close();
+        }, 1000);
+    </script>';
 }
 else{
     echo json_encode(

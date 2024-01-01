@@ -168,8 +168,20 @@ else{
         <div class="card card-primary">
           <div class="card-header">
             <div class="row">
-              <div class="col-9">Weighing Report</div>
-              <div class="col-3">
+              <div class="col-6">Weighing Report</div>
+              <div class="col-2">
+                <button type="button" class="btn btn-block bg-gradient-info btn-sm"  id="officeSearch">
+                  <i class="fas fa-newspaper"></i>
+                  Export Office Report
+                </button>
+              </div>
+              <div class="col-2">
+                <button type="button" class="btn btn-block bg-gradient-warning btn-sm"  id="farmSearch">
+                  <i class="fas fa-file"></i>
+                  Export Farm Report
+                </button>
+              </div>
+              <div class="col-2">
                 <button type="button" class="btn btn-block bg-gradient-success btn-sm"  id="excelSearch">
                   <i class="fas fa-file-excel"></i>
                   Export Excel
@@ -182,7 +194,7 @@ else{
             <table id="weightTable" class="table table-bordered table-striped display">
               <thead>
                 <tr>
-                  <th>No</th>
+                  <th></th>
                   <th>Serial No</th>
                   <th>Customer</th>
                   <th>Product</th>
@@ -206,7 +218,6 @@ $(function () {
   const today = new Date();
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(today.getDate() - 7);
-  
 
   var table = $("#weightTable").DataTable({
     "responsive": true,
@@ -228,7 +239,15 @@ $(function () {
       } 
     },
     'columns': [
-        { data: 'no' },
+        {
+          // Add a checkbox with a unique ID for each row
+          data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+          className: 'select-checkbox',
+          orderable: false,
+          render: function (data, type, row) {
+            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+          }
+        },
         { data: 'serial_no' },
         { data: 'customer' },
         { data: 'product' },
@@ -336,7 +355,15 @@ $(function () {
         }
       },
       'columns': [
-        { data: 'no' },
+        {
+          // Add a checkbox with a unique ID for each row
+          data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+          className: 'select-checkbox',
+          orderable: false,
+          render: function (data, type, row) {
+            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+          }
+        },
         { data: 'serial_no' },
         { data: 'customer' },
         { data: 'product' },
@@ -347,7 +374,7 @@ $(function () {
         {
           data: 'id',
           render: function (data, type, row) {
-            return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/print.php?userID=' + data + '\');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/printportrait.php?userID=' + data + '\'s);" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
+            return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/print.php?userID=' + data + '\');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/printportrait.php?userID=' + data + '\');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
           }
         }
       ],
@@ -401,6 +428,40 @@ $(function () {
     window.open("php/export.php?fromDate="+fromDateValue+"&toDate="+toDateValue+
     "&farm="+statusFilter+"&customer="+customerNoFilter);
 
+  });
+
+  $('#officeSearch').on('click', function(){
+    var selectedIds = []; // An array to store the selected 'id' values
+
+    $("#weightTable tbody input[type='checkbox']").each(function () {
+      if (this.checked) {
+        selectedIds.push($(this).val());
+      }
+    });
+
+    if (selectedIds.length > 0) {
+      window.open("php/printportrait.php?ids="+JSON.stringify(selectedIds));
+    } 
+    else {
+      alert("Please select at least one DO to update.");
+    }
+  });
+
+  $('#farmSearch').on('click', function(){
+    var selectedIds = []; // An array to store the selected 'id' values
+
+    $("#weightTable tbody input[type='checkbox']").each(function () {
+      if (this.checked) {
+        selectedIds.push($(this).val());
+      }
+    });
+
+    if (selectedIds.length > 0) {
+      window.open("php/print.php?ids="+JSON.stringify(selectedIds));
+    } 
+    else {
+      alert("Please select at least one DO to update.");
+    }
   });
 });
 
