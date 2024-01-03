@@ -26,6 +26,8 @@ if(isset($_POST['messageId'])){
                 $message['message_key_code'] = $row['message_key_code'];
                 $message['en'] = $row['en'];
                 $message['ch'] = $row['ch'];
+                $message['my'] = $row['my'];
+                $message['np'] = $row['np'];
             }
             
             echo json_encode(

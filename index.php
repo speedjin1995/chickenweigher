@@ -1,7 +1,5 @@
 <?php
-require_once 'php/db_connect.php';
-
-session_start();
+require_once 'php/languageSetting.php';
 
 if(!isset($_SESSION['userID'])){
   echo '<script type="text/javascript">';
@@ -15,11 +13,15 @@ else{
 	$result = $stmt->get_result();
   $role = 'NORMAL';
   $name = '';
+  $language = 'en';
 	
 	if(($row = $result->fetch_assoc()) !== null){
     $role = $row['role_code'];
     $name = $row['name'];
+    $language = $row['languages'];
   }
+
+  $_SESSION['language'] = $language;
 }
 ?>
 
@@ -321,7 +323,7 @@ to get the desired effect
             <img src="assets/user-avatar.png" class="img-circle elevation-2" alt="User Image">
           </div>
           <div class="info" style="white-space: nowrap;">
-            <p style="font-size:0.75rem; color:#E3E3E3; margin-bottom:0rem; color:#1888CA">Welcome</p>
+            <p style="font-size:0.75rem; color:#E3E3E3; margin-bottom:0rem; color:#1888CA"><?=$languageArray['welcome_tab'][$language] ?></p>
             <a href="#myprofile" data-file="myprofile.php" id="goToProfile" class="d-block"><?=$name ?></a>
           </div>
       </div>
@@ -334,19 +336,19 @@ to get the desired effect
           <li class="nav-item has-treeview menu-open">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>Weighing<i class="fas fa-angle-left right"></i></p>
+              <p><?=$languageArray['weighing_code'][$language] ?><i class="fas fa-angle-left right"></i></p>
             </a>
             <ul class="nav nav-treeview" style="display: block;">
               <li class="nav-item">
                 <a href="#weight" data-file="weightPage.php" class="nav-link link">
                   <i class="nav-icon fas fa-chart-pie"></i>
-                  <p>Weight Weighing</p>
+                  <p><?=$languageArray['weight_weighing_code'][$language] ?></p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="#billboard" data-file="billboard.php" class="nav-link link">
                   <i class="nav-icon fas fa-book"></i>
-                  <p>Weighing Report</p>
+                  <p><?=$languageArray['weighing_report_code'][$language] ?></p>
                 </a>
               </li>
             </ul>
@@ -356,55 +358,61 @@ to get the desired effect
                 echo '<li class="nav-item">
                 <a href="#users" data-file="users.php" class="nav-link link">
                   <i class="nav-icon fas fa-user"></i>
-                  <p>Staffs</p>
+                  <p>'.$languageArray['staff_code'][$language].'</p>
                 </a>
               </li>
               <li class="nav-item has-treeview">
                 <a href="#" class="nav-link">
                   <i class="nav-icon fas fa-database"></i>
-                  <p>Master Data<i class="fas fa-angle-left right"></i></p>
+                  <p>'.$languageArray['master_data_code'][$language].'<i class="fas fa-angle-left right"></i></p>
                 </a>
                 <ul class="nav nav-treeview" style="display: none;">
                   <li class="nav-item">
                     <a href="#customers" data-file="customers.php" class="nav-link link">
                       <i class="nav-icon fas fa-book"></i>
-                      <p>Customers</p>
+                      <p>'.$languageArray['customer_code'][$language].'</p>
                     </a>
                   </li>
                   <li class="nav-item">
                     <a href="#suppliers" data-file="suppliers.php" class="nav-link link">
                       <i class="nav-icon fas fa-book"></i>
-                      <p>Supplies</p>
+                      <p>'.$languageArray['supplier_code'][$language].'</p>
                     </a>
                   </li>
                   <li class="nav-item">
                     <a href="#products" data-file="products.php" class="nav-link link">
                       <i class="nav-icon fas fa-shopping-cart"></i>
-                      <p>Products</p>
+                      <p>'.$languageArray['product_code'][$language].'</p>
                     </a>
                   </li>
                   <li class="nav-item">
                     <a href="#vehicles" data-file="vehicles.php" class="nav-link link">
                       <i class="nav-icon fas fa-car"></i>
-                      <p>Vehicles</p>
+                      <p>'.$languageArray['vehicle_code'][$language].'</p>
                     </a>
                   </li>
                   <li class="nav-item">
                     <a href="#transporters" data-file="transport.php" class="nav-link link">
                       <i class="nav-icon fas fa-box"></i>
-                      <p>Transporters</p>
+                      <p>'.$languageArray['transporter_code'][$language].'</p>
                     </a>
                   </li>
                   <li class="nav-item">
                     <a href="#grades" data-file="grades.php" class="nav-link link">
                       <i class="nav-icon fas fa-balance-scale"></i>
-                      <p>Grades</p>
+                      <p>'.$languageArray['grade_code'][$language].'</p>
                     </a>
                   </li>
                   <li class="nav-item">
                     <a href="#farms" data-file="farms.php" class="nav-link link">
                       <i class="nav-icon fas fa-shopping-bag"></i>
-                      <p>Farms</p>
+                      <p>'.$languageArray['farm_code'][$language].'</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#message" data-file="message.php" class="nav-link link">
+                      <i class="nav-icon fas fa-comments"></i>
+                      <p>'.$languageArray['message_resource_code'][$language].'</p>
                     </a>
                   </li>
                 </ul>
@@ -421,7 +429,7 @@ to get the desired effect
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-cogs"></i>
-              <p>Settings<i class="fas fa-angle-left right"></i></p>
+              <p><?=$languageArray['setting_code'][$language] ?><i class="fas fa-angle-left right"></i></p>
             </a>
         
             <ul class="nav nav-treeview" style="display: none;">
@@ -430,7 +438,7 @@ to get the desired effect
                   echo '<li class="nav-item">
                   <a href="#company" data-file="company.php" class="nav-link link">
                     <i class="nav-icon fas fa-building"></i>
-                    <p>Company Profile</p>
+                    <p>'.$languageArray['company_profile_code'][$language].'</p>
                   </a>
                 </li>';
                 }
@@ -439,14 +447,14 @@ to get the desired effect
               <li class="nav-item">
                 <a href="#myprofile" data-file="myprofile.php" class="nav-link link">
                   <i class="nav-icon fas fa-id-badge"></i>
-                  <p>Profile</p>
+                  <p><?=$languageArray['profile_code'][$language] ?></p>
                 </a>
               </li>
           
               <li class="nav-item">
                 <a href="#changepassword" data-file="changePassword.php" class="nav-link link">
                   <i class="nav-icon fas fa-key"></i>
-                  <p>Change Password</p>
+                  <p><?=$languageArray['change_password'][$language] ?></p>
                 </a>
               </li>
             </ul>
@@ -454,7 +462,7 @@ to get the desired effect
           <li class="nav-item">
             <a href="php/logout.php" class="nav-link">
               <i class="nav-icon fas fa-sign-out-alt"></i>
-              <p>Logout</p>
+              <p><?=$languageArray['logout_code'][$language] ?></p>
             </a>
           </li>
         </ul>

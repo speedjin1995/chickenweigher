@@ -69,7 +69,7 @@ if(!isset($_SESSION['userID'])){
 <div class="modal fade" id="messageModal">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
-      <form role="form" id="messageForm" method="post" action="php/message.php">
+      <form role="form" id="messageForm">
           <div class="modal-header">
             <h4 class="modal-title">Message Resource Details</h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -86,12 +86,20 @@ if(!isset($_SESSION['userID'])){
             <input class="form-control" name="keyCode" id="keyCode" placeholder="Message Key Code" required>
           </div>
           <div class="form-group">
-            <label for="englishDecs">English Description</label>
-            <textarea class="form-control" name="englishDecs" id="englishDecs" rows="3" placeholder="English Description" required></textarea>
+            <label for="englishDecs">English</label>
+            <textarea class="form-control" name="englishDecs" id="englishDecs" rows="3" placeholder="English" required></textarea>
           </div>
           <div class="form-group">
-            <label for="chineseDecs">中文解释</label>
-            <textarea class="form-control" name="chineseDecs" id="chineseDecs" rows="3" placeholder="中文解释" required></textarea>
+            <label for="chineseDecs">中文</label>
+            <textarea class="form-control" name="chineseDecs" id="chineseDecs" rows="3" placeholder="中文" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="malayDecs">Bahasa Malaysia</label>
+            <textarea class="form-control" name="malayDecs" id="malayDecs" rows="3" placeholder="Bahasa" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="nepaliDecs">नेपाली</label>
+            <textarea class="form-control" name="nepaliDecs" id="nepaliDecs" rows="3" placeholder="नेपाली" required></textarea>
           </div>
         </div>
           </div>
@@ -109,12 +117,58 @@ if(!isset($_SESSION['userID'])){
 <script>
 $(function () {
     $("#messageTable").DataTable({
-      "responsive": true,
-      "autoWidth": false,
-      "paging": true,
-      "searching": true,
-      "ordering": true,
-      "info": true,
+        "responsive": true,
+        "autoWidth": false,
+        'processing': true,
+        'serverSide': true,
+        'serverMethod': 'post',
+        'order': [[ 1, 'asc' ]],
+        'columnDefs': [ { orderable: false, targets: [0] }],
+        'ajax': {
+            'url':'php/loadMessages.php'
+        },
+        'columns': [
+            { data: 'counter' },
+            { data: 'message_key_code' },
+            { data: 'en' },
+            { data: 'ch' },
+            { data: 'my' },
+            { data: 'np' },
+            { 
+              data: 'id',
+              render: function (data, type, row) {
+                return '<div class="row"><div class="col-3"><button type="button" id="edit' + row.id + '" onclick="edit(' + row.id + ')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="delete' + row.id + '" onclick="deletes(' + row.id + ')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
+              }
+            }
+        ],
+        "rowCallback": function( row, data, index ) {
+
+            $('td', row).css('background-color', '#E6E6FA');
+        },        
+    });
+
+    $.validator.setDefaults({
+        submitHandler: function () {
+            $('#spinnerLoading').show();
+            $.post('php/message.php', $('#messageForm').serialize(), function(data){
+                var obj = JSON.parse(data); 
+                
+                if(obj.status === 'success'){
+                    $('#messageModal').modal('hide');
+                    toastr["success"](obj.message, "Success:");
+                    $('#messageTable').DataTable().ajax.reload();
+                    $('#spinnerLoading').hide();
+                }
+                else if(obj.status === 'failed'){
+                    toastr["error"](obj.message, "Failed:");
+                    $('#spinnerLoading').hide();
+                }
+                else{
+                    toastr["error"]("Something wrong when edit", "Failed:");
+                    $('#spinnerLoading').hide();
+                }
+            });
+        }
     });
     
     $('#addMessage').on('click', function(){
@@ -122,19 +176,21 @@ $(function () {
         $('#messageModal').find('#keyCode').val('');
         $('#messageModal').find('#englishDecs').val('');
         $('#messageModal').find('#chineseDecs').val('');
+        $('#messageModal').find('#malayDecs').val('');
+        $('#messageModal').find('#nepaliDecs').val('');
         $('#messageModal').modal('show');
         
         $('#messageForm').validate({
             errorElement: 'span',
             errorPlacement: function (error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-group').append(error);
+              error.addClass('invalid-feedback');
+              element.closest('.form-group').append(error);
             },
             highlight: function (element, errorClass, validClass) {
-                $(element).addClass('is-invalid');
+              $(element).addClass('is-invalid');
             },
             unhighlight: function (element, errorClass, validClass) {
-                $(element).removeClass('is-invalid');
+              $(element).removeClass('is-invalid');
             }
         });
     });
@@ -149,20 +205,22 @@ function edit(id){
             $('#messageModal').find('#keyCode').val(decode.message.message_key_code);
             $('#messageModal').find('#englishDecs').val(decode.message.en);
             $('#messageModal').find('#chineseDecs').val(decode.message.ch);
+            $('#messageModal').find('#malayDecs').val(decode.message.my);
+            $('#messageModal').find('#nepaliDecs').val(decode.message.np);
             $('#messageModal').modal('show');
             
             $('#messageForm').validate({
-                errorElement: 'span',
-                errorPlacement: function (error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-group').append(error);
-                },
-                highlight: function (element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function (element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                }
+              errorElement: 'span',
+              errorPlacement: function (error, element) {
+                  error.addClass('invalid-feedback');
+                  element.closest('.form-group').append(error);
+              },
+              highlight: function (element, errorClass, validClass) {
+                  $(element).addClass('is-invalid');
+              },
+              unhighlight: function (element, errorClass, validClass) {
+                  $(element).removeClass('is-invalid');
+              }
             });
         }
     });
@@ -170,12 +228,21 @@ function edit(id){
 
 function deletes(id){
     $.post( "php/deletemessage.php", { messageId: id}, function( data ) {
-        var decode = JSON.parse(data)
-        
-        if(decode.status === 'success'){
-            alert(decode.message);
-            $('#delete' + id).parents('.message_row').remove();
-        }
+      var obj = JSON.parse(data);
+            
+      if(obj.status === 'success'){
+          toastr["success"](obj.message, "Success:");
+          $('#messageTable').DataTable().ajax.reload();
+          $('#spinnerLoading').hide();
+      }
+      else if(obj.status === 'failed'){
+          toastr["error"](obj.message, "Failed:");
+          $('#spinnerLoading').hide();
+      }
+      else{
+          toastr["error"]("Something wrong when activate", "Failed:");
+          $('#spinnerLoading').hide();
+      }
     });
 }
 </script>
