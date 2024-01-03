@@ -81,6 +81,8 @@ while($row = $result->fetch_assoc()){
                 );
             }
         }
+        
+        array_push($checking, $row['id']);
     }
     
     if(!in_array($row['id'], $checking)){
@@ -115,6 +117,8 @@ while($row = $result->fetch_assoc()){
                 'remark'=>$row['remark']
             );
         }
+        
+        array_push($checking, $row['id']);
     }
 }
 
