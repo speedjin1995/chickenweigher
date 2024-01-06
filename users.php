@@ -42,7 +42,7 @@ else{
                                 <input type="file" id="fileInput" accept=".xlsx, .xls" />
                             </div>
                             <div class="col-2">
-                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="importExcelbtn"><?=$languageArray['import_excel_code	'][$language] ?></button>
+                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="importExcelbtn"><?=$languageArray['import_excel_code'][$language] ?></button>
                             </div>                            
                             <div class="col-3">
                                 <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addMembers"><?=$languageArray['add_members'][$language] ?></button>

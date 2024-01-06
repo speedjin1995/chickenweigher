@@ -37,6 +37,9 @@ if ($data !== null) {
                     "message"=> $insert_stmt->error
                 )
             );
+
+            $insert_stmt->close();
+            $db->close();
         }
         else{
             $insert_stmt->close();
