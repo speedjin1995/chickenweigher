@@ -608,9 +608,9 @@ if(isset($_GET['userID'])){
                                         <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.number_format($totalGross - $totalCrate, 1, '.', '').'</td>
                                     </tr>
                                 </tbody>
-                            </table>';
+                            </table><br>
 
-                            /*<table class="table">
+                            <table class="table">
                                 <tbody>
                                     <tr>
                                         <th style="width: 20%;border-top:0px;padding: 0 0.7rem;"></th>
@@ -634,7 +634,7 @@ if(isset($_GET['userID'])){
                                         <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalBirds.'</td>
                                     </tr>
                                 </tbody>
-                            </table>*/
+                            </table>';
                             $message .= '</td>
                         <td style="width: 50%;border-top:0px;">
                             <p><b>SUMMARY - BY HOUSE</b></p>

@@ -1,14 +1,13 @@
 <?php
-require_once 'php/db_connect.php';
-
-session_start();
+require_once 'php/languageSetting.php';
 
 if(!isset($_SESSION['userID'])){
   echo '<script type="text/javascript">';
   echo 'window.location.href = "login.html";</script>';
 }
 else{
-  $user = $_SESSION['userID'];
+    $language = $_SESSION['language'];
+    $user = $_SESSION['userID'];
 }
 ?>
 
@@ -16,7 +15,7 @@ else{
     <div class="container-fluid">
         <div class="row mb-2">
 			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">Grades</h1>
+				<h1 class="m-0 text-dark"><?=$languageArray['grade_code'][$language] ?></h1>
 			</div><!-- /.col -->
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -33,7 +32,7 @@ else{
                         <div class="row">
                             <div class="col-9"></div>
                             <div class="col-3">
-                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addUnits">Add Grades</button>
+                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addUnits"><?=$languageArray['add_grade_code'][$language] ?></button>
                             </div>
                         </div>
                     </div>
@@ -59,7 +58,7 @@ else{
       <div class="modal-content">
         <form role="form" id="unitForm">
             <div class="modal-header">
-              <h4 class="modal-title">Add Grades</h4>
+              <h4 class="modal-title"><?=$languageArray['add_grade_code'][$language] ?></h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -70,14 +69,14 @@ else{
     					<input type="hidden" class="form-control" id="id" name="id">
     				</div>
     				<div class="form-group">
-    					<label for="units">Grades *</label>
+    					<label for="units"><?=$languageArray['grade_code'][$language] ?> *</label>
     					<input type="text" class="form-control" name="units" id="units" placeholder="Enter Grades" required>
     				</div>
     			</div>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary" name="submit" id="submitLot">Submit</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal"><?=$languageArray['close_code'][$language] ?></button>
+              <button type="submit" class="btn btn-primary" name="submit" id="submitLot"><?=$languageArray['save_code'][$language] ?></button>
             </div>
         </form>
       </div>

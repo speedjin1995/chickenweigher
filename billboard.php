@@ -1,7 +1,5 @@
 <?php
-require_once 'php/db_connect.php';
-
-session_start();
+require_once 'php/languageSetting.php';
 
 if(!isset($_SESSION['userID'])){
   echo '<script type="text/javascript">';
@@ -9,6 +7,7 @@ if(!isset($_SESSION['userID'])){
 }
 else{
   $user = $_SESSION['userID'];
+  $language = $_SESSION['language'];
   $stmt = $db->prepare("SELECT * from users where id = ?");
 	$stmt->bind_param('s', $user);
 	$stmt->execute();
@@ -35,7 +34,7 @@ else{
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark">Weighing Report</h1>
+        <h1 class="m-0 text-dark"><?=$languageArray['weighing_report_code'][$language] ?></h1>
       </div><!-- /.col -->
     </div><!-- /.row -->
   </div><!-- /.container-fluid -->
@@ -51,7 +50,7 @@ else{
           <div class="card-body">
             <div class="row">
               <div class="form-group col-3">
-                <label>From Date:</label>
+                <label><?=$languageArray['from_date_code'][$language] ?>:</label>
                 <div class="input-group date" id="fromDatePicker" data-target-input="nearest">
                   <input type="text" class="form-control datetimepicker-input" data-target="#fromDatePicker" id="fromDate"/>
                   <div class="input-group-append" data-target="#fromDatePicker" data-toggle="datetimepicker">
@@ -60,7 +59,7 @@ else{
               </div>
 
               <div class="form-group col-3">
-                <label>To Date:</label>
+                <label><?=$languageArray['to_date_code'][$language] ?>:</label>
                 <div class="input-group date" id="toDatePicker" data-target-input="nearest">
                   <input type="text" class="form-control datetimepicker-input" data-target="#toDatePicker" id="toDate"/>
                   <div class="input-group-append" data-target="#toDatePicker" data-toggle="datetimepicker">
@@ -71,7 +70,7 @@ else{
 
               <div class="col-3">
                 <div class="form-group">
-                  <label>Farm</label>
+                  <label><?=$languageArray['farm_code'][$language] ?></label>
                   <select class="form-control" id="farmFilter" name="farmFilter" style="width: 100%;">
                     <option selected="selected">-</option>
                     <?php while($rowStatus=mysqli_fetch_assoc($packages)){ ?>
@@ -83,7 +82,7 @@ else{
 
               <div class="col-3">
                 <div class="form-group">
-                  <label>Customer No</label>
+                  <label><?=$languageArray['customer_code'][$language] ?></label>
                   <select class="form-control" style="width: 100%;" id="customerFilter" name="customerFilter" style="display: none;">
                     <option selected="selected">-</option>
                     <?php while($rowCustomer=mysqli_fetch_assoc($customers)){ ?>
@@ -116,7 +115,7 @@ else{
               <div class="col-3">
                 <button type="button" class="btn btn-block bg-gradient-warning btn-sm"  id="filterSearch">
                   <i class="fas fa-search"></i>
-                  Search
+                  <?=$languageArray['search_code'][$language] ?>
                 </button>
               </div>
             </div>
@@ -168,23 +167,23 @@ else{
         <div class="card card-primary">
           <div class="card-header">
             <div class="row">
-              <div class="col-6">Weighing Report</div>
+              <div class="col-6"><?=$languageArray['weighing_report_code'][$language] ?></div>
               <div class="col-2">
                 <button type="button" class="btn btn-block bg-gradient-info btn-sm"  id="officeSearch">
                   <i class="fas fa-newspaper"></i>
-                  Export Office Report
+                  <?=$languageArray['export_office_report_code'][$language] ?>
                 </button>
               </div>
               <div class="col-2">
                 <button type="button" class="btn btn-block bg-gradient-warning btn-sm"  id="farmSearch">
                   <i class="fas fa-file"></i>
-                  Export Farm Report
+                  <?=$languageArray['export_farm_report_code'][$language] ?>
                 </button>
               </div>
               <div class="col-2">
                 <button type="button" class="btn btn-block bg-gradient-success btn-sm"  id="excelSearch">
                   <i class="fas fa-file-excel"></i>
-                  Export Excel
+                  <?=$languageArray['export_excels_code'][$language] ?>
                 </button>
               </div>
             </div>

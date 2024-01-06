@@ -1,7 +1,5 @@
 <?php
-require_once 'php/db_connect.php';
-
-session_start();
+require_once 'php/languageSetting.php';
 
 if(!isset($_SESSION['userID'])){
   echo '<script type="text/javascript">';
@@ -9,6 +7,7 @@ if(!isset($_SESSION['userID'])){
 }
 else{
   $user = $_SESSION['userID'];
+  $language = $_SESSION['language'];
   $stmt = $db->prepare("SELECT * from users where id = ?");
 	$stmt->bind_param('s', $user);
 	$stmt->execute();
@@ -41,7 +40,7 @@ else{
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark">Weight Weighing</h1>
+        <h1 class="m-0 text-dark"><?=$languageArray['weight_weighing_code'][$language] ?></h1>
       </div><!-- /.col -->
     </div><!-- /.row -->
   </div><!-- /.container-fluid -->
@@ -57,7 +56,7 @@ else{
           <div class="card-body">
             <div class="row">
               <div class="form-group col-3">
-                <label>From Date:</label>
+                <label><?=$languageArray['from_date_code'][$language] ?>:</label>
                 <div class="input-group date" id="fromDatePicker" data-target-input="nearest">
                   <input type="text" class="form-control datetimepicker-input" data-target="#fromDatePicker" id="fromDate"/>
                   <div class="input-group-append" data-target="#fromDatePicker" data-toggle="datetimepicker">
@@ -66,7 +65,7 @@ else{
               </div>
 
               <div class="form-group col-3">
-                <label>To Date:</label>
+                <label><?=$languageArray['to_date_code'][$language] ?>:</label>
                 <div class="input-group date" id="toDatePicker" data-target-input="nearest">
                   <input type="text" class="form-control datetimepicker-input" data-target="#toDatePicker" id="toDate"/>
                   <div class="input-group-append" data-target="#toDatePicker" data-toggle="datetimepicker">
@@ -77,7 +76,7 @@ else{
 
               <div class="col-3">
                 <div class="form-group">
-                  <label>Farm</label>
+                  <label><?=$languageArray['farm_code'][$language] ?></label>
                   <select class="form-control" id="farmFilter" name="farmFilter" style="width: 100%;">
                     <option selected="selected">-</option>
                     <?php while($rowStatus2=mysqli_fetch_assoc($farms2)){ ?>
@@ -89,7 +88,7 @@ else{
 
               <div class="col-3">
                 <div class="form-group">
-                  <label>Customer No</label>
+                  <label><?=$languageArray['customer_code'][$language] ?></label>
                   <select class="form-control" style="width: 100%;" id="customerFilter" name="customerFilter" style="display: none;">
                     <option selected="selected">-</option>
                     <?php while($rowCustomer2=mysqli_fetch_assoc($customers2)){ ?>
@@ -105,7 +104,7 @@ else{
               <div class="col-3">
                 <button type="button" class="btn btn-block bg-gradient-warning btn-sm"  id="filterSearch">
                   <i class="fas fa-search"></i>
-                  Search
+                  <?=$languageArray['search_code'][$language] ?>
                 </button>
               </div>
             </div>
@@ -122,15 +121,15 @@ else{
               <?php 
                 if($role == "ADMIN" || $role == "MANAGER"){
                   echo '<div class="col-3">
-                  <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="refreshBtn">Refresh</button>
+                  <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="refreshBtn">'.$languageArray['refresh_code'][$language].'</button>
                 </div>
                 <div class="col-3">
-                  <button type="button" class="btn btn-block bg-gradient-warning btn-sm" onclick="newEntry()">Add New Weight</button>
+                  <button type="button" class="btn btn-block bg-gradient-warning btn-sm" onclick="newEntry()">'.$languageArray['add_new_weight_code'][$language].'</button>
                 </div>';
                 }
                 else{
                   echo '<div class="col-3"></div><div class="col-3">
-                  <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="refreshBtn">Refresh</button>
+                  <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="refreshBtn">'.$languageArray['refresh_code'][$language].'</button>
                 </div>
                 ';
                 }
@@ -167,7 +166,7 @@ else{
     <div class="modal-content">
       <form role="form" id="extendForm">
         <div class="modal-header bg-gray-dark color-palette">
-          <h4 class="modal-title">Add New Jobs</h4>
+          <h4 class="modal-title"><?=$languageArray['add_new_job_code'][$language] ?></h4>
           <button type="button" class="close bg-gray-dark color-palette" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -182,7 +181,7 @@ else{
             </div>
             <div class="col-4">
               <div class="form-group">
-                <label class="labelStatus">Customer No *</label>
+                <label class="labelStatus"><?=$languageArray['customer_code'][$language] ?> *</label>
                 <select class="form-control select2" style="width: 100%;" id="customerNo" name="customerNo" required>
                   <option value="" selected disabled hidden>Please Select</option>
                   <?php while($rowCustomer=mysqli_fetch_assoc($customers)){ ?>
@@ -193,7 +192,7 @@ else{
             </div>
             <div class="col-4">
               <div class="form-group">
-                <label>Product *</label>
+                <label><?=$languageArray['product_code'][$language] ?> *</label>
                 <select class="form-control select2" style="width: 100%;" id="product" name="product" required>
                   <option selected="selected">-</option>
                   <?php while($row5=mysqli_fetch_assoc($products)){ ?>
@@ -204,7 +203,7 @@ else{
             </div>
             <div class="col-4">
               <div class="form-group">
-                <label class="vehicleNo">Vehicle No</label>
+                <label class="vehicleNo"><?=$languageArray['vehicle_no_code'][$language] ?></label>
                 <select class="form-control select2" id="vehicleNo" name="vehicleNo">
                   <option selected="selected">-</option>
                   <?php while($row2=mysqli_fetch_assoc($vehicles)){ ?>
@@ -214,7 +213,7 @@ else{
               </div>
             </div>
             <div class="form-group col-4">
-              <label>Driver</label>
+              <label><?=$languageArray['driver_code'][$language] ?></label>
               <select class="form-control select2" style="width: 100%;" id="driver" name="driver">
                   <option selected="selected">-</option>
                   <?php while($row5=mysqli_fetch_assoc($transporters)){ ?>
@@ -224,7 +223,7 @@ else{
             </div>
             <div class="col-4">
               <div class="form-group">
-                <label>Farm *</label>
+                <label><?=$languageArray['farm_code'][$language] ?> *</label>
                 <select class="form-control select2" style="width: 100%;" id="farm" name="farm" required>
                   <option selected="selected">-</option>
                   <?php while($row6=mysqli_fetch_assoc($farms)){ ?>
@@ -234,7 +233,7 @@ else{
               </div>
             </div>
             <div class="form-group col-4">
-              <label>Average Bird Weight</label>
+              <label><?=$languageArray['avg_bird_weight_code'][$language] ?></label>
               <input class="form-control" type="number" placeholder="Average Bird Weight" id="aveBird" name="aveBird">
             </div>
             <!--div class="form-group col-4">
@@ -242,24 +241,24 @@ else{
               <input class="form-control" type="number" placeholder="Average Cage Weight" id="aveCage" name="aveCage">
             </div-->
             <div class="form-group col-4">
-              <label>Min Avg. Weight </label>
+              <label><?=$languageArray['min_average_weight_code'][$language] ?> </label>
               <input class="form-control" type="number" placeholder="Min Weight" id="minWeight" name="minWeight">
             </div>
             <div class="form-group col-4">
-              <label>Max Avg. Weight </label>
+              <label><?=$languageArray['max_average_weight_code'][$language] ?> </label>
               <input class="form-control" type="number" placeholder="Max Weight" id="maxWeight" name="maxWeight">
             </div>
             <div class="form-group col-4">
-              <label>Min Crate </label>
+              <label><?=$languageArray['min_crate_code'][$language] ?> </label>
               <input class="form-control" type="number" placeholder="Min Crate" id="minCrate" name="minCrate">
             </div>
             <div class="form-group col-4">
-              <label>Max Crate </label>
+              <label><?=$languageArray['max_crate_code'][$language] ?> </label>
               <input class="form-control" type="number" placeholder="Max Crate" id="maxCrate" name="maxCrate">
             </div>
             <div class="col-4">
               <div class="form-group">
-                <label>Assigned To</label>
+                <label><?=$languageArray['assigned_to_code'][$language] ?></label>
                 <select class="select2" style="width: 100%;" id="assignTo" name="assignTo[]" multiple="multiple"> 
                   <?php while($rowusers=mysqli_fetch_assoc($users)){ ?>
                     <option value="<?=$rowusers['id'] ?>"><?=$rowusers['name'] ?></option>
@@ -269,15 +268,15 @@ else{
             </div>
             <div class="col-12">
               <div class="form-group">
-                <label>Remark</label>
+                <label><?=$languageArray['remark_code'][$language] ?></label>
                 <textarea class="form-control" rows="1" placeholder="Enter ..." id="remark" name="remark"></textarea>
               </div>
             </div>
           </div>
         </div>
         <div class="modal-footer justify-content-between bg-gray-dark color-palette">
-          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary" id="saveButton">Save changes</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal"><?=$languageArray['close_code'][$language] ?></button>
+          <button type="submit" class="btn btn-primary" id="saveButton"><?=$languageArray['save_code'][$language] ?></button>
         </div>
       </form>
     </div>

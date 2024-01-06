@@ -1,14 +1,13 @@
 <?php
-require_once 'php/db_connect.php';
-
-session_start();
+require_once 'php/languageSetting.php';
 
 if(!isset($_SESSION['userID'])){
-  echo '<script type="text/javascript">';
-  echo 'window.location.href = "login.html";</script>';
+    echo '<script type="text/javascript">';
+    echo 'window.location.href = "login.html";</script>';
 }
 else{
-  $user = $_SESSION['userID'];
+    $language = $_SESSION['language'];
+    $user = $_SESSION['userID'];
 }
 ?>
 
@@ -16,7 +15,7 @@ else{
     <div class="container-fluid">
         <div class="row mb-2">
 			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">Products</h1>
+				<h1 class="m-0 text-dark"><?=$languageArray['product_code'][$language] ?></h1>
 			</div><!-- /.col -->
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -36,10 +35,10 @@ else{
                                 <input type="file" id="fileInput" accept=".xlsx, .xls" />
                             </div>
                             <div class="col-2">
-                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="importExcelbtn">Import Excel</button>
+                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="importExcelbtn"><?=$languageArray['import_excel_code'][$language] ?></button>
                             </div>                            
                             <div class="col-3">
-                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addProducts">Add Products</button>
+                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addProducts"><?=$languageArray['add_products_code'][$language] ?></button>
                             </div>
                         </div>
                     </div>
@@ -66,7 +65,7 @@ else{
       <div class="modal-content">
         <form role="form" id="productForm">
             <div class="modal-header">
-              <h4 class="modal-title">Add Products</h4>
+              <h4 class="modal-title"><?=$languageArray['add_products_code'][$language] ?></h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -77,22 +76,22 @@ else{
                   <input type="hidden" class="form-control" id="id" name="id">
                 </div>
                 <div class="form-group">
-                  <label for="code">Product Code *</label>
+                  <label for="code"><?=$languageArray['product_code_code'][$language] ?> *</label>
                   <input type="text" class="form-control" name="code" id="code" placeholder="Enter Product Code" maxlength="10" required>
                 </div>
                 <div class="form-group">
-                  <label for="product">Chicken Description *</label>
+                  <label for="product"><?=$languageArray['product_code'][$language] ?> *</label>
                   <input type="text" class="form-control" name="product" id="product" placeholder="Enter Product Name" required>
                 </div>
                 <div class="form-group"> 
-                  <label for="remark">Remark </label>
+                  <label for="remark"><?=$languageArray['description_code'][$language] ?> </label>
                   <textarea class="form-control" id="remark" name="remark" placeholder="Enter your remark"></textarea>
                 </div>
               </div>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary" name="submit" id="submitMember">Submit</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal"><?=$languageArray['close_code'][$language] ?></button>
+              <button type="submit" class="btn btn-primary" name="submit" id="submitMember"><?=$languageArray['save_code'][$language] ?></button>
             </div>
         </form>
       </div>
@@ -204,7 +203,6 @@ $(function () {
                 contentType: 'application/json',
                 data: JSON.stringify(row),
                 success: function(response) {
-                    debugger;
                     var obj = JSON.parse(response); 
                     
                     if(obj.status === 'success'){

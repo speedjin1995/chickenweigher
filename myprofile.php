@@ -1,7 +1,5 @@
 <?php
-require_once 'php/db_connect.php';
-
-session_start();
+require_once 'php/languageSetting.php';
 
 if(!isset($_SESSION['userID'])){
     echo '<script type="text/javascript">';
@@ -15,7 +13,7 @@ else{
 	$result = $stmt->get_result();
     $fullName = '';
     $userName = '';
-    $language = 'en';
+    $language = $_SESSION['language'];
 	
 	if(($row = $result->fetch_assoc()) !== null){
         $fullName = $row['name'];
@@ -29,7 +27,7 @@ else{
 	<div class="container-fluid">
 		<div class="row mb-2">
 			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">My Profile</h1>
+				<h1 class="m-0 text-dark"><?=$languageArray['profile_code'][$language] ?></h1>
 			</div>
 		</div>
 	</div>
@@ -40,15 +38,15 @@ else{
 		<form role="form" id="profileForm" novalidate="novalidate">
 			<div class="card-body">
 				<div class="form-group">
-					<label for="name">Full Name *</label>
+					<label for="name"><?=$languageArray['name_code'][$language] ?> *</label>
 					<input type="text" class="form-control" id="userName" name="userName" value="<?=$fullName ?>" placeholder="Enter Full Name" required="">
 				</div>
 				<div class="form-group">
-					<label for="name">Username *</label>
+					<label for="name"><?=$languageArray['username_code'][$language] ?> *</label>
 					<input type="text" class="form-control" id="userEmail" name="userEmail" value="<?=$userName ?>" placeholder="Enter Username" readonly="">
 				</div>
                 <div class="form-group">
-                    <label>Language *</label>
+                    <label><?=$languageArray['language_code'][$language] ?> *</label>
                     <select class="form-control" style="width: 100%;" id="language" name="language" required>
                         <option value="en" <?= ($language == 'en') ? 'selected' : '' ?>>English</option>
                         <option value="ch" <?= ($language == 'ch') ? 'selected' : '' ?>>Chinese</option>
@@ -59,7 +57,7 @@ else{
 			</div>
 			
 			<div class="card-footer">
-				<button class="btn btn-success" id="saveProfile"><i class="fas fa-save"></i> Save</button>
+				<button class="btn btn-success" id="saveProfile"><i class="fas fa-save"></i> <?=$languageArray['save_code'][$language] ?></button>
 			</div>
 		</form>
 	</div>

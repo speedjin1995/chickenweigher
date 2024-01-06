@@ -1,7 +1,5 @@
 <?php
-require_once 'php/db_connect.php';
-
-session_start();
+require_once 'php/languageSetting.php';
 
 if(!isset($_SESSION['userID'])){
     echo '<script type="text/javascript">';
@@ -11,6 +9,7 @@ else{
     /*$stmt = $db->prepare("SELECT users.id, users.name, users.email, users.joined_date, users.expired_date, users.status, roles.role_name from users, roles WHERE users.role_code = roles.role_code");
     $stmt->execute();
     $result = $stmt->get_result();*/
+    $language = $_SESSION['language'];
     
     $stmt2 = $db->prepare("SELECT * FROM roles");
     $stmt2->execute();
@@ -23,7 +22,7 @@ else{
     <div class="container-fluid">
         <div class="row mb-2">
 			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">Members</h1>
+				<h1 class="m-0 text-dark"><?=$languageArray['staff_code'][$language] ?></h1>
 			</div><!-- /.col -->
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -43,10 +42,10 @@ else{
                                 <input type="file" id="fileInput" accept=".xlsx, .xls" />
                             </div>
                             <div class="col-2">
-                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="importExcelbtn">Import Excel</button>
+                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="importExcelbtn"><?=$languageArray['import_excel_code	'][$language] ?></button>
                             </div>                            
                             <div class="col-3">
-                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addMembers">Add Members</button>
+                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addMembers"><?=$languageArray['add_members'][$language] ?></button>
                             </div>
                         </div>
                     </div>
@@ -74,7 +73,7 @@ else{
       <div class="modal-content">
         <form role="form" id="memberForm">
             <div class="modal-header">
-              <h4 class="modal-title">Add Members</h4>
+              <h4 class="modal-title"><?=$languageArray['add_members'][$language] ?></h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -85,15 +84,15 @@ else{
     					<input type="hidden" class="form-control" id="id" name="id">
     				</div>
     				<div class="form-group">
-    					<label for="username">Username *</label>
+    					<label for="username"><?=$languageArray['username_code'][$language] ?> *</label>
     					<input type="text" class="form-control" name="username" id="username" placeholder="Enter Username" required>
     				</div>
                     <div class="form-group">
-    					<label for="name">Name *</label>
+    					<label for="name"><?=$languageArray['name_code'][$language] ?> *</label>
     					<input type="text" class="form-control" name="name" id="name" placeholder="Enter Full Name" required>
     				</div>
                     <div class="form-group">
-						<label>Role *</label>
+						<label><?=$languageArray['role_code'][$language] ?> *</label>
 						<select class="form-control" id="userRole" name="userRole" required>
 						    <option select="selected" value="">Please Select</option>
 						    <?php while($row2 = $result2->fetch_assoc()){ ?>
@@ -102,7 +101,7 @@ else{
 						</select>
 					</div>
                     <div class="form-group">
-						<label>Farm</label>
+						<label><?=$languageArray['farm_code'][$language] ?></label>
 						<select class="select2" id="farm" name="farm[]" multiple="multiple">
 						    <?php while($rowCustomer2=mysqli_fetch_assoc($farms)){ ?>
     							<option value="<?= $rowCustomer2['id'] ?>"><?= $rowCustomer2['name'] ?></option>
@@ -112,8 +111,8 @@ else{
     			</div>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary" name="submit" id="submitMember">Submit</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal"><?=$languageArray['close_code'][$language] ?></button>
+              <button type="submit" class="btn btn-primary" name="submit" id="submitMember"><?=$languageArray['save_code'][$language] ?></button>
             </div>
         </form>
       </div>
@@ -229,7 +228,6 @@ $(function () {
                 contentType: 'application/json',
                 data: JSON.stringify(row),
                 success: function(response) {
-                    debugger;
                     var obj = JSON.parse(response); 
                     
                     if(obj.status === 'success'){

@@ -1,13 +1,12 @@
 <?php
-require_once 'php/db_connect.php';
-
-session_start();
+require_once 'php/languageSetting.php';
 
 if(!isset($_SESSION['userID'])){
   echo '<script type="text/javascript">';
   echo 'window.location.href = "login.html";</script>';
 }
 else{
+  $language = $_SESSION['language'];
   $user = $_SESSION['userID'];
   $suppliers = $db->query("SELECT * FROM supplies WHERE deleted = '0'");
   $states = $db->query("SELECT * FROM states");
@@ -17,7 +16,7 @@ else{
     <div class="container-fluid">
         <div class="row mb-2">
 			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">Farms</h1>
+				<h1 class="m-0 text-dark"><?=$languageArray['farm_code'][$language] ?></h1>
 			</div><!-- /.col -->
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -31,19 +30,19 @@ else{
 			<div class="col-12">
 				<div class="card">
 					<div class="card-header">
-                        <div class="row">
-                          <div class="col-5"></div>
-                            <div class="col-2">
-                                <input type="file" id="fileInput" accept=".xlsx, .xls" />
-                            </div>
-                            <div class="col-2">
-                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="importExcelbtn">Import Excel</button>
-                            </div>                            
-                            <div class="col-3">
-                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addPackages">Add Packages</button>
-                            </div>
-                        </div>
-                    </div>
+            <div class="row">
+              <div class="col-5"></div>
+                <div class="col-2">
+                    <input type="file" id="fileInput" accept=".xlsx, .xls" />
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="importExcelbtn"><?=$languageArray['import_excel_code'][$language] ?></button>
+                </div>                            
+                <div class="col-3">
+                    <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addPackages"><?=$languageArray['add_farms_code'][$language] ?></button>
+                </div>
+            </div>
+          </div>
 					<div class="card-body">
 						<table id="packageTable" class="table table-bordered table-striped">
 							<thead>
@@ -68,7 +67,7 @@ else{
       <div class="modal-content">
         <form role="form" id="packageForm">
             <div class="modal-header">
-              <h4 class="modal-title">Add Lots</h4>
+              <h4 class="modal-title"><?=$languageArray['add_farms_code'][$language] ?></h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -79,31 +78,31 @@ else{
                   <input type="hidden" class="form-control" id="id" name="id">
                 </div>
                 <div class="form-group">
-                  <label for="code">Farm Code *</label>
+                  <label for="code"><?=$languageArray['farm_code_code'][$language] ?> *</label>
                   <input type="text" class="form-control" name="code" id="code" placeholder="Enter Product Code" maxlength="10" required>
                 </div>
                 <div class="form-group">
-                  <label for="packages">Farm Name *</label>
+                  <label for="packages"><?=$languageArray['farm_code'][$language] ?>*</label>
                   <input type="text" class="form-control" name="packages" id="packages" placeholder="Enter Packages Number" required>
                 </div>
                 <div class="form-group"> 
-                  <label for="address">Address *</label>
+                  <label for="address"><?=$languageArray['address_code'][$language] ?> *</label>
                   <input type="text" class="form-control" name="address" id="address" placeholder="Enter  Address" required>
                 </div>
                 <div class="form-group"> 
-                  <label for="address">Address 2</label>
+                  <label for="address"><?=$languageArray['address_code'][$language] ?> 2</label>
                   <input type="text" class="form-control" name="address2" id="address2" placeholder="Enter  Address">
                 </div>
                 <div class="form-group"> 
-                  <label for="address">Address 3</label>
+                  <label for="address"><?=$languageArray['address_code'][$language] ?> 3</label>
                   <input type="text" class="form-control" name="address3" id="address3" placeholder="Enter  Address">
                 </div>
                 <div class="form-group"> 
-                  <label for="address">Address 4</label>
+                  <label for="address"><?=$languageArray['address_code'][$language] ?> 4</label>
                   <input type="text" class="form-control" name="address4" id="address4" placeholder="Enter  Address">
                 </div>
                 <div class="form-group">
-                  <label>States *</label>
+                  <label><?=$languageArray['states_code'][$language] ?> *</label>
                   <select class="form-control" style="width: 100%;" id="states" name="states" required>
                     <?php while($rowCustomer2=mysqli_fetch_assoc($states)){ ?>
                       <option value="<?=$rowCustomer2['id'] ?>"><?=$rowCustomer2['states'] ?></option>
@@ -111,7 +110,7 @@ else{
                   </select>
                 </div>
                 <div class="form-group">
-                  <label>Supplier No</label>
+                  <label><?=$languageArray['supplier_code'][$language] ?></label>
                   <select class="form-control" style="width: 100%;" id="supplier" name="supplier">
                     <option selected="selected">-</option>
                     <?php while($rowCustomer2=mysqli_fetch_assoc($suppliers)){ ?>
@@ -122,8 +121,8 @@ else{
               </div>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary" name="submit" id="submitLot">Submit</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal"><?=$languageArray['close_code'][$language] ?></button>
+              <button type="submit" class="btn btn-primary" name="submit" id="submitLot"><?=$languageArray['save_code'][$language] ?></button>
             </div>
         </form>
       </div>
@@ -243,7 +242,6 @@ $(function () {
                 contentType: 'application/json',
                 data: JSON.stringify(row),
                 success: function(response) {
-                    debugger;
                     var obj = JSON.parse(response); 
                     
                     if(obj.status === 'success'){

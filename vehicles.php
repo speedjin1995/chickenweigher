@@ -1,15 +1,14 @@
 <?php
-require_once 'php/db_connect.php';
-
-session_start();
+require_once 'php/languageSetting.php';
 
 if(!isset($_SESSION['userID'])){
   echo '<script type="text/javascript">';
   echo 'window.location.href = "login.html";</script>';
 }
 else{
-  $user = $_SESSION['userID'];
-  $transporters = $db->query("SELECT * FROM transporters WHERE deleted = '0'");
+    $language = $_SESSION['language'];
+    $user = $_SESSION['userID'];
+    $transporters = $db->query("SELECT * FROM transporters WHERE deleted = '0'");
 }
 ?>
 
@@ -17,7 +16,7 @@ else{
     <div class="container-fluid">
         <div class="row mb-2">
 			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">Vehicles</h1>
+				<h1 class="m-0 text-dark"><?=$languageArray['vehicle_code'][$language] ?></h1>
 			</div><!-- /.col -->
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -37,10 +36,10 @@ else{
                                 <input type="file" id="fileInput" accept=".xlsx, .xls" />
                             </div>
                             <div class="col-2">
-                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="importExcelbtn">Import Excel</button>
+                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="importExcelbtn"><?=$languageArray['import_excel_code'][$language] ?></button>
                             </div>                            
                             <div class="col-3">
-                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addVehicles">Add Vehicles</button>
+                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addVehicles"><?=$languageArray['add_vehicle_code'][$language] ?></button>
                             </div>
                         </div>
                     </div>
@@ -69,7 +68,7 @@ else{
       <div class="modal-content">
         <form role="form" id="vehicleForm">
             <div class="modal-header">
-              <h4 class="modal-title">Add Vehicles</h4>
+              <h4 class="modal-title"><?=$languageArray['add_vehicle_code'][$language] ?></h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -80,11 +79,11 @@ else{
     					<input type="hidden" class="form-control" id="id" name="id">
     				</div>
     				<div class="form-group">
-    					<label for="vehicleNumber">Vehicles No. *</label>
+    					<label for="vehicleNumber"><?=$languageArray['vehicle_no_code'][$language] ?> *</label>
     					<input type="type" class="form-control" name="vehicleNumber" id="vehicleNumber" placeholder="Enter Vehicle Number" required>
     				</div>
                     <div class="form-group">
-                        <label>Driver *</label>
+                        <label><?=$languageArray['driver_code'][$language] ?> *</label>
                         <select class="form-control select2" style="width: 100%;" id="driver" name="driver" required>
                             <option selected="selected">-</option>
                             <?php while($rowCustomer2=mysqli_fetch_assoc($transporters)){ ?>
@@ -93,18 +92,18 @@ else{
                         </select>
                     </div>
                     <div class="form-group">
-    					<label for="attendance1">Attendance 1</label>
+    					<label for="attendance1"><?=$languageArray['attendence_code'][$language] ?> 1</label>
     					<input type="type" class="form-control" name="attendance1" id="attendance1" placeholder="Enter Attendance 1">
     				</div>
                     <div class="form-group">
-    					<label for="attendance2">Attendance 2</label>
+    					<label for="attendance2"><?=$languageArray['attendence_code'][$language] ?> 2</label>
     					<input type="type" class="form-control" name="attendance2" id="attendance2" placeholder="Enter Attendance 2">
     				</div>
     			</div>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary" name="submit" id="submitVehicle">Submit</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal"><?=$languageArray['close_code'][$language] ?></button>
+              <button type="submit" class="btn btn-primary" name="submit" id="submitVehicle"><?=$languageArray['save_code'][$language] ?></button>
             </div>
         </form>
       </div>
@@ -223,7 +222,6 @@ $(function () {
                 contentType: 'application/json',
                 data: JSON.stringify(row),
                 success: function(response) {
-                    debugger;
                     var obj = JSON.parse(response); 
                     
                     if(obj.status === 'success'){
