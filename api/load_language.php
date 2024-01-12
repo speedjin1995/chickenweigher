@@ -9,9 +9,9 @@ while ($row = mysqli_fetch_assoc($lang)) {
     $code = $row['message_key_code'];
 
     $languages['en'][$code] = $row['en'];
-    $languages['ch'][$code] = $row['ch'];
+    $languages['zh'][$code] = $row['ch'];
     $languages['my'][$code] = $row['my'];
-    $languages['np'][$code] = $row['np'];
+    $languages['ne'][$code] = $row['np'];
 }
 
 $db->close();

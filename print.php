@@ -571,7 +571,7 @@ if(isset($_GET['userID'])){
                                             <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.number_format($totalGross, 1, '.', '').'</td>
                                         </tr>';
                                         $message .= '<tr>
-                                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">Crates Wt (kg)</td>
+                                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 14px;">Crates Wt (kg)</td>
                                             <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.number_format($totalSCrate, 1, '.', '').'</td>
                                             <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.number_format($totalACrate, 1, '.', '').'</td>
                                             <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.number_format($totalCrate, 1, '.', '').'</td>
@@ -640,7 +640,7 @@ if(isset($_GET['userID'])){
                                 <table class="table" style="width: 95%">
                                     <tbody>
                                         <tr>
-                                            <th style="width: 28%;border-top:0px;padding: 0 0.7rem;"></th>
+                                            <th style="width: 28%;border-top:0px;padding: 0 0.7rem;">H</th>
                                             <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">Crates</th>
                                             <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">Birds</th>
                                             <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 11px;">Nett(kg)</th>
@@ -662,7 +662,7 @@ if(isset($_GET['userID'])){
 
                                             $average = $nettsIn / $birdsIn;
                                             $message .= '<tr>
-                                                <td style="width: 28%;border-top:0px;padding: 0 0.7rem;font-size: 12px;">No. '.$group.'</td>
+                                                <td style="width: 28%;border-top:0px;padding: 0 0.7rem;font-size: 12px;">'.$group.'</td>
                                                 <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$crateIn.'</td>
                                                 <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$birdsIn.'</td>
                                                 <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$nettsIn.'</td>

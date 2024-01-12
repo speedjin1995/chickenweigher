@@ -272,7 +272,7 @@ if(isset($_GET['userID'])){
                 padding: 10px 10px 0px 10px;
                 bottom: 0;
                 width: 100%;
-                height: 30%;
+                height: auto;
             }
         </style>
     </head>
@@ -572,7 +572,7 @@ if(isset($_GET['userID'])){
                                         <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalGross.'</td>
                                     </tr>';
                                     $message .= '<tr>
-                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">Crates Wt (kg)</td>
+                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 14px;">Crates Wt (kg)</td>
                                         <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalSCrate.'</td>
                                         <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalACrate.'</td>
                                         <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$totalCrate.'</td>
@@ -641,7 +641,7 @@ if(isset($_GET['userID'])){
                             <table class="table" style="width: 95%">
                                 <tbody>
                                     <tr>
-                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;"></th>
+                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;">H</th>
                                         <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">Crates</th>
                                         <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">Birds</th>
                                         <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">Nett (kg)</th>
@@ -663,7 +663,7 @@ if(isset($_GET['userID'])){
 
                                         $average = $nettsIn / $birdsIn;
                                         $message .= '<tr>
-                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;">No. '.$group.'</td>
+                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;">'.$group.'</td>
                                             <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$crateIn.'</td>
                                             <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$birdsIn.'</td>
                                             <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;">'.$nettsIn.'</td>

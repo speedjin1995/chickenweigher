@@ -9,6 +9,7 @@ $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'");
 $suppliers = $db->query("SELECT * FROM supplies WHERE deleted = '0'");
 $grades = $db->query("SELECT * FROM grades WHERE deleted = '0'");
 $transporters = $db->query("SELECT * FROM `transporters` WHERE deleted = '0'");
+$indicators = $db->query("SELECT * FROM `indicators`");
 
 $data1 = array();
 $data2 = array();
@@ -18,13 +19,16 @@ $data5 = array();
 $data6 = array();
 $data7 = array();
 $data9 = array();
+$data0 = array();
 
-/*while($row1=mysqli_fetch_assoc($lots)){
-    $data1[] = array( 
+while($row1=mysqli_fetch_assoc($indicators)){
+    $data0[] = array( 
         'id'=>$row1['id'],
-        'lots_no'=>$row1['lots_no']
+        'name'=>$row1['name'],
+        'mac_address'=>$row1['mac_address'],
+        'udid'=>$row1['udid']
     );
-}*/
+}
 
 while($row2=mysqli_fetch_assoc($vehicles)){
     $data2[] = array( 
@@ -90,7 +94,8 @@ echo json_encode(
         "customers"=> $data5, 
         "suppliers"=> $data6, 
         "grades"=> $data7, 
-        "drivers"=> $data9
+        "drivers"=> $data9,
+        "indicators"=>$data0
     )
 );
 ?>

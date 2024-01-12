@@ -9,6 +9,7 @@ $compphone = '6043325822';
 $compiemail = 'admin@synctronix.com.my';
 
 $mapOfWeights = array();
+$mapOfBirdsToCages = array();
 
 $totalGross = 0.0;
 $totalCrate = 0.0;
@@ -44,11 +45,12 @@ function totalWeight($strings){
 }
 
 function rearrangeList($weightDetails) {
-    global $mapOfWeights, $totalGross, $totalCrate, $totalReduce, $totalNet, $totalCrates, $totalBirds, $totalMaleBirds, $totalMaleCages, $totalFemaleBirds, $totalFemaleCages, $totalMixedBirds, $totalMixedCages;
+    global $mapOfWeights, $totalGross, $totalCrate, $totalReduce, $totalNet, $totalCrates, $totalBirds, $totalMaleBirds, $totalMaleCages, $totalFemaleBirds, $totalFemaleCages, $totalMixedBirds, $totalMixedCages, $mapOfBirdsToCages;
 
     if (!empty($weightDetails)) {
         $array1 = array(); // group
         $array2 = array(); // house
+        $array3 = array();
 
         foreach ($weightDetails as $element) {
             if(!in_array($element['groupNumber'], $array1)){
@@ -70,6 +72,18 @@ function rearrangeList($weightDetails) {
             $totalNet += floatval($element['netWeight']);
             $totalCrates += intval($element['numberOfCages']);
             $totalBirds += intval($element['numberOfBirds']);
+            
+            if(!in_array($element['numberOfBirds'], $array3)){
+                $mapOfBirdsToCages[] = array( 
+                    'numberOfBirds' => $element['numberOfBirds'],
+                    'count' => 0
+                );
+
+                array_push($array3, $element['numberOfBirds']);
+            }
+            
+            $keyB = array_search($element['numberOfBirds'], $array3);
+            $mapOfBirdsToCages[$keyB]['count'] += (int)$element['numberOfCages'];
 
             if ($element['sex'] == 'Male') {
                 $totalMaleBirds += intval($element['numberOfBirds']);
@@ -375,6 +389,24 @@ if(isset($_GET['userID'])){
                                                 <td></td>
                                             </tr>
                                         </tbody>
+                                    </table><br>
+                                    <table class="table-full" style="width: 90%;">
+                                        <tbody>
+                                            <tr>
+                                                <td>Birds</td>
+                                                <td>Cages</td>
+                                                <td>Total</td>
+                                            </tr>';
+                                        
+                                            for ($bc = 0; $bc < count($mapOfBirdsToCages); $bc++) {
+                                                $message .= '<tr>';
+                                                $message .= '<td>' . $mapOfBirdsToCages[$bc]['numberOfBirds'] . '</td>';
+                                                $message .= '<td>' . $mapOfBirdsToCages[$bc]['count'] . '</td>';
+                                                $message .= '<td>' . ((int)$mapOfBirdsToCages[$bc]['count'] * (int)$mapOfBirdsToCages[$bc]['numberOfBirds']) . '</td>';
+                                                $message .= '</tr>';
+                                            }
+                                            
+                                        $message .= '</tbody>
                                     </table>
                                 </td>
                                 <td style="width: 30%;">
