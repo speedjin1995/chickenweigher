@@ -39,9 +39,9 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       "id"=>$row['id'],
       "message_key_code"=>$row['message_key_code'],
       "en"=>$row['en'],
-      "ch"=>$row['ch'],
+      "zh"=>$row['zh'],
       "my"=>$row['my'],
-      "np"=>$row['np']
+      "ne"=>$row['ne']
     );
 
     $counter++;

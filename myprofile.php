@@ -49,9 +49,9 @@ else{
                     <label><?=$languageArray['language_code'][$language] ?> *</label>
                     <select class="form-control" style="width: 100%;" id="language" name="language" required>
                         <option value="en" <?= ($language == 'en') ? 'selected' : '' ?>>English</option>
-                        <option value="ch" <?= ($language == 'ch') ? 'selected' : '' ?>>Chinese</option>
+                        <option value="zh" <?= ($language == 'zh') ? 'selected' : '' ?>>Chinese</option>
                         <option value="my" <?= ($language == 'my') ? 'selected' : '' ?>>Bahasa Malaysia</option>
-                        <option value="np" <?= ($language == 'np') ? 'selected' : '' ?>>नेपाली</option>
+                        <option value="ne" <?= ($language == 'ne') ? 'selected' : '' ?>>नेपाली</option>
                     </select>
                 </div>
 			</div>

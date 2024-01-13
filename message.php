@@ -131,9 +131,9 @@ $(function () {
             { data: 'counter' },
             { data: 'message_key_code' },
             { data: 'en' },
-            { data: 'ch' },
+            { data: 'zh' },
             { data: 'my' },
-            { data: 'np' },
+            { data: 'ne' },
             { 
               data: 'id',
               render: function (data, type, row) {
@@ -204,9 +204,9 @@ function edit(id){
             $('#messageModal').find('#keyId').val(decode.message.id);
             $('#messageModal').find('#keyCode').val(decode.message.message_key_code);
             $('#messageModal').find('#englishDecs').val(decode.message.en);
-            $('#messageModal').find('#chineseDecs').val(decode.message.ch);
+            $('#messageModal').find('#chineseDecs').val(decode.message.zh);
             $('#messageModal').find('#malayDecs').val(decode.message.my);
-            $('#messageModal').find('#nepaliDecs').val(decode.message.np);
+            $('#messageModal').find('#nepaliDecs').val(decode.message.ne);
             $('#messageModal').modal('show');
             
             $('#messageForm').validate({
