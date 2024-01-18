@@ -36,7 +36,8 @@ while($row2=mysqli_fetch_assoc($vehicles)){
         'veh_number'=>$row2['veh_number'],
         'driver'=>$row2['driver'],
         'attandence_1'=>$row2['attandence_1'],
-        'attandence_2'=>$row2['attandence_2']
+        'attandence_2'=>$row2['attandence_2'],
+        'customers'=>$row2['customers']
     );
 }
 

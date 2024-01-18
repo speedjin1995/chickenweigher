@@ -13,6 +13,7 @@ if(isset($_POST['vehicleNumber'], $_POST['driver'])){
     $driver = filter_input(INPUT_POST, 'driver', FILTER_SANITIZE_STRING);
     $attendance1 = null;
     $attendance2 = null;
+    $customers = null;
 
     if($_POST['attendance1'] != null && $_POST['attendance1'] != ''){
         $attendance1 = filter_input(INPUT_POST, 'attendance1', FILTER_SANITIZE_STRING);
@@ -21,11 +22,15 @@ if(isset($_POST['vehicleNumber'], $_POST['driver'])){
     if($_POST['attendance2'] != null && $_POST['attendance2'] != ''){
         $attendance2 = filter_input(INPUT_POST, 'attendance2', FILTER_SANITIZE_STRING);
     }
+
+    if($_POST['customer'] != null && $_POST['customer'] != ''){
+        $customers = filter_input(INPUT_POST, 'customer', FILTER_SANITIZE_STRING);
+    }
     
 
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE vehicles SET veh_number=?, driver=?, attandence_1=?, attandence_2=? WHERE id=?")) {
-            $update_stmt->bind_param('sssss', $vehicleNumber, $driver, $attendance1, $attendance2, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE vehicles SET veh_number=?, driver=?, attandence_1=?, attandence_2=?, customers=? WHERE id=?")) {
+            $update_stmt->bind_param('ssssss', $vehicleNumber, $driver, $attendance1, $attendance2, $customers, $_POST['id']);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -50,8 +55,8 @@ if(isset($_POST['vehicleNumber'], $_POST['driver'])){
         }
     }
     else{
-        if ($insert_stmt = $db->prepare("INSERT INTO vehicles (veh_number, driver, attandence_1, attandence_2) VALUES (?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('ssss', $vehicleNumber, $driver, $attendance1, $attendance2);
+        if ($insert_stmt = $db->prepare("INSERT INTO vehicles (veh_number, driver, attandence_1, attandence_2, customers) VALUES (?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('sssss', $vehicleNumber, $driver, $attendance1, $attendance2, $customers);
             
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {

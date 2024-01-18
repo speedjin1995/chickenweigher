@@ -9,6 +9,7 @@ else{
     $language = $_SESSION['language'];
     $user = $_SESSION['userID'];
     $transporters = $db->query("SELECT * FROM transporters WHERE deleted = '0'");
+    $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'"); // Customers
 }
 ?>
 
@@ -99,6 +100,15 @@ else{
     					<label for="attendance2"><?=$languageArray['attendence_code'][$language] ?> 2</label>
     					<input type="type" class="form-control" name="attendance2" id="attendance2" placeholder="Enter Attendance 2">
     				</div>
+                    <div class="form-group">
+                        <label><?=$languageArray['customer_code'][$language] ?> *</label>
+                        <select class="form-control select2" style="width: 100%;" id="customer" name="customer">
+                            <option selected="selected">-</option>
+                            <?php while($rowCustomer=mysqli_fetch_assoc($customers)){ ?>
+                                <option value="<?=$rowCustomer['id'] ?>"><?=$rowCustomer['customer_name'] ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
     			</div>
             </div>
             <div class="modal-footer justify-content-between">
@@ -181,6 +191,7 @@ $(function () {
         $('#vehicleModal').find('#driver').val("");
         $('#vehicleModal').find('#attendance1').val("");
         $('#vehicleModal').find('#attendance2').val("");
+        $('#vehicleModal').find('#customer').val("");
         $('#vehicleModal').modal('show');
         
         $('#vehicleForm').validate({
@@ -259,6 +270,7 @@ function edit(id){
             $('#vehicleModal').find('#driver').val(obj.message.driver);
             $('#vehicleModal').find('#attendance1').val(obj.message.attandence_1);
             $('#vehicleModal').find('#attendance2').val(obj.message.attandence_2);
+            $('#vehicleModal').find('#customer').val(obj.message.customers);
             $('#vehicleModal').modal('show');
             
             $('#vehicleForm').validate({
