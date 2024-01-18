@@ -101,7 +101,7 @@ else{
     					<input type="type" class="form-control" name="attendance2" id="attendance2" placeholder="Enter Attendance 2">
     				</div>
                     <div class="form-group">
-                        <label><?=$languageArray['customer_code'][$language] ?> *</label>
+                        <label><?=$languageArray['customer_code'][$language] ?> </label>
                         <select class="form-control select2" style="width: 100%;" id="customer" name="customer">
                             <option selected="selected">-</option>
                             <?php while($rowCustomer=mysqli_fetch_assoc($customers)){ ?>
