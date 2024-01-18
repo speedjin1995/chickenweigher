@@ -50,6 +50,7 @@ while($row = $result->fetch_assoc()){
         'total_cage'=>$row['total_cage'],
         'max_crate'=>$row['max_crate'],
         'weight_data'=>$row['weight_data'],
+        'cage_data'=>$row['cage_data'],
         'created_datetime'=>$row['created_datetime'],
         'max_crate'=>$row['max_crate'],
         'start_time'=>$row['start_time'],

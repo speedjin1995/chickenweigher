@@ -9,7 +9,8 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 , $post['vehicleNumber'], $post['driverName'], $post['farmId']
 , $post['averageCage'], $post['averageBird'], $post['capturedData']
 , $post['remark'], $post['startTime'], $post['endTime'], $post['cratesCount']
-, $post['numberOfCages'], $post['totalCagesWeight'], $post['weightDetails'])){
+, $post['numberOfCages'], $post['totalCagesWeight'], $post['weightDetails']
+, $post['cageDetails'])){
 
 	$status = $post['status'];
 	$product = $post['product'];
@@ -21,6 +22,7 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 	$capturedData = $post['capturedData'];
 	$timestampData = $post['timestampData'];
 	$weightDetails = $post['weightDetails'];
+	$cageDetails = $post['cageDetails'];
 	$cratesCount = $post['cratesCount'];
 	$numberOfCages = $post['numberOfCages'];
 	$totalCagesWeight = $post['totalCagesWeight'];
@@ -106,13 +108,14 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 		$id = $post['id'];
 		$data = json_encode($weightDetails);
 		$data2 = json_encode($timestampData);
+		$data3 = json_encode($cageDetails);
 
 		if ($update_stmt = $db->prepare("UPDATE weighing SET customer=?, supplier=?, product=?, driver_name=?, lorry_no=?, farm_id=?, average_cage=?, average_bird=?, 
 		minimum_weight=?, maximum_weight=?, weight_data=?, remark=?, start_time=?, weight_time=?, end_time=?, total_cage=?, number_of_cages=?, total_cages_weight=?, 
-		follower1=?, follower2=?, status=?, po_no=? WHERE id=?")){
-			$update_stmt->bind_param('sssssssssssssssssssssss', $customerName, $supplierName, $product, $driverName, 
+		follower1=?, follower2=?, status=?, po_no=?, cage_data=? WHERE id=?")){
+			$update_stmt->bind_param('ssssssssssssssssssssssss', $customerName, $supplierName, $product, $driverName, 
 			$vehicleNumber, $farmId, $averageCage, $averageBird, $minWeight, $maxWeight, $data, $remark, $startTime, 
-			$data2, $endTime, $cratesCount, $numberOfCages, $totalCagesWeight, $attandence1, $attandence2, $status, $doNo, $id);
+			$data2, $endTime, $cratesCount, $numberOfCages, $totalCagesWeight, $attandence1, $attandence2, $status, $doNo, $data3, $id);
 		
 			// Execute the prepared query.
 			if (! $update_stmt->execute()){
@@ -130,7 +133,8 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 					array(
 						"status"=> "success", 
 						"message"=> "Updated Successfully!!",
-						"serialNo" => $post['serialNo']
+						"serialNo" => $post['serialNo'],
+						"weightId" => $id
 					)
 				);
 			}
@@ -156,14 +160,15 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 	else{
 		$data = json_encode($weightDetails);
 		$data2 = json_encode($timestampData);
+		$data3 = json_encode($cageDetails);
 		$id = '0';
 
 		if ($insert_stmt = $db->prepare("INSERT INTO weighing (serial_no, customer, supplier, product, driver_name, lorry_no, 
 		farm_id, average_cage, average_bird, minimum_weight, maximum_weight, weight_data, remark, start_time, weight_time, end_time,
-		total_cage, number_of_cages, total_cages_weight, follower1, follower2, status, po_no) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){		    
-			$insert_stmt->bind_param('sssssssssssssssssssssss', $serialNo, $customerName, $supplierName, $product, $driverName, 
+		total_cage, number_of_cages, total_cages_weight, follower1, follower2, status, po_no, cage_data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){		    
+			$insert_stmt->bind_param('ssssssssssssssssssssssss', $serialNo, $customerName, $supplierName, $product, $driverName, 
 			$vehicleNumber, $farmId, $averageCage, $averageBird, $minWeight, $maxWeight, $data, $remark, $startTime, $data2, $endTime,
-			$cratesCount, $numberOfCages, $totalCagesWeight, $attandence1, $attandence2, $status, $doNo);		
+			$cratesCount, $numberOfCages, $totalCagesWeight, $attandence1, $attandence2, $status, $doNo, $data3);		
 			// Execute the prepared query.
 			if (! $insert_stmt->execute()){
 				echo json_encode(
@@ -181,7 +186,8 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 					array(
 						"status"=> "success", 
 						"message"=> "Added Successfully!!",
-						"serialNo"=> $serialNo
+						"serialNo"=> $serialNo,
+						"weightId" => $id
 					)
 				);
 			}
