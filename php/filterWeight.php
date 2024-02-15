@@ -17,27 +17,21 @@ $searchQuery = " ";
 if($_POST['fromDate'] != null && $_POST['fromDate'] != ''){
   $fromDate = new DateTime($_POST['fromDate']);
   $fromDateTime = date_format($fromDate,"Y-m-d H:i:s");
-   $searchQuery = " and weight.inCDateTime >= '".$fromDateTime."'";
-}
-
-if($_POST['fromDate'] != null && $_POST['fromDate'] != ''){
-  $fromDate = new DateTime($_POST['fromDate']);
-  $fromDateTime = date_format($fromDate,"Y-m-d H:i:s");
-  $searchQuery = " and created_datetime >= '".$fromDateTime."'";
+  $searchQuery = " and weighing.booking_date >= '".$fromDateTime."'";
 }
 
 if($_POST['toDate'] != null && $_POST['toDate'] != ''){
   $toDate = new DateTime($_POST['toDate']);
   $toDateTime = date_format($toDate,"Y-m-d H:i:s");
-	$searchQuery .= " and created_datetime <= '".$toDateTime."'";
+	$searchQuery .= " and weighing.booking_date <= '".$toDateTime."'";
 }
 
 if($_POST['farm'] != null && $_POST['farm'] != '' && $_POST['farm'] != '-'){
-	$searchQuery .= " and farm_id = '".$_POST['farm']."'";
+	$searchQuery .= " and weighing.farm_id = '".$_POST['farm']."'";
 }
 
 if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){
-	$searchQuery .= " and customer = '".$_POST['customer']."'";
+	$searchQuery .= " and weighing.customer = '".$_POST['customer']."'";
 }
 
 if($searchValue != ''){
@@ -65,6 +59,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
   $data[] = array( 
     "no"=>$counter,
     "id"=>$row['id'],
+    "booking_date"=>$row['booking_date'],
     "status"=>$row['status'],
     "serial_no"=>$row['serial_no'],
     "po_no"=>$row['po_no'],

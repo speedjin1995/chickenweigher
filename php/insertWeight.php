@@ -4,11 +4,14 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 session_start();
 
-if(isset($_POST['customerNo'], $_POST['product'], $_POST['farm'])){
+if(isset($_POST['bookingDate'], $_POST['customerNo'], $_POST['product'], $_POST['farm'])){
 	$userId = $_SESSION['userID'];
 	$status = "Pending";
 	$product = filter_input(INPUT_POST, 'product', FILTER_SANITIZE_STRING);
 	$farm = filter_input(INPUT_POST, 'farm', FILTER_SANITIZE_STRING);
+	$bookingDate = filter_input(INPUT_POST, 'bookingDate', FILTER_SANITIZE_STRING);
+	$dateTime = DateTime::createFromFormat('d/m/Y h:i:s A', $bookingDate);
+	$formattedDate = $dateTime->format('Y-m-d H:i:s');
 	
 	$orderNo = null;
 	$poNo = null;
@@ -116,9 +119,9 @@ if(isset($_POST['customerNo'], $_POST['product'], $_POST['farm'])){
 		$id = $_POST['id'];
 		if ($update_stmt = $db->prepare("UPDATE weighing SET group_no=?, customer=?, supplier=?, product=?, driver_name=?, lorry_no=?, farm_id=?, 
 		average_cage=?, average_bird=?, minimum_weight=?, maximum_weight=?, grade=?, gender=?, house_no=?, remark=?, weighted_by=?, min_crate=?, 
-		max_crate=?, po_no=? WHERE id=?")){
-			$update_stmt->bind_param('ssssssssssssdsssssss', $group, $customerName, $supplierName, $product, $driver, $vehicleNo, $farm, $aveCage,
-			$aveBird, $minWeight, $maxWeight, $grade, $gender, $houseNo, $remark, $assignTo, $minCrate, $maxCrate, $poNo, $id);
+		max_crate=?, po_no=?, booking_date=? WHERE id=?")){
+			$update_stmt->bind_param('ssssssssssssdssssssss', $group, $customerName, $supplierName, $product, $driver, $vehicleNo, $farm, $aveCage,
+			$aveBird, $minWeight, $maxWeight, $grade, $gender, $houseNo, $remark, $assignTo, $minCrate, $maxCrate, $poNo, $formattedDate, $id);
 		
 			// Execute the prepared query.
 			if (! $update_stmt->execute()){
@@ -153,12 +156,12 @@ if(isset($_POST['customerNo'], $_POST['product'], $_POST['farm'])){
 	else{
 		if ($insert_stmt = $db->prepare("INSERT INTO weighing (serial_no, group_no, customer, supplier, product, driver_name, lorry_no, 
 		farm_id, average_cage, average_bird, minimum_weight, maximum_weight, grade, gender, house_no, remark, weighted_by, status, 
-		min_crate, max_crate, po_no, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){
+		min_crate, max_crate, po_no, created_by, booking_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){
 		    $data = null;
 			$data2 = null;
-			$insert_stmt->bind_param('ssssssssssssssssssssss', $serialNo, $group, $customerName, $supplierName, $product, $driver, 
+			$insert_stmt->bind_param('sssssssssssssssssssssss', $serialNo, $group, $customerName, $supplierName, $product, $driver, 
 			$vehicleNo, $farm, $aveCage, $aveBird, $minWeight, $maxWeight, $grade, $gender, $houseNo, $remark, $assignTo, 
-			$status, $minCrate,$maxCrate, $poNo, $userId);
+			$status, $minCrate,$maxCrate, $poNo, $userId, $formattedDate);
 								
 			// Execute the prepared query.
 			if (! $insert_stmt->execute()){

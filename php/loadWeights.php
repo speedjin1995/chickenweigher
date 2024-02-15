@@ -38,6 +38,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
   $data[] = array( 
     "no"=>$counter,
     "id"=>$row['id'],
+    "booking_date"=>$row['booking_date'],
     "status"=>$row['status'],
     "serial_no"=>$row['serial_no'],
     "po_no"=>$row['po_no'],

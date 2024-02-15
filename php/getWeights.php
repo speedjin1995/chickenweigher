@@ -37,6 +37,7 @@ if(isset($_POST['userID'])){
                 $message['house_no'] = $row['house_no'];
                 $message['average_cage'] = $row['average_cage'];
                 $message['average_bird'] = $row['average_bird'];
+                $message['booking_date'] = $row['booking_date'];
                 $message['minimum_weight'] = $row['minimum_weight'];
                 $message['max_crate'] = $row['max_crate'];
                 $message['group_no'] = $row['group_no'];

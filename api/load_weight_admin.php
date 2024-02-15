@@ -32,6 +32,7 @@ while($row = $result->fetch_assoc()){
 	$message[] = array( 
         'id'=>$row['id'],
         'serial_no'=>$row['serial_no'],
+        "booking_date"=>$row['booking_date'],
         'po_no'=>$row['po_no'],
         'group_no'=>$row['group_no'],
         'customer'=>$row['customer'],

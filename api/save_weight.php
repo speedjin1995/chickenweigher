@@ -128,6 +128,7 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 			} 
 			else{
 				$update_stmt->close();
+				$db->close();
 				
 				echo json_encode(
 					array(
@@ -138,15 +139,6 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 					)
 				);
 			}
-
-			if ($insert_stmt2 = $db->prepare("INSERT INTO weight_cart (weighing_id, farm_id, weight_data, start_time, end_time) 
-			VALUES (?, ?, ?, ?, ?)")){
-				$insert_stmt2->bind_param('sssss', $id, $farmId, $data, $startTime, $endTime);
-				$insert_stmt2->execute();
-				$insert_stmt2->close();
-			}
-
-			$db->close();
 		}
 		else{
 			echo json_encode(
@@ -161,14 +153,15 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 		$data = json_encode($weightDetails);
 		$data2 = json_encode($timestampData);
 		$data3 = json_encode($cageDetails);
+		$now = date("Y-m-d H:i:s");
 		$id = '0';
 
 		if ($insert_stmt = $db->prepare("INSERT INTO weighing (serial_no, customer, supplier, product, driver_name, lorry_no, 
 		farm_id, average_cage, average_bird, minimum_weight, maximum_weight, weight_data, remark, start_time, weight_time, end_time,
-		total_cage, number_of_cages, total_cages_weight, follower1, follower2, status, po_no, cage_data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){		    
-			$insert_stmt->bind_param('ssssssssssssssssssssssss', $serialNo, $customerName, $supplierName, $product, $driverName, 
+		total_cage, number_of_cages, total_cages_weight, follower1, follower2, status, po_no, cage_data, booking_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){		    
+			$insert_stmt->bind_param('sssssssssssssssssssssssss', $serialNo, $customerName, $supplierName, $product, $driverName, 
 			$vehicleNumber, $farmId, $averageCage, $averageBird, $minWeight, $maxWeight, $data, $remark, $startTime, $data2, $endTime,
-			$cratesCount, $numberOfCages, $totalCagesWeight, $attandence1, $attandence2, $status, $doNo, $data3);		
+			$cratesCount, $numberOfCages, $totalCagesWeight, $attandence1, $attandence2, $status, $doNo, $data3, $now);		
 			// Execute the prepared query.
 			if (! $insert_stmt->execute()){
 				echo json_encode(
@@ -181,6 +174,7 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 			else{
 				$id = $insert_stmt->insert_id;
 				$insert_stmt->close();
+				$db->close();
 				
 				echo json_encode(
 					array(
@@ -191,15 +185,6 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 					)
 				);
 			}
-
-			if ($insert_stmt2 = $db->prepare("INSERT INTO weight_cart (weighing_id, farm_id, weight_data, start_time, end_time) 
-			VALUES (?, ?, ?, ?, ?)")){
-				$insert_stmt2->bind_param('sssss', $id, $farmId, $data, $startTime, $endTime);
-				$insert_stmt2->execute();
-				$insert_stmt2->close();
-			}
-
-			$db->close();
 		}
 		else{
 			echo json_encode(

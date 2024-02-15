@@ -142,7 +142,7 @@ else{
               <thead>
                 <tr>
                   <th>No</th>
-                  <th>Created Datetime</th>
+                  <th>Booking Datetime</th>
                   <th>Order No</th>
                   <th>PO No</th>
                   <th>Customers</th>
@@ -178,6 +178,14 @@ else{
             <div class="form-group col-4">
               <label>PO No.</label>
               <input class="form-control" type="text" placeholder="PO No." id="poNo" name="poNo">
+            </div>
+            <div class="form-group col-4">
+              <label><?=$languageArray['booking_date_code'][$language] ?> *</label>
+              <div class="input-group date" id="bookingDatePicker" data-target-input="nearest">
+                <input type="text" class="form-control datetimepicker-input" data-target="#bookingDatePicker" id="bookingDate" name="bookingDate" required/>
+                <div class="input-group-append" data-target="#bookingDatePicker" data-toggle="datetimepicker">
+                <div class="input-group-text"><i class="fa fa-calendar"></i></div></div>
+              </div>
             </div>
             <div class="col-4">
               <div class="form-group">
@@ -236,10 +244,6 @@ else{
               <label><?=$languageArray['avg_bird_weight_code'][$language] ?></label>
               <input class="form-control" type="number" placeholder="Average Bird Weight" id="aveBird" name="aveBird">
             </div>
-            <!--div class="form-group col-4">
-              <label>Average Cage Weight</label>
-              <input class="form-control" type="number" placeholder="Average Cage Weight" id="aveCage" name="aveCage">
-            </div-->
             <div class="form-group col-4">
               <label><?=$languageArray['min_average_weight_code'][$language] ?> </label>
               <input class="form-control" type="number" placeholder="Min Weight" id="minWeight" name="minWeight">
@@ -266,7 +270,7 @@ else{
                 </select>
               </div>
             </div>
-            <div class="col-12">
+            <div class="col-8">
               <div class="form-group">
                 <label><?=$languageArray['remark_code'][$language] ?></label>
                 <textarea class="form-control" rows="1" placeholder="Enter ..." id="remark" name="remark"></textarea>
@@ -313,7 +317,7 @@ $(function () {
     },
     'columns': [
       { data: 'no' },
-      { data: 'created_datetime' },
+      { data: 'booking_date' },
       { data: 'serial_no' },
       { data: 'po_no' },
       { data: 'customer' },
@@ -374,6 +378,13 @@ $(function () {
   $('#toDatePicker').datetimepicker({
     icons: { time: 'far fa-clock' },
     format: 'DD/MM/YYYY HH:mm:ss A',
+    defaultDate: new Date
+  });
+
+  $('#bookingDatePicker').datetimepicker({
+    icons: { time: 'far fa-clock' },
+    format: 'DD/MM/YYYY hh:mm:ss A',
+    minDate: new Date,
     defaultDate: new Date
   });
 
@@ -439,7 +450,7 @@ $(function () {
       },
       'columns': [
         { data: 'no' },
-        { data: 'created_datetime' },
+        { data: 'booking_date' },
         { data: 'serial_no' },
         { data: 'po_no' },
         { data: 'customer' },
@@ -730,7 +741,7 @@ function formatNormal2 (row) {
 }
 
 function newEntry(){
-  var date = new Date();
+  var currentDate = moment().format('DD/MM/YYYY hh:mm:ss A');
   $('#extendModal').find('#id').val("");
   $('#extendModal').find('#customerNo').val('');
   $('#extendModal').find('#product').val('');
@@ -743,6 +754,7 @@ function newEntry(){
   $('#extendModal').find('#minCrate').val('');
   $('#extendModal').find('#maxCrate').val('');
   $('#extendModal').find('#minWeight').val('');
+  $('#extendModal').find('#bookingDate').val(currentDate);
   $('#extendModal').find('#maxWeight').val("");
   $('#extendModal').find('#assignTo').select2('destroy').val('').select2();
   $('#extendModal').find('#remark').val("");
@@ -773,6 +785,9 @@ function edit(id) {
     var obj = JSON.parse(data);
     
     if(obj.status === 'success'){
+      var momentDate = moment(obj.message.booking_date, 'YYYY-MM-DD HH:mm:ss');
+      var formattedDate = momentDate.format('DD/MM/YYYY hh:mm:ss A');
+
       $('#extendModal').find('#id').val(obj.message.id);
       $('#extendModal').find('#poNo').val(obj.message.po_no);
       $('#extendModal').find('#customerNo').val(obj.message.customer);
@@ -784,6 +799,7 @@ function edit(id) {
       $('#extendModal').find('#aveCage').val(obj.message.average_cage);
       $('#extendModal').find('#minWeight').val(obj.message.minimum_weight);
       $('#extendModal').find('#maxWeight').val(obj.message.maximum_weight);
+      $('#extendModal').find('#bookingDate').val(formattedDate);
       $('#extendModal').find('#maxCrate').val(obj.message.max_crate);
       $('#extendModal').find("select[name='assignTo[]']").val(obj.message.weighted_by).trigger('change');
       $('#extendModal').find('#remark').val(obj.message.remark);
