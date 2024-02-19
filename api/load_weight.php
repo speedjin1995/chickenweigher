@@ -19,7 +19,7 @@ if(($row2 = $stmt2->fetch_assoc()) !== null){
     }  
 }
 
-//$stmt = $db->prepare("SELECT * from weighing WHERE created_datetime >= ?");
+//$stmt = $db->prepare("SELECT * from weighing WHERE id = '6'");
 $stmt = $db->prepare("SELECT * from weighing WHERE status='Complete' AND `deleted` = '0' ORDER BY `created_datetime`");
 //$stmt->bind_param('ss', $now, $end);
 $stmt->execute();
@@ -52,7 +52,7 @@ while($row = $result->fetch_assoc()){
                 $message[] = array( 
                     'id'=>$row['id'],
                     'serial_no'=>$row['serial_no'],
-                    "booking_date"=>$row['booking_date'],
+                    'booking_date'=>$row['booking_date'],
                     'po_no'=>$row['po_no'],
                     'group_no'=>$row['group_no'],
                     'customer'=>$row['customer'],
@@ -81,10 +81,10 @@ while($row = $result->fetch_assoc()){
                     'house_no'=>$row['house_no'],
                     'remark'=>$row['remark']
                 );
+                
+                array_push($checking, $row['id']);
             }
         }
-        
-        array_push($checking, $row['id']);
     }
     
     if(!in_array($row['id'], $checking)){
@@ -92,7 +92,7 @@ while($row = $result->fetch_assoc()){
             $message[] = array( 
                 'id'=>$row['id'],
                 'serial_no'=>$row['serial_no'],
-                "booking_date"=>$row['booking_date'],
+                'booking_date'=>$row['booking_date'],
                 'group_no'=>$row['group_no'],
                 'customer'=>$row['customer'],
                 'supplier'=>$row['supplier'],
@@ -120,13 +120,14 @@ while($row = $result->fetch_assoc()){
                 'house_no'=>$row['house_no'],
                 'remark'=>$row['remark']
             );
+            
+            array_push($checking, $row['id']);
         }
-        
-        array_push($checking, $row['id']);
     }
 }
 
 $stmt->close();
+$stmt2->close();
 $db->close();
 
 echo json_encode(
