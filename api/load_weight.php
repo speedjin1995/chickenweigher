@@ -53,6 +53,7 @@ while($row = $result->fetch_assoc()){
                     'id'=>$row['id'],
                     'serial_no'=>$row['serial_no'],
                     'booking_date'=>$row['booking_date'],
+                    'weighted_by'=>$row['weighted_by'],
                     'po_no'=>$row['po_no'],
                     'group_no'=>$row['group_no'],
                     'customer'=>$row['customer'],

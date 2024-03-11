@@ -120,11 +120,14 @@ else{
               <div class="col-6"></div>
               <?php 
                 if($role == "ADMIN" || $role == "MANAGER"){
-                  echo '<div class="col-3">
+                  echo '<div class="col-2">
+                  <button type="button" class="btn btn-block bg-gradient-error btn-sm" id="deleteBtn">'.$languageArray['delete_code'][$language].'</button>
+                </div>
+                <div class="col-2">
                   <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="refreshBtn">'.$languageArray['refresh_code'][$language].'</button>
                 </div>
-                <div class="col-3">
-                  <button type="button" class="btn btn-block bg-gradient-warning btn-sm" onclick="newEntry()">'.$languageArray['add_new_weight_code'][$language].'</button>
+                <div class="col-2">
+                  <button type="button" class="btn btn-block bg-gradient-info btn-sm" onclick="newEntry()">'.$languageArray['add_new_weight_code'][$language].'</button>
                 </div>';
                 }
                 else{
@@ -141,7 +144,7 @@ else{
             <table id="weightTable" class="table table-bordered table-striped display">
               <thead>
                 <tr>
-                  <th>No</th>
+                  <th></th>
                   <th>Booking Datetime</th>
                   <th>Order No</th>
                   <th>PO No</th>
@@ -316,7 +319,15 @@ $(function () {
         'url':'php/loadWeights.php'
     },
     'columns': [
-      { data: 'no' },
+      {
+        // Add a checkbox with a unique ID for each row
+        data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+        className: 'select-checkbox',
+        orderable: false,
+        render: function (data, type, row) {
+          return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+        }
+      },
       { data: 'booking_date' },
       { data: 'serial_no' },
       { data: 'po_no' },
@@ -449,7 +460,15 @@ $(function () {
         }
       },
       'columns': [
-        { data: 'no' },
+        {
+          // Add a checkbox with a unique ID for each row
+          data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+          className: 'select-checkbox',
+          orderable: false,
+          render: function (data, type, row) {
+            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+          }
+        },
         { data: 'booking_date' },
         { data: 'serial_no' },
         { data: 'po_no' },
