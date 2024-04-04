@@ -11,6 +11,7 @@ $compiemail = 'admin@synctronix.com.my';
 $mapOfWeights = array();
 $mapOfHouses = array();
 
+$totalCount = 0;
 $totalGross = 0.0;
 $totalCrate = 0.0;
 $totalReduce = 0.0;
@@ -60,7 +61,7 @@ function totalWeight($strings){
 }
 
 function rearrangeList($weightDetails) {
-    global $mapOfHouses, $mapOfWeights, $totalSGross, $totalSCrate, $totalSReduce, $totalSNet, $totalSBirds, $totalSCages, $totalAGross, $totalACrate, $totalAReduce, $totalANet, $totalABirds, $totalACages, $totalGross, $totalCrate, $totalReduce, $totalNet, $totalCrates, $totalBirds, $totalMaleBirds, $totalMaleCages, $totalFemaleBirds, $totalFemaleCages, $totalMixedBirds, $totalMixedCages;
+    global $mapOfHouses, $mapOfWeights, $totalSGross, $totalSCrate, $totalSReduce, $totalSNet, $totalSBirds, $totalSCages, $totalAGross, $totalACrate, $totalAReduce, $totalANet, $totalABirds, $totalACages, $totalGross, $totalCrate, $totalReduce, $totalNet, $totalCrates, $totalBirds, $totalMaleBirds, $totalMaleCages, $totalFemaleBirds, $totalFemaleCages, $totalMixedBirds, $totalMixedCages, $totalCount;
 
     if (!empty($weightDetails)) {
         $array1 = array(); // group
@@ -137,7 +138,9 @@ function rearrangeList($weightDetails) {
                 $totalACrate += floatval($element['tareWeight']);
                 $totalAReduce += floatval($element['reduceWeight']);
                 $totalANet += floatval($element['netWeight']);
-            } 
+            }
+            
+            $totalCount++;
         }
     }
     
@@ -178,6 +181,8 @@ if(isset($_GET['userID'])){
                 $weightTime = json_decode($row['weight_time'], true);
                 $cage_data = json_decode($row['cage_data'], true);
                 $userName = "-";
+                $pages = ceil($totalCount / 150);
+                $page = 1;
 
                 if($row['weighted_by'] != null){
                     if ($select_stmt2 = $db->prepare("select * FROM users WHERE id=?")) {
@@ -205,13 +210,7 @@ if(isset($_GET['userID'])){
                     margin-top: 0.1in;
                     margin-bottom: 0.1in;
                 }
-            } 
-            
-            body{
-                width: 21cm;
-                height: 29.7cm;
-                margin: 30mm 45mm 30mm 45mm;
-            } 
+            }
 
             table {
                 width: 100%;
@@ -276,17 +275,25 @@ if(isset($_GET['userID'])){
                 width: 66.666667%;
             }
             
+            #container {
+                min-height: 75vh;
+                display: table;
+                width: 100%;
+            }
+            
             #footer {
+                position: fixed;
                 padding: 10px 10px 0px 10px;
                 bottom: 0;
                 width: 100%;
                 height: auto;
             }
         </style>
-    </head>
+    </head><body>';
     
-    <body>
-        <div id="preview-container">
+    $noOfRows = 0;
+    for($p=0; $p<$pages; $p++){
+        $message .= '<div id="container">
             <table class="table">
                 <tbody>
                     <tr>
@@ -439,13 +446,14 @@ if(isset($_GET['userID'])){
                         <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
                             <p>
                                 <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Page No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">1 of 1</span>
+                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$page.' of '.$pages.'</span>
                             </p>
                         </td>
                     </tr>
                 </tbody>
             </table><br>
-
+    
+            
             <table class="table">
                 <tbody>
                     <tr style="border-top: 1px solid #000000;border-bottom: 1px solid #000000;font-family: sans-serif;">
@@ -463,7 +471,7 @@ if(isset($_GET['userID'])){
                     
                     $countCage = 1;
                     $indexCount2 = 11;
-                    $indexStringCage = '<tr><td style="border-top:0px;padding: 0 0.7rem;">
+                    $indexStringCage = '<tr><td style="border-top:0px;padding: 0 0.7rem;width: 20%;">
                         <p>
                             <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">1</span>
                         </p>
@@ -471,7 +479,7 @@ if(isset($_GET['userID'])){
                     
                     foreach ($cage_data as $cage) {
                         if ($countCage < 10) {
-                            $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;">
+                            $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;">
                                 <p>
                                     <span style="font-size: 12px;font-family: sans-serif;">' . str_replace('kg', '', $cage['data']) .  '/' . $cage['number'] . '</span>
                                 </p>
@@ -479,7 +487,7 @@ if(isset($_GET['userID'])){
                             $countCage++;
                         }
                         else {
-                            $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;">
+                            $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;">
                                 <p>
                                     <span style="font-size: 12px;font-family: sans-serif;">' . str_replace('kg', '', $cage['data']) . '/' . $cage['number'] . '</span>
                                 </p>
@@ -490,7 +498,7 @@ if(isset($_GET['userID'])){
     
                     if ($countCage > 0) {
                         for ($k = 0; $k <= (10 - $countCage); $k++) {
-                            $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;"><p><span style="font-size: 12px;font-family: sans-serif;"></span></p></td>';
+                            $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;"><p><span style="font-size: 12px;font-family: sans-serif;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td>';
                         }
                         $indexStringCage .= '</tr>';
                     }
@@ -521,10 +529,11 @@ if(isset($_GET['userID'])){
             
                             $count = 0;
                             $newRow = false;
+                            $reachNewPage = false;
                             $totalCount = 0;
                             $indexCount2 = 11;
                             $oldWeight = "";
-                            $indexString = '<tr><td style="border-top:0px;padding: 0 0.7rem;">
+                            $indexString = '<tr><td style="border-top:0px;padding: 0 0.7rem;width: 20%;">
                                 <p>
                                     <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">1</span>
                                 </p>
@@ -532,7 +541,7 @@ if(isset($_GET['userID'])){
                             
                             foreach ($house['weightList'] as $element) {
                                 if ($count < 10) {
-                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
+                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;">
                                         <p>
                                             <span style="font-size: 12px;font-family: sans-serif;">' . $element['grossWeight'] . '/' . $element['numberOfBirds'] . '</span>
                                         </p>
@@ -545,28 +554,43 @@ if(isset($_GET['userID'])){
                                     $count = 0;
                                     $newRow = true;
                                     $oldWeight = $element['grossWeight'] . '/' . $element['numberOfBirds'];
-                                    $indexString .= '<tr><td style="border-top:0px;padding: 0 0.7rem;">
+                                    $indexString .= '<tr><td style="border-top:0px;padding: 0 0.7rem;width: 20%;">
                                         <p>
                                             <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">' . $indexCount2 . '</span>
                                         </p>
                                     </td>';
                                     $indexCount2 += 10;
-                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
+                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;">
                                         <p>
                                             <span style="font-size: 12px;font-family: sans-serif;">' . $oldWeight . '</span>
                                         </p>
                                     </td>';
                                     $count++;
+                                    $noOfRows+=10;
+                                }
+                                
+                                if($noOfRows >= 150){
+                                    $reachNewPage = true;
+                                    break;
                                 }
                                 
                                 $totalCount++;
                             }
+                            
+                            if($reachNewPage){
+                                break;
+                            }
             
                             if ($count > 0) {
                                 for ($k = 0; $k < (10 - $count); $k++) {
-                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;"><p><span style="font-size: 12px;font-family: sans-serif;"></span></p></td>';
+                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;"><p><span style="font-size: 12px;font-family: sans-serif;"></span></p></td>';
                                 }
                                 $indexString .= '</tr>';
+                                $noOfRows++;
+                            }
+                            
+                            if($noOfRows >= 150){
+                                break;
                             }
             
                             $message .= $indexString;
@@ -578,7 +602,7 @@ if(isset($_GET['userID'])){
                 }
             }
             
-            $message .= '<div id="footer">
+            $message .= '</div><div id="footer">
                 <hr>
                 <table class="table">
                     <tbody>
@@ -721,23 +745,39 @@ if(isset($_GET['userID'])){
                         </tr>
                     </tbody>
                 </table>
-            </div>
-        </div>
-        <button id="print-button" onclick="printPreview()">Print Preview</button>
-    </body>
-</html>';
+            </div>';
+            
+        $page++;
+        $noOfRows = 0;
+        
+        if($p != ($pages - 1)){
+            $message .= '<p style="page-break-after: always;">&nbsp;</p>';
+        }
+    }
+    
+    
+        //</div>
+        //<button id="print-button" onclick="printPreview()">Print Preview</button>
+    $message .= '</body></html>';
                 
                 echo $message;
                 echo "<script>
+                    setTimeout(function(){
+                        document.title = 'F-" . $row['po_no'] . "_" . substr($row['customer'], 0, 15) . "_" . $row['serial_no'] . "';
+                        window.print();
+                        window.close();
+                    }, 1000);
+                </script>";
+                /*echo "<script>
                     function printPreview() {
                         var printWindow = window.open('', '_blank');
-                        printWindow.document.write('<html><title>F-".$row['po_no']."_".substr($row['customer'], 0, 15)."_".$row['serial_no']."</title><style>@media print{@page{margin-left:.3in;margin-right:.3in;margin-top:.1in;margin-bottom:.1in}}table{width:100%;border-collapse:collapse}.table td,.table th{padding:.7rem;vertical-align:top;border-top:1px solid #dee2e6}.table-bordered{border:1px solid #000}.table-bordered td,.table-bordered th{border:1px solid #000;font-family:sans-serif}.row{display:flex;flex-wrap:wrap;margin-top:20px}.col-md-3{position:relative;width:25%}.col-md-9{position:relative;width:75%}.col-md-7{position:relative;width:58.333333%}.col-md-5{position:relative;width:41.666667%}.col-md-6{position:relative;width:50%}.col-md-4{position:relative;width:33.333333%}.col-md-8{position:relative;width:66.666667%}#footer{position:fixed;padding:10px 10px 0 10px;bottom:0;width:100%;height:auto}</style><body>');
+                        printWindow.document.write('<html><title>F-".$row['po_no']."_".substr($row['customer'], 0, 15)."_".$row['serial_no']."</title><style>@media print{@page{margin-left:.3in;margin-right:.3in;margin-top:.1in;margin-bottom:.1in}}table{width:100%;border-collapse:collapse}.table td,.table th{padding:.7rem;vertical-align:top;border-top:1px solid #dee2e6}.table-bordered{border:1px solid #000}.table-bordered td,.table-bordered th{border:1px solid #000;font-family:sans-serif}.row{display:flex;flex-wrap:wrap;margin-top:20px}.col-md-3{position:relative;width:25%}.col-md-9{position:relative;width:75%}.col-md-7{position:relative;width:58.333333%}.col-md-5{position:relative;width:41.666667%}.col-md-6{position:relative;width:50%}.col-md-4{position:relative;width:33.333333%}.col-md-8{position:relative;width:66.666667%}#container{min-height: 75vh; display: table;width: 100%;}#footer{position:fixed;padding:10px 10px 0 10px;bottom:0;width:100%;height:auto}</style><body>');
                         printWindow.document.write(document.getElementById('preview-container').innerHTML);
                         printWindow.document.write('</body></html>');
                         printWindow.document.close();
                         printWindow.print();
                     }
-               </script>";
+               </script>";*/
             }
             else{
                 echo json_encode(

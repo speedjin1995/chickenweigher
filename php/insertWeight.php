@@ -12,6 +12,10 @@ if(isset($_POST['bookingDate'], $_POST['customerNo'], $_POST['product'], $_POST[
 	$bookingDate = filter_input(INPUT_POST, 'bookingDate', FILTER_SANITIZE_STRING);
 	$dateTime = DateTime::createFromFormat('d/m/Y h:i:s A', $bookingDate);
 	$formattedDate = $dateTime->format('Y-m-d H:i:s');
+	$formattedDate2 = $dateTime->format('Y-m-d 00:00:00');
+	
+	$currentDateTimeObj = new DateTime();
+    $currentDateTime = $currentDateTimeObj->format("Y-m-d H:i:s");
 	
 	$orderNo = null;
 	$poNo = null;
@@ -82,10 +86,13 @@ if(isset($_POST['bookingDate'], $_POST['customerNo'], $_POST['product'], $_POST[
 	}
 
 	if($_POST['id'] == null || $_POST['id'] == ''){
-		$serialNo = 'S'.date("Ymd");
+	    $bookingYear = $dateTime->format('Y');
+        $bookingMonth = $dateTime->format('m');
+        $bookingDay = $dateTime->format('d');
+		$serialNo = 'S' . $bookingYear . $bookingMonth . $bookingDay;
 
-		if ($select_stmt = $db->prepare("SELECT COUNT(*) FROM weighing WHERE created_datetime >= ?")) {
-            $select_stmt->bind_param('s', $today);
+		if ($select_stmt = $db->prepare("SELECT COUNT(*) FROM weighing WHERE booking_date >= ? AND deleted='0'")) {
+            $select_stmt->bind_param('s', $formattedDate2);
             
             // Execute the prepared query.
             if (! $select_stmt->execute()) {
@@ -120,7 +127,7 @@ if(isset($_POST['bookingDate'], $_POST['customerNo'], $_POST['product'], $_POST[
 		if ($update_stmt = $db->prepare("UPDATE weighing SET group_no=?, customer=?, supplier=?, product=?, driver_name=?, lorry_no=?, farm_id=?, 
 		average_cage=?, average_bird=?, minimum_weight=?, maximum_weight=?, grade=?, gender=?, house_no=?, remark=?, weighted_by=?, min_crate=?, 
 		max_crate=?, po_no=?, booking_date=? WHERE id=?")){
-			$update_stmt->bind_param('ssssssssssssdssssssss', $group, $customerName, $supplierName, $product, $driver, $vehicleNo, $farm, $aveCage,
+			$update_stmt->bind_param('sssssssssssssssssssss', $group, $customerName, $supplierName, $product, $driver, $vehicleNo, $farm, $aveCage,
 			$aveBird, $minWeight, $maxWeight, $grade, $gender, $houseNo, $remark, $assignTo, $minCrate, $maxCrate, $poNo, $formattedDate, $id);
 		
 			// Execute the prepared query.
@@ -156,12 +163,12 @@ if(isset($_POST['bookingDate'], $_POST['customerNo'], $_POST['product'], $_POST[
 	else{
 		if ($insert_stmt = $db->prepare("INSERT INTO weighing (serial_no, group_no, customer, supplier, product, driver_name, lorry_no, 
 		farm_id, average_cage, average_bird, minimum_weight, maximum_weight, grade, gender, house_no, remark, weighted_by, status, 
-		min_crate, max_crate, po_no, created_by, booking_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){
+		min_crate, max_crate, po_no, created_by, booking_date, created_datetime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){
 		    $data = null;
 			$data2 = null;
-			$insert_stmt->bind_param('sssssssssssssssssssssss', $serialNo, $group, $customerName, $supplierName, $product, $driver, 
+			$insert_stmt->bind_param('ssssssssssssssssssssssss', $serialNo, $group, $customerName, $supplierName, $product, $driver, 
 			$vehicleNo, $farm, $aveCage, $aveBird, $minWeight, $maxWeight, $grade, $gender, $houseNo, $remark, $assignTo, 
-			$status, $minCrate,$maxCrate, $poNo, $userId, $formattedDate);
+			$status, $minCrate,$maxCrate, $poNo, $userId, $formattedDate, $currentDateTime);
 								
 			// Execute the prepared query.
 			if (! $insert_stmt->execute()){
