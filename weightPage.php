@@ -9,20 +9,20 @@ else{
   $user = $_SESSION['userID'];
   $language = $_SESSION['language'];
   $stmt = $db->prepare("SELECT * from users where id = ?");
-	$stmt->bind_param('s', $user);
-	$stmt->execute();
-	$result = $stmt->get_result();
-	
-	if(($row = $result->fetch_assoc()) !== null){
-    $role = $row['role_code'];
-  }
+    $stmt->bind_param('s', $user);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if(($row = $result->fetch_assoc()) !== null){
+        $role = $row['role_code'];
+    }
 
   $vehicles = $db->query("SELECT * FROM vehicles WHERE deleted = '0'"); // Vehicles
   $products = $db->query("SELECT * FROM products WHERE deleted = '0'"); // Products
-  $farms = $db->query("SELECT * FROM farms WHERE deleted = '0'");
-  $farms2 = $db->query("SELECT * FROM farms WHERE deleted = '0'");
-  $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'"); // Customers
-  $customers2 = $db->query("SELECT * FROM customers WHERE deleted = '0'"); // Customers
+  $farms = $db->query("SELECT * FROM farms WHERE deleted = '0' ORDER BY name");
+  $farms2 = $db->query("SELECT * FROM farms WHERE deleted = '0' ORDER BY name");
+  $customers = $db->query("SELECT * FROM customers WHERE deleted = '0' ORDER BY customer_name"); // Customers
+  $customers2 = $db->query("SELECT * FROM customers WHERE deleted = '0' ORDER BY customer_name"); // Customers
   $users = $db->query("SELECT * FROM users WHERE deleted = '0'"); // Users
   $transporters = $db->query("SELECT * FROM transporters WHERE deleted = '0'"); // Drivers
 }
@@ -77,7 +77,7 @@ else{
               <div class="col-3">
                 <div class="form-group">
                   <label><?=$languageArray['farm_code'][$language] ?></label>
-                  <select class="form-control" id="farmFilter" name="farmFilter" style="width: 100%;">
+                  <select class="form-control select2" id="farmFilter" name="farmFilter" style="width: 100%;">
                     <option selected="selected">-</option>
                     <?php while($rowStatus2=mysqli_fetch_assoc($farms2)){ ?>
                       <option value="<?=$rowStatus2['id'] ?>"><?=$rowStatus2['name'] ?></option>
@@ -89,7 +89,7 @@ else{
               <div class="col-3">
                 <div class="form-group">
                   <label><?=$languageArray['customer_code'][$language] ?></label>
-                  <select class="form-control" style="width: 100%;" id="customerFilter" name="customerFilter" style="display: none;">
+                  <select class="form-control select2" style="width: 100%;" id="customerFilter" name="customerFilter" style="display: none;">
                     <option selected="selected">-</option>
                     <?php while($rowCustomer2=mysqli_fetch_assoc($customers2)){ ?>
                       <option value="<?=$rowCustomer2['customer_name'] ?>"><?=$rowCustomer2['customer_name'] ?></option>
@@ -117,24 +117,15 @@ else{
         <div class="card card-primary">
           <div class="card-header">
             <div class="row">
-              <div class="col-6"></div>
+              <div class="col-9"></div>
               <?php 
                 if($role == "ADMIN" || $role == "MANAGER"){
-                  echo '<div class="col-2">
-                  <button type="button" class="btn btn-block bg-gradient-error btn-sm" id="deleteBtn">'.$languageArray['delete_code'][$language].'</button>
-                </div>
-                <div class="col-2">
-                  <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="refreshBtn">'.$languageArray['refresh_code'][$language].'</button>
-                </div>
-                <div class="col-2">
-                  <button type="button" class="btn btn-block bg-gradient-info btn-sm" onclick="newEntry()">'.$languageArray['add_new_weight_code'][$language].'</button>
+                  echo '<div class="col-3">
+                  <button type="button" class="btn btn-block bg-gradient-warning btn-sm" onclick="newEntry()">'.$languageArray['add_new_weight_code'][$language].'</button>
                 </div>';
                 }
                 else{
-                  echo '<div class="col-3"></div><div class="col-3">
-                  <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="refreshBtn">'.$languageArray['refresh_code'][$language].'</button>
-                </div>
-                ';
+                  echo '<div class="col-3"></div>';
                 }
               ?>
             </div>
@@ -144,7 +135,7 @@ else{
             <table id="weightTable" class="table table-bordered table-striped display">
               <thead>
                 <tr>
-                  <th></th>
+                  <th>No</th>
                   <th>Booking Datetime</th>
                   <th>Order No</th>
                   <th>PO No</th>
@@ -169,7 +160,7 @@ else{
     <div class="modal-content">
       <form role="form" id="extendForm">
         <div class="modal-header bg-gray-dark color-palette">
-          <h4 class="modal-title"><?=$languageArray['add_new_job_code'][$language] ?></h4>
+          <h4 class="modal-title" id="modalTitle"><?=$languageArray['add_new_job_code'][$language] ?></h4>
           <button type="button" class="close bg-gray-dark color-palette" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -319,15 +310,7 @@ $(function () {
         'url':'php/loadWeights.php'
     },
     'columns': [
-      {
-        // Add a checkbox with a unique ID for each row
-        data: 'id', // Assuming 'serialNo' is a unique identifier for each row
-        className: 'select-checkbox',
-        orderable: false,
-        render: function (data, type, row) {
-          return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
-        }
-      },
+      { data: 'no' },
       { data: 'booking_date' },
       { data: 'serial_no' },
       { data: 'po_no' },
@@ -460,15 +443,7 @@ $(function () {
         }
       },
       'columns': [
-        {
-          // Add a checkbox with a unique ID for each row
-          data: 'id', // Assuming 'serialNo' is a unique identifier for each row
-          className: 'select-checkbox',
-          orderable: false,
-          render: function (data, type, row) {
-            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
-          }
-        },
+        { data: 'no' },
         { data: 'booking_date' },
         { data: 'serial_no' },
         { data: 'po_no' },
@@ -713,14 +688,12 @@ function format (row) {
   if(row.status == 'Pending'){
     returnString += '<div class="row"><div class="col-3"><button type="button" onclick="edit('+row.id+
   ')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" class="btn btn-danger btn-sm" onclick="deactivate('+row.id+
-  ')"><i class="fas fa-trash"></i></button></div><div class="col-3"><button type="button" class="btn btn-info btn-sm" onclick="print('+row.id+
-  ')"><i class="fas fa-print"></i></button></div></div></div></div>'+
+  ')"><i class="fas fa-trash"></i></button></div></div></div></div>'+
   '</div>';
   }
   else{
     returnString += '<div class="row"><div class="col-3"></div><div class="col-3"><button type="button" class="btn btn-danger btn-sm" onclick="deactivate('+row.id+
-  ')"><i class="fas fa-trash"></i></button></div><div class="col-3"><button type="button" class="btn btn-info btn-sm" onclick="print('+row.id+
-  ')"><i class="fas fa-print"></i></button></div></div></div></div>'+
+  ')"><i class="fas fa-trash"></i></button></div></div></div></div>'+
   '</div>';
   }
 
@@ -736,13 +709,11 @@ function formatNormal (row) {
   
   if(row.status == 'Pending'){
     returnString += '<div class="row"><div class="col-3"><button type="button" onclick="edit('+row.id+
-  ')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"></div><div class="col-3"><button type="button" class="btn btn-info btn-sm" onclick="print('+row.id+
-  ')"><i class="fas fa-print"></i></button></div></div></div></div>'+
+  ')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"></div></div></div></div>'+
   '</div>';
   }
   else{
-    returnString += '<div class="row"><div class="col-3"></div><div class="col-3"></div><div class="col-3"><button type="button" class="btn btn-info btn-sm" onclick="print('+row.id+
-  ')"><i class="fas fa-print"></i></button></div></div></div></div>'+
+    returnString += '<div class="row"><div class="col-3"></div><div class="col-3"></div></div></div></div>'+
   '</div>';
   }
 
@@ -754,19 +725,18 @@ function formatNormal2 (row) {
   ' kg</p></div><div class="col-md-3"><p>Average Bird Weight: '+row.average_bird+
   ' kg</p></div><div class="col-md-3"><p>Minimum Weight: '+row.minimum_weight+
   ' kg</p></div><div class="col-md-3"><p>Maximum Weight: '+row.maximum_weight+
-  ' kg</p></div></div><div class="row"><div class="col-3"></div><div class="col-3"></div><div class="col-3"><button type="button" class="btn btn-info btn-sm" onclick="print('+row.id+
-  ')"><i class="fas fa-print"></i></button></div></div></div></div>'+
+  ' kg</p></div></div><div class="row"><div class="col-3"></div><div class="col-3"></div></div></div></div>'+
   '</div>';
 }
 
 function newEntry(){
   var currentDate = moment().format('DD/MM/YYYY hh:mm:ss A');
   $('#extendModal').find('#id').val("");
-  $('#extendModal').find('#customerNo').val('');
-  $('#extendModal').find('#product').val('');
-  $('#extendModal').find('#vehicleNo').val('');
-  $('#extendModal').find('#driver').val('');
-  $('#extendModal').find('#farm').val('');
+  $('#extendModal').find('#customerNo').select2('destroy').val('').select2();
+  $('#extendModal').find('#product').select2('destroy').val('').select2();
+  $('#extendModal').find('#vehicleNo').select2('destroy').val('').select2();
+  $('#extendModal').find('#driver').select2('destroy').val('').select2();
+  $('#extendModal').find('#farm').select2('destroy').val('').select2();
   $('#extendModal').find('#aveBird').val("");
   $('#extendModal').find('#aveCage').val('');
   $('#extendModal').find('#poNo').val('');
@@ -777,6 +747,7 @@ function newEntry(){
   $('#extendModal').find('#maxWeight').val("");
   $('#extendModal').find('#assignTo').select2('destroy').val('').select2();
   $('#extendModal').find('#remark').val("");
+  $('#extendModal').find('#modalTitle').text("Add New Order");
   $('#extendModal').modal('show');
   
   $('#extendForm').validate({
@@ -809,11 +780,11 @@ function edit(id) {
 
       $('#extendModal').find('#id').val(obj.message.id);
       $('#extendModal').find('#poNo').val(obj.message.po_no);
-      $('#extendModal').find('#customerNo').val(obj.message.customer);
-      $('#extendModal').find('#product').val(obj.message.product);
-      $('#extendModal').find('#vehicleNo').val(obj.message.lorry_no);
-      $('#extendModal').find('#driver').val(obj.message.driver_name);
-      $('#extendModal').find('#farm').val(obj.message.farm_id);
+      $('#extendModal').find('#customerNo').val(obj.message.customer).trigger('change');
+      $('#extendModal').find('#product').val(obj.message.product).trigger('change');
+      $('#extendModal').find('#vehicleNo').val(obj.message.lorry_no).trigger('change');
+      $('#extendModal').find('#driver').val(obj.message.driver_name).trigger('change');
+      $('#extendModal').find('#farm').val(obj.message.farm_id).trigger('change');
       $('#extendModal').find('#aveBird').val(obj.message.average_bird);
       $('#extendModal').find('#aveCage').val(obj.message.average_cage);
       $('#extendModal').find('#minWeight').val(obj.message.minimum_weight);
@@ -822,6 +793,7 @@ function edit(id) {
       $('#extendModal').find('#maxCrate').val(obj.message.max_crate);
       $('#extendModal').find("select[name='assignTo[]']").val(obj.message.weighted_by).trigger('change');
       $('#extendModal').find('#remark').val(obj.message.remark);
+      $('#extendModal').find('#modalTitle').text("Edit Order");
 
       /*if($('#extendModal').find('#status').val() == 'Sales'){
         $('#extendModal').find('#customerNo').html($('select#customerNoHidden').html());
