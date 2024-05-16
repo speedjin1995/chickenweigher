@@ -15,85 +15,87 @@ $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Sear
 $searchQuery = " ";
 
 if($_POST['fromDate'] != null && $_POST['fromDate'] != ''){
-    $searchQuery = " and count.dateTime >= '".$_POST['fromDate']."'";
+  $fromDate = new DateTime($_POST['fromDate']);
+  $fromDateTime = date_format($fromDate,"Y-m-d H:i:s");
+  $searchQuery = " and created_datetime >= '".$fromDateTime."'";
 }
 
 if($_POST['toDate'] != null && $_POST['toDate'] != ''){
-  $searchQuery = " and count.dateTime <= '".$_POST['toDate']."'";
+  $toDate = new DateTime($_POST['toDate']);
+  $toDateTime = date_format($toDate,"Y-m-d H:i:s");
+	$searchQuery .= " and created_datetime <= '".$toDateTime."'";
 }
 
-if($_POST['status'] != null && $_POST['status'] != '' && $_POST['status'] != '-'){
-  $searchQuery = " and count.status = '".$_POST['status']."'";
+if($_POST['farm'] != null && $_POST['farm'] != '' && $_POST['farm'] != '-'){
+	$searchQuery .= " and farm_id = '".$_POST['farm']."'";
 }
 
 if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){
-  $searchQuery = " and count.customer = '".$_POST['customer']."'";
+	$searchQuery .= " and customer = '".$_POST['customer']."'";
 }
 
-if($_POST['vehicle'] != null && $_POST['vehicle'] != '' && $_POST['vehicle'] != '-'){
-  $searchQuery = " and count.vehicleNo = '".$_POST['vehicle']."'";
-}
-
-if($_POST['invoice'] != null && $_POST['invoice'] != ''){
-  $searchQuery = " and count.invoiceNo like '%".$_POST['invoice']."%'";
-}
-
-if($_POST['batch'] != null && $_POST['batch'] != ''){
-  $searchQuery = " and count.batchNo like '%".$_POST['batch']."%'";
-}
-
-if($_POST['product'] != null && $_POST['product'] != '' && $_POST['product'] != '-'){
-  $searchQuery = " and count.productName = '".$_POST['product']."'";
+if($searchValue != ''){
+  $searchQuery = " and (weighing.serial_no like '%".$searchValue."%' or 
+  weighing.lorry_no like '%".$searchValue."%' )";
 }
 
 ## Total number of records without filtering
-$sel = mysqli_query($db,"select count(*) as allcount from count, vehicles, packages, lots, customers, products, units, status WHERE count.vehicleNo = vehicles.id AND count.package = packages.id AND count.lotNo = lots.id AND count.customer = customers.id AND count.productName = products.id AND status.id=count.status AND units.id=count.unit AND count.deleted = '0'");
+$sel = mysqli_query($db,"select count(*) as allcount from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete'");
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($db,"select count(*) as allcount from count, vehicles, packages, lots, customers, products, status, units WHERE count.vehicleNo = vehicles.id AND count.package = packages.id AND count.lotNo = lots.id AND count.customer = customers.id AND count.productName = products.id AND status.id=count.status AND units.id=count.unit AND count.deleted = '0'".$searchQuery);
+$sel = mysqli_query($db,"select count(*) as allcount from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete'".$searchQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select count.id, count.serialNo, vehicles.veh_number, lots.lots_no, count.batchNo, count.invoiceNo, count.deliveryNo, 
-count.purchaseNo, customers.customer_name, products.product_name, packages.packages, count.unitWeight, count.tare, count.totalWeight, 
-count.actualWeight, count.currentWeight, units.units, count.moq, count.dateTime, count.unitPrice, count.totalPrice,count.totalPCS, 
-count.remark, status.status from count, vehicles, packages, lots, customers, products, units, status WHERE 
-count.vehicleNo = vehicles.id AND count.package = packages.id AND count.lotNo = lots.id AND count.customer = customers.id AND 
-count.productName = products.id AND status.id=count.status AND units.id=count.unit AND count.deleted = '0'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
-
+$empQuery = "select weighing.*, farms.name from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
+$counter = 1;
 
 while($row = mysqli_fetch_assoc($empRecords)) {
+  $weight_data = json_decode($row['weight_data'], true);
+  $averageBirds = 0;
+  $totalWeigh = 0;
+  $totalBirds = 0;
+  $totalCages = 0;
+
+  for($i=0; $i<count($weight_data); $i++){
+    $totalBirds += (int)$weight_data[$i]['numberOfBirds'];
+    $totalCages += (int)$weight_data[$i]['numberOfCages'];
+    $totalWeigh += (float)$weight_data[$i]['netWeight'];
+  }
+
+  $averageBirds = $totalWeigh / $totalBirds;
+
   $data[] = array( 
+    "no"=>$counter,
     "id"=>$row['id'],
-    "serialNo"=>$row['serialNo'],
-    "veh_number"=>$row['veh_number'],
-    "lots_no"=>$row['lots_no'],
-    "batchNo"=>$row['batchNo'],
-    "invoiceNo"=>$row['invoiceNo'],
-    "deliveryNo"=>$row['deliveryNo'],
-    "purchaseNo"=>$row['purchaseNo'],
-    "customer_name"=>$row['customer_name'],
-    "product_name"=>$row['product_name'],
-    "packages"=>$row['packages'],
-    "unitWeight"=>$row['unitWeight'],
-    "tare"=>$row['tare'],
-    "totalWeight"=>$row['totalWeight'],
-    "actualWeight"=>$row['actualWeight'],
-    "currentWeight"=>$row['currentWeight'],
-    "unit"=>$row['units'],
-    "moq"=>$row['moq'],
-    "dateTime"=>$row['dateTime'],
-    "unitPrice"=>$row['unitPrice'],
-    "totalPrice"=>$row['totalPrice'],
-    "totalPCS"=>$row['totalPCS'],
-    "remark"=>$row['remark'],
-    "status"=>$row['status']
+    "status"=>$row['status'],
+    "serial_no"=>$row['serial_no'],
+    "po_no"=>$row['po_no'],
+    "group_no"=>$row['group_no'],
+    "customer"=>$row['customer'],
+    "supplier"=>$row['supplier'],
+    "product"=>$row['product'],
+    "driver_name"=>$row['driver_name'],
+    "lorry_no"=>$row['lorry_no'],
+    "farm_id"=>$row['name'],
+    "average_cage"=>$row['average_cage'],
+    "average_bird"=>number_format($averageBirds, 2, '.', ''),
+    "minimum_weight"=>$row['minimum_weight'],
+    "maximum_weight"=>$row['maximum_weight'],
+    "max_crate"=>$row['max_crate'],
+    "created_datetime"=>$row['created_datetime'],
+    "start_time"=>$row['start_time'],
+    "end_time"=>$row['end_time'],
+    "total_birds"=>$totalBirds,
+    "total_cages"=>$totalCages
   );
+
+  $counter++;
 }
 
 ## Response
