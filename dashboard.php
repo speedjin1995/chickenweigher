@@ -50,21 +50,13 @@ else{
           <div class="card-body">
             <div class="row">
               <div class="form-group col-3">
-                <label><?=$languageArray['from_date_code'][$language] ?>:</label>
-                <div class="input-group date" id="fromDatePicker" data-target-input="nearest">
-                  <input type="text" class="form-control datetimepicker-input" data-target="#fromDatePicker" id="fromDate"/>
-                  <div class="input-group-append" data-target="#fromDatePicker" data-toggle="datetimepicker">
-                  <div class="input-group-text"><i class="fa fa-calendar"></i></div></div>
-                </div>
-              </div>
+                <label>Date range button:</label>
 
-              <div class="form-group col-3">
-                <label><?=$languageArray['to_date_code'][$language] ?>:</label>
-                <div class="input-group date" id="toDatePicker" data-target-input="nearest">
-                  <input type="text" class="form-control datetimepicker-input" data-target="#toDatePicker" id="toDate"/>
-                  <div class="input-group-append" data-target="#toDatePicker" data-toggle="datetimepicker">
-                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                  </div>
+                <div class="input-group">
+                  <button type="button" class="btn btn-default float-right" id="daterange-btn">
+                    <i class="far fa-calendar-alt"></i> Date range picker
+                    <i class="fas fa-caret-down"></i>
+                  </button>
                 </div>
               </div>
 
@@ -91,27 +83,6 @@ else{
                   </select>
                 </div>
               </div>
-            </div>
-
-            <!--div class="row">
-              <div class="form-group col-3">
-                <label>Vehicle No</label>
-                <input class="form-control" type="text" id="vehicleFilter" placeholder="Vehicle No">
-              </div>
-
-              <div class="form-group col-3">
-                <label>Invoice No</label>
-                <input class="form-control" type="text" id="invoiceFilter" placeholder="Invoice No">
-              </div>
-
-              <div class="form-group col-3">
-                <label>Batch No</label>
-                <input class="form-control" type="text" id="batchFilter" placeholder="Batch No">
-              </div>
-            </div-->
-
-            <div class="row">
-              <div class="col-9"></div>
               <div class="col-3">
                 <button type="button" class="btn btn-block bg-gradient-warning btn-sm"  id="filterSearch">
                   <i class="fas fa-search"></i>
@@ -192,16 +163,16 @@ else{
                 <tr>
                   <th>Serial No</th>
                   <th>Customer</th>
-                  <th>Product</th>
                   <th>Farm</th>
-                  <th>Average Birds <br>Weight</th>
                   <th>Number of <br>Cages</th>
                   <th>Number of <br>Birds</th>
+                  <th>Average Birds <br>Weight</th>
                 </tr>
               </thead>
               <tfoot>
                 <tr>
-                    <th colspan="5">Total</th>
+                    <th colspan="3">Total</th>
+                    <th></th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -219,6 +190,97 @@ $(function () {
   const today = new Date();
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(today.getDate() - 7);
+  var started = formatDate(today) + " 00:00:00";
+  var ended = formatDate(sevenDaysAgo) + " 23:59:59";
+
+  $('#daterange-btn').daterangepicker(
+    {
+      ranges   : {
+        'Today'       : [moment(), moment()],
+        'Yesterday'   : [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+        'Last 7 Days' : [moment().subtract(6, 'days'), moment()],
+        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+        'This Month'  : [moment().startOf('month'), moment().endOf('month')],
+        'Last Month'  : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+      },
+      startDate: moment().subtract(6, 'days'),
+      endDate  : moment()
+    },
+    function (start, end) {
+      var startFormatted = formatDate(start) + " 00:00:00";
+      var endFormatted = formatDate(end) + " 23:59:59";
+      started = startFormatted;
+      ended = endFormatted;
+      var statusFilter = $('#farmFilter').val() ? $('#farmFilter').val() : '';
+      var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
+
+      //Destroy the old Datatable
+      $("#weightTable").DataTable().clear().destroy();
+
+      //Create new Datatable
+      table = $("#weightTable").DataTable({
+        "responsive": true,
+        "autoWidth": false,
+        'processing': true,
+        'serverSide': true,
+        'serverMethod': 'post',
+        'searching': false,
+        'order': [[ 0, 'asc' ]],
+        'columnDefs': [ { orderable: false, targets: [0] }],
+        'ajax': {
+          'type': 'POST',
+          'url':'php/filterCount.php',
+          'data': {
+            fromDate: startFormatted,
+            toDate: endFormatted,
+            farm: statusFilter,
+            customer: customerNoFilter
+          } 
+        },
+        'columns': [
+            { data: 'serial_no' },
+            { data: 'customer' },
+            { data: 'farm_id' },
+            { data: 'total_cages' },
+            { data: 'total_birds' },
+            { data: 'average_bird' }
+        ],
+        "rowCallback": function( row, data, index ) {
+          $('td', row).css('background-color', '#E6E6FA');
+        },
+        "drawCallback": function(settings) {
+          $('#spinnerLoading').hide();
+          /*$('#salesInfo').html(settings.json.done);
+          $('#purchaseInfo').html(settings.json.inprogress);
+          $('#localInfo').html(settings.json.total);*/
+        },
+        "footerCallback": function(row, data, start, end, display) {
+            var api = this.api();
+
+            // Calculate total for 'total_cages' column
+            var totalCages = api
+                .column(3, { page: 'current' })
+                .data()
+                .reduce(function(a, b) {
+                    return a + parseInt(b, 10);
+                }, 0);
+
+            // Calculate total for 'total_birds' column
+            var totalBirds = api
+                .column(4, { page: 'current' })
+                .data()
+                .reduce(function(a, b) {
+                    return a + parseInt(b, 10);
+                }, 0);
+
+            // Update footer with the total
+            $(api.column(3).footer()).html(totalCages);
+            $(api.column(4).footer()).html(totalBirds);
+        }
+      });
+    }
+  );
+
 
   var table = $("#weightTable").DataTable({
     "responsive": true,
@@ -233,20 +295,19 @@ $(function () {
       'type': 'POST',
       'url':'php/filterCount.php',
       'data': {
-        fromDate:  sevenDaysAgo.getFullYear() + "-" + (sevenDaysAgo.getMonth() + 1) + "-" + sevenDaysAgo.getDate() + " 00:00:00",
-        toDate: new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate() + " 23:59:59",
+        fromDate: started,
+        toDate: ended,
         farm: '',
         customer: ''
       } 
     },
     'columns': [
-        { data: 'serial_no' },
-        { data: 'customer' },
-        { data: 'product' },
-        { data: 'farm_id' },
-        { data: 'average_bird' },
-        { data: 'total_cages' },
-        { data: 'total_birds' }
+      { data: 'serial_no' },
+      { data: 'customer' },
+      { data: 'farm_id' },
+      { data: 'total_cages' },
+      { data: 'total_birds' },
+      { data: 'average_bird' }
     ],
     "rowCallback": function( row, data, index ) {
       $('td', row).css('background-color', '#E6E6FA');
@@ -262,7 +323,7 @@ $(function () {
 
         // Calculate total for 'total_cages' column
         var totalCages = api
-            .column(5, { page: 'current' })
+            .column(3, { page: 'current' })
             .data()
             .reduce(function(a, b) {
                 return a + parseInt(b, 10);
@@ -270,66 +331,24 @@ $(function () {
 
         // Calculate total for 'total_birds' column
         var totalBirds = api
-            .column(6, { page: 'current' })
+            .column(4, { page: 'current' })
             .data()
             .reduce(function(a, b) {
                 return a + parseInt(b, 10);
             }, 0);
 
         // Update footer with the total
-        $(api.column(5).footer()).html(totalCages);
-        $(api.column(6).footer()).html(totalBirds);
+        $(api.column(3).footer()).html(totalCages);
+        $(api.column(4).footer()).html(totalBirds);
     }
-  });
-
-  //Date picker
-  $('#fromDatePicker').datetimepicker({
-      icons: { time: 'far fa-clock' },
-      format: 'DD/MM/YYYY HH:mm:ss A',
-      defaultDate: sevenDaysAgo
-  });
-
-  $('#toDatePicker').datetimepicker({
-      icons: { time: 'far fa-clock' },
-      format: 'DD/MM/YYYY HH:mm:ss A',
-      defaultDate: new Date
   });
 
   $('#filterSearch').on('click', function(){
     $('#spinnerLoading').show();
 
-    var fromDateValue = '';
-    var toDateValue = '';
-
-    if($('#fromDate').val()){
-      var convert1 = $('#fromDate').val().replace(", ", " ");
-      convert1 = convert1.replace(":", "/");
-      convert1 = convert1.replace(":", "/");
-      convert1 = convert1.replace(" ", "/");
-      convert1 = convert1.replace(" pm", "");
-      convert1 = convert1.replace(" am", "");
-      convert1 = convert1.replace(" PM", "");
-      convert1 = convert1.replace(" AM", "");
-      var convert2 = convert1.split("/");
-      var date  = new Date(convert2[2], convert2[1] - 1, convert2[0], convert2[3], convert2[4], convert2[5]);
-      fromDateValue = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-    }
-    
-    if($('#toDate').val()){
-      var convert3 = $('#toDate').val().replace(", ", " ");
-      convert3 = convert3.replace(":", "/");
-      convert3 = convert3.replace(":", "/");
-      convert3 = convert3.replace(" ", "/");
-      convert3 = convert3.replace(" pm", "");
-      convert3 = convert3.replace(" am", "");
-      convert3 = convert3.replace(" PM", "");
-      convert3 = convert3.replace(" AM", "");
-      var convert4 = convert3.split("/");
-      var date2  = new Date(convert4[2], convert4[1] - 1, convert4[0], convert4[3], convert4[4], convert4[5]);
-      toDateValue = date2.getFullYear() + "-" + (date2.getMonth() + 1) + "-" + date2.getDate() + " " + date2.getHours() + ":" + date2.getMinutes() + ":" + date2.getSeconds();
-    }
-
-    var statusFilter = $('#statusFilter').val() ? $('#statusFilter').val() : '';
+    var fromDateValue = started;
+    var toDateValue = ended;
+    var statusFilter = $('#farmFilter').val() ? $('#farmFilter').val() : '';
     var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
 
     //Destroy the old Datatable
@@ -358,11 +377,10 @@ $(function () {
       'columns': [
         { data: 'serial_no' },
         { data: 'customer' },
-        { data: 'product' },
         { data: 'farm_id' },
-        { data: 'average_bird' },
         { data: 'total_cages' },
-        { data: 'total_birds' }
+        { data: 'total_birds' },
+        { data: 'average_bird' }
       ],
       "rowCallback": function( row, data, index ) {
         $('td', row).css('background-color', '#E6E6FA');
@@ -374,28 +392,28 @@ $(function () {
         $('#localInfo').html('Total Transaction: ' + settings.json.localTotal + '<br>Total Incoming: ' + settings.json.localWeight + ' kg<br>Total Outgoing: ' + settings.json.localTare + ' kg<br>Total Net Weight: ' +settings.json.localNet+ ' kg');*/
       },
       "footerCallback": function(row, data, start, end, display) {
-        var api = this.api();
+            var api = this.api();
 
-        // Calculate total for 'total_cages' column
-        var totalCages = api
-            .column(5, { page: 'current' })
-            .data()
-            .reduce(function(a, b) {
-                return a + parseInt(b, 10);
-            }, 0);
+            // Calculate total for 'total_cages' column
+            var totalCages = api
+                .column(3, { page: 'current' })
+                .data()
+                .reduce(function(a, b) {
+                    return a + parseInt(b, 10);
+                }, 0);
 
-        // Calculate total for 'total_birds' column
-        var totalBirds = api
-            .column(6, { page: 'current' })
-            .data()
-            .reduce(function(a, b) {
-                return a + parseInt(b, 10);
-            }, 0);
+            // Calculate total for 'total_birds' column
+            var totalBirds = api
+                .column(4, { page: 'current' })
+                .data()
+                .reduce(function(a, b) {
+                    return a + parseInt(b, 10);
+                }, 0);
 
-        // Update footer with the total
-        $(api.column(5).footer()).html(totalCages);
-        $(api.column(6).footer()).html(totalBirds);
-      }
+            // Update footer with the total
+            $(api.column(3).footer()).html(totalCages);
+            $(api.column(4).footer()).html(totalBirds);
+        }
     });
   });
 
