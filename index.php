@@ -564,7 +564,7 @@ $(function () {
       });
   });
   
-  $("a[href='#weight']").click();
+  $("a[href='#dashboard']").click();
 });
 
 function formatDate(date) {
