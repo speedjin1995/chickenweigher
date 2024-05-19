@@ -15,15 +15,15 @@ $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Sear
 $searchQuery = " ";
 
 if($_POST['fromDate'] != null && $_POST['fromDate'] != ''){
-  $fromDate = new DateTime($_POST['fromDate']);
-  $fromDateTime = date_format($fromDate,"Y-m-d H:i:s");
+  $dateTime = DateTime::createFromFormat('d/m/Y', $_POST['fromDate']);
+  $fromDateTime = $dateTime->format('Y-m-d 00:00:00');
   $searchQuery = " and weighing.booking_date >= '".$fromDateTime."'";
 }
 
 if($_POST['toDate'] != null && $_POST['toDate'] != ''){
-  $toDate = new DateTime($_POST['toDate']);
-  $toDateTime = date_format($toDate,"Y-m-d H:i:s");
-	$searchQuery .= " and weighing.booking_date <= '".$toDateTime."'";
+  $dateTime = DateTime::createFromFormat('d/m/Y', $_POST['toDate']);
+  $toDateTime = $dateTime->format('Y-m-d 23:59:59');
+  $searchQuery .= " and weighing.booking_date <= '".$toDateTime."'";
 }
 
 if($_POST['farm'] != null && $_POST['farm'] != '' && $_POST['farm'] != '-'){

@@ -8,6 +8,7 @@ if(!isset($_SESSION['userID'])){
 else{
   $user = $_SESSION['userID'];
   $language = $_SESSION['language'];
+  $_SESSION['page']='dashboard';
   $stmt = $db->prepare("SELECT * from users where id = ?");
 	$stmt->bind_param('s', $user);
 	$stmt->execute();
@@ -49,8 +50,8 @@ else{
         <div class="card">
           <div class="card-body">
             <div class="row">
-              <div class="form-group col-3">
-                <label>Date range button:</label>
+              <div class="form-group col-4">
+                <label>Date range: <span id="range"></span></label>
 
                 <div class="input-group">
                   <button type="button" class="btn btn-default float-right" id="daterange-btn">
@@ -60,10 +61,10 @@ else{
                 </div>
               </div>
 
-              <div class="col-3">
+              <div class="col-4">
                 <div class="form-group">
                   <label><?=$languageArray['farm_code'][$language] ?></label>
-                  <select class="form-control" id="farmFilter" name="farmFilter" style="width: 100%;">
+                  <select class="form-control select2" id="farmFilter" name="farmFilter" style="width: 100%;">
                     <option selected="selected">-</option>
                     <?php while($rowStatus=mysqli_fetch_assoc($packages)){ ?>
                       <option value="<?=$rowStatus['id'] ?>"><?=$rowStatus['name'] ?></option>
@@ -72,10 +73,10 @@ else{
                 </div>
               </div>
 
-              <div class="col-3">
+              <div class="col-4">
                 <div class="form-group">
                   <label><?=$languageArray['customer_code'][$language] ?></label>
-                  <select class="form-control" style="width: 100%;" id="customerFilter" name="customerFilter" style="display: none;">
+                  <select class="form-control select2" style="width: 100%;" id="customerFilter" name="customerFilter" style="display: none;">
                     <option selected="selected">-</option>
                     <?php while($rowCustomer=mysqli_fetch_assoc($customers)){ ?>
                       <option value="<?=$rowCustomer['customer_name'] ?>"><?=$rowCustomer['customer_name'] ?></option>
@@ -83,6 +84,9 @@ else{
                   </select>
                 </div>
               </div>
+            </div>
+            <div class="row">
+              <div class="col-9"></div>
               <div class="col-3">
                 <button type="button" class="btn btn-block bg-gradient-warning btn-sm"  id="filterSearch">
                   <i class="fas fa-search"></i>
@@ -191,7 +195,14 @@ $(function () {
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(today.getDate() - 7);
   var started = formatDate(today) + " 00:00:00";
-  var ended = formatDate(sevenDaysAgo) + " 23:59:59";
+  var ended = formatDate(today) + " 23:59:59";
+  var dateRange = formatDate(today) + ' - ' + formatDate(today);
+  $('#range').html(dateRange);
+  
+  $('.select2').select2({
+    allowClear: true,
+    placeholder: "Please Select"
+  })
 
   $('#daterange-btn').daterangepicker(
     {
@@ -203,12 +214,14 @@ $(function () {
         'This Month'  : [moment().startOf('month'), moment().endOf('month')],
         'Last Month'  : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
       },
-      startDate: moment().subtract(6, 'days'),
+      startDate: moment(),
       endDate  : moment()
     },
     function (start, end) {
       var startFormatted = formatDate(start) + " 00:00:00";
       var endFormatted = formatDate(end) + " 23:59:59";
+      var dateRange = start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY');
+      $('#range').html(dateRange);
       started = startFormatted;
       ended = endFormatted;
       var statusFilter = $('#farmFilter').val() ? $('#farmFilter').val() : '';
@@ -280,7 +293,6 @@ $(function () {
       });
     }
   );
-
 
   var table = $("#weightTable").DataTable({
     "responsive": true,

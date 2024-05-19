@@ -10,7 +10,7 @@ else{
     $stmt->execute();
     $result = $stmt->get_result();*/
     $language = $_SESSION['language'];
-    
+    $_SESSION['page']='users';
     $stmt2 = $db->prepare("SELECT * FROM roles");
     $stmt2->execute();
     $result2 = $stmt2->get_result();

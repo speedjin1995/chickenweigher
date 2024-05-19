@@ -7,6 +7,7 @@ if(!isset($_SESSION['userID'])){
 }
 else{
     $id = $_SESSION['userID'];
+    $_SESSION['page']='myprofile';
     $stmt = $db->prepare("SELECT * from users where id = ?");
 	$stmt->bind_param('s', $id);
 	$stmt->execute();

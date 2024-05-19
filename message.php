@@ -7,6 +7,9 @@ if(!isset($_SESSION['userID'])){
   echo '<script type="text/javascript">';
   echo 'window.location.href = "login.html";</script>';
 }
+else{
+  $_SESSION['page']='message';
+}
 ?>
 
 <style>

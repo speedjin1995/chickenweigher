@@ -8,6 +8,7 @@ if(!isset($_SESSION['userID'])){
 else{
     $language = $_SESSION['language'];
     $user = $_SESSION['userID'];
+    $_SESSION['page']='transporters';
 }
 ?>
 

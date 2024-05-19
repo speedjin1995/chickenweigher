@@ -9,6 +9,7 @@ if(!isset($_SESSION['userID'])){
 }
 else{
     $id = '1';
+    $_SESSION['page']='company';
     $stmt = $db->prepare("SELECT * from companies where id = ?");
 	$stmt->bind_param('s', $id);
 	$stmt->execute();

@@ -378,14 +378,14 @@ to get the desired effect
                       <i class="nav-icon fas fa-book"></i>
                       <p>'.$languageArray['customer_code'][$language].'</p>
                     </a>
-                  </li>
-                  <li class="nav-item">
+                  </li>';
+                  /*<li class="nav-item">
                     <a href="#suppliers" data-file="suppliers.php" class="nav-link link">
                       <i class="nav-icon fas fa-book"></i>
                       <p>'.$languageArray['supplier_code'][$language].'</p>
                     </a>
-                  </li>
-                  <li class="nav-item">
+                  </li>*/
+                  echo '<li class="nav-item">
                     <a href="#products" data-file="products.php" class="nav-link link">
                       <i class="nav-icon fas fa-shopping-cart"></i>
                       <p>'.$languageArray['product_code'][$language].'</p>
@@ -564,7 +564,7 @@ $(function () {
       });
   });
   
-  $("a[href='#dashboard']").click();
+  $("a[href='#<?=$_SESSION['page']?>']").click();
 });
 
 function formatDate(date) {

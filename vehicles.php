@@ -8,6 +8,7 @@ if(!isset($_SESSION['userID'])){
 else{
     $language = $_SESSION['language'];
     $user = $_SESSION['userID'];
+    $_SESSION['page']='vehicles';
     $transporters = $db->query("SELECT * FROM transporters WHERE deleted = '0'");
     $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'"); // Customers
 }

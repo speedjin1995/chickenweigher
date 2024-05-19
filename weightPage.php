@@ -8,6 +8,7 @@ if(!isset($_SESSION['userID'])){
 else{
   $user = $_SESSION['userID'];
   $language = $_SESSION['language'];
+  $_SESSION['page']='weight';
   $stmt = $db->prepare("SELECT * from users where id = ?");
     $stmt->bind_param('s', $user);
     $stmt->execute();
@@ -294,7 +295,8 @@ $(function () {
   $('#supplierNoHidden').hide();
 
   $('.select2').select2({
-    allowClear: true
+    allowClear: true,
+    placeholder: "Please Select"
   })
 
   var table = $("#weightTable").DataTable({
