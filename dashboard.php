@@ -64,8 +64,7 @@ else{
               <div class="col-4">
                 <div class="form-group">
                   <label><?=$languageArray['farm_code'][$language] ?></label>
-                  <select class="form-control select2" id="farmFilter" name="farmFilter" style="width: 100%;">
-                    <option selected="selected">-</option>
+                  <select class="form-control select2" id="farmFilter" name="farmFilter" style="width: 100%;" multiple>
                     <?php while($rowStatus=mysqli_fetch_assoc($packages)){ ?>
                       <option value="<?=$rowStatus['id'] ?>"><?=$rowStatus['name'] ?></option>
                     <?php } ?>
@@ -76,8 +75,7 @@ else{
               <div class="col-4">
                 <div class="form-group">
                   <label><?=$languageArray['customer_code'][$language] ?></label>
-                  <select class="form-control select2" style="width: 100%;" id="customerFilter" name="customerFilter" style="display: none;">
-                    <option selected="selected">-</option>
+                  <select class="form-control select2" style="width: 100%;" id="customerFilter" name="customerFilter" style="display: none;" multiple>
                     <?php while($rowCustomer=mysqli_fetch_assoc($customers)){ ?>
                       <option value="<?=$rowCustomer['customer_name'] ?>"><?=$rowCustomer['customer_name'] ?></option>
                     <?php } ?>

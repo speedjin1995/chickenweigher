@@ -22,12 +22,30 @@ if($_POST['toDate'] != null && $_POST['toDate'] != ''){
 	$searchQuery .= " and created_datetime <= '".$_POST['toDate']."'";
 }
 
-if($_POST['farm'] != null && $_POST['farm'] != '' && $_POST['farm'] != '-'){
-	$searchQuery .= " and farm_id = '".$_POST['farm']."'";
+if (isset($_POST['farm']) && is_array($_POST['farm']) && count($_POST['farm']) > 0) {
+    // Sanitize each farm ID
+    $farms = array_map(function($farm) {
+        return "'" . $farm . "'";
+    }, $_POST['farm']);
+    
+    // Join sanitized farm IDs with commas to form an SQL IN clause
+    $farmsList = implode(',', $farms);
+    
+    // Append to search query
+    $searchQuery .= " AND farm_id IN ($farmsList)";
 }
 
-if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){
-	$searchQuery .= " and customer = '".$_POST['customer']."'";
+if (isset($_POST['customer']) && is_array($_POST['customer']) && count($_POST['customer']) > 0) {
+    // Sanitize each customer name
+    $customers = array_map(function($customer) {
+        return "'" . $customer . "'";
+    }, $_POST['customer']);
+    
+    // Join sanitized customer names with commas to form an SQL IN clause
+    $customersList = implode(',', $customers);
+    
+    // Append to search query
+    $searchQuery .= " AND customer IN ($customersList)";
 }
 
 if($searchValue != ''){
