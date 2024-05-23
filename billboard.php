@@ -18,8 +18,8 @@ else{
     $role = $row['role_code'];
   }
 
-  $packages = $db->query("SELECT * FROM farms WHERE deleted = '0'");
-  $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'");
+  $packages = $db->query("SELECT * FROM farms WHERE deleted = '0' ORDER BY name");
+  $customers = $db->query("SELECT * FROM customers WHERE deleted = '0' ORDER BY customer_name");
 }
 ?>
 
@@ -72,7 +72,7 @@ else{
               <div class="col-3">
                 <div class="form-group">
                   <label><?=$languageArray['farm_code'][$language] ?></label>
-                  <select class="form-control" id="farmFilter" name="farmFilter" style="width: 100%;">
+                  <select class="form-control select2" id="farmFilter" name="farmFilter" style="width: 100%;">
                     <option selected="selected">-</option>
                     <?php while($rowStatus=mysqli_fetch_assoc($packages)){ ?>
                       <option value="<?=$rowStatus['id'] ?>"><?=$rowStatus['name'] ?></option>
@@ -84,7 +84,7 @@ else{
               <div class="col-3">
                 <div class="form-group">
                   <label><?=$languageArray['customer_code'][$language] ?></label>
-                  <select class="form-control" style="width: 100%;" id="customerFilter" name="customerFilter" style="display: none;">
+                  <select class="form-control select2" style="width: 100%;" id="customerFilter" name="customerFilter" style="display: none;">
                     <option selected="selected">-</option>
                     <?php while($rowCustomer=mysqli_fetch_assoc($customers)){ ?>
                       <option value="<?=$rowCustomer['customer_name'] ?>"><?=$rowCustomer['customer_name'] ?></option>
@@ -194,14 +194,14 @@ else{
             <table id="weightTable" class="table table-bordered table-striped display">
               <thead>
                 <tr>
-                  <th></th>
+                  <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
                   <th>Serial No</th>
                   <th>Customer</th>
                   <th>Product</th>
                   <th>Vehicle No.</th>
-                  <th>Driver Name</th>
+                  <!--th>Driver Name</th-->
                   <th>Farm</th>
-                  <th>Created <br>Date Time</th>
+                  <th>Completed <br>Date Time</th>
                   <th></th>
                 </tr>
               </thead>
@@ -218,6 +218,12 @@ $(function () {
   const today = new Date();
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(today.getDate() - 7);
+  var started = formatDate(sevenDaysAgo);
+  var ended = formatDate(today);
+  
+  $('.select2').select2({
+    allowClear: true
+  });
 
   var table = $("#weightTable").DataTable({
     "responsive": true,
@@ -232,8 +238,8 @@ $(function () {
       'type': 'POST',
       'url':'php/filterBillboard.php',
       'data': {
-        fromDate:  sevenDaysAgo.getFullYear() + "-" + (sevenDaysAgo.getMonth() + 1) + "-" + sevenDaysAgo.getDate() + " 00:00:00",
-        toDate: new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate() + " 23:59:59",
+        fromDate: started,
+        toDate: ended,
         farm: '',
         customer: ''
       } 
@@ -252,9 +258,9 @@ $(function () {
         { data: 'customer' },
         { data: 'product' },
         { data: 'lorry_no' },
-        { data: 'driver_name' },
+        //{ data: 'driver_name' },
         { data: 'farm_id' },
-        { data: 'created_datetime' },
+        { data: 'end_time' },
         {
           data: 'id',
           render: function (data, type, row) {
@@ -297,9 +303,9 @@ $(function () {
   $('#filterSearch').on('click', function(){
     $('#spinnerLoading').show();
 
-    var fromDateValue = $('#fromDate').val();
-    var toDateValue = $('#toDate').val();
-    var statusFilter = $('#statusFilter').val() ? $('#statusFilter').val() : '';
+    var fromDateValue = $('#fromDate').val().replace(", ", " ");
+    var toDateValue = $('#toDate').val().replace(", ", " ");
+    var statusFilter = $('#farmFilter').val() ? $('#farmFilter').val() : '';
     var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
 
     //Destroy the old Datatable
@@ -339,9 +345,9 @@ $(function () {
         { data: 'customer' },
         { data: 'product' },
         { data: 'lorry_no' },
-        { data: 'driver_name' },
+        //{ data: 'driver_name' },
         { data: 'farm_id' },
-        { data: 'created_datetime' },
+        { data: 'end_time' },
         {
           data: 'id',
           render: function (data, type, row) {
@@ -433,6 +439,11 @@ $(function () {
     else {
       alert("Please select at least one DO to update.");
     }
+  });
+  
+  $('#selectAllCheckbox').on('change', function() {
+    var checkboxes = $('#weightTable tbody input[type="checkbox"]');
+    checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
   });
 });
 

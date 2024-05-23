@@ -333,28 +333,48 @@ to get the desired effect
         <ul class="nav nav-pills nav-sidebar flex-column" id="sideMenu" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
             with font-awesome or any other icon font library -->
-          <li class="nav-item">
-            <a href="#dashboard" data-file="dashboard.php" class="nav-link link">
-              <i class="nav-icon fas fa-user"></i>
-              <p><?=$languageArray['dashboard_code'][$language] ?></p>
-            </a>
-          </li>
           <li class="nav-item has-treeview menu-open">
             <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p><?=$languageArray['weighing_code'][$language] ?><i class="fas fa-angle-left right"></i></p>
+              <i class="nav-icon fas fa-bar-chart"></i>
+              <p><?=$languageArray['dashboard_code'][$language] ?><i class="fas fa-angle-left right"></i></p>
             </a>
             <ul class="nav nav-treeview" style="display: block;">
               <li class="nav-item">
-                <a href="#weight" data-file="weightPage.php" class="nav-link link">
-                  <i class="nav-icon fas fa-chart-pie"></i>
-                  <p><?=$languageArray['weight_weighing_code'][$language] ?></p>
+                <a href="#dashboard" data-file="dashboard.php" class="nav-link link">
+                  <i class="nav-icon fas fa-check-square"></i>
+                  <p><?=$languageArray['ccb_farm_code'][$language] ?></p>
                 </a>
               </li>
               <li class="nav-item">
+                <a href="#otherDashboard" data-file="dashboardOther.php" class="nav-link link">
+                  <i class="nav-icon fas fa-plus-square"></i>
+                  <p><?=$languageArray['other_farm_code'][$language] ?></p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#weight" data-file="weightPage.php" class="nav-link link">
+              <i class="nav-icon fas fa-chart-pie"></i>
+              <p><?=$languageArray['weight_weighing_code'][$language] ?></p>
+            </a>
+          </li>
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p><?=$languageArray['weighing_report_code'][$language] ?><i class="fas fa-angle-left right"></i></p>
+            </a>
+            <ul class="nav nav-treeview" style="display: none;">
+              <li class="nav-item">
                 <a href="#billboard" data-file="billboard.php" class="nav-link link">
                   <i class="nav-icon fas fa-book"></i>
-                  <p><?=$languageArray['weighing_report_code'][$language] ?></p>
+                  <p><?=$languageArray['ccb_farm_code'][$language] ?></p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#otherBillboard" data-file="billboardOther.php" class="nav-link link">
+                  <i class="nav-icon fas fa-address-book"></i>
+                  <p><?=$languageArray['other_farm_code'][$language] ?></p>
                 </a>
               </li>
             </ul>
@@ -580,6 +600,21 @@ function formatDate(date) {
     day = '0' + day;
 
   return [year, month, day].join('-');
+}
+
+function formatDate2(date) {
+  var d = new Date(date),
+  month = '' + (d.getMonth() + 1),
+  day = '' + d.getDate(),
+  year = d.getFullYear();
+
+  if (month.length < 2) 
+    month = '0' + month;
+
+  if (day.length < 2) 
+    day = '0' + day;
+
+  return [day, month, year].join('/');
 }
 </script>
 </body>

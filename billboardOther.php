@@ -8,7 +8,7 @@ if(!isset($_SESSION['userID'])){
 else{
   $user = $_SESSION['userID'];
   $language = $_SESSION['language'];
-  $_SESSION['page']='dashboard';
+  $_SESSION['page']='otherBillboard';
   $stmt = $db->prepare("SELECT * from users where id = ?");
 	$stmt->bind_param('s', $user);
 	$stmt->execute();
@@ -18,8 +18,8 @@ else{
     $role = $row['role_code'];
   }
 
-  $packages = $db->query("SELECT * FROM farms WHERE deleted = '0'");
-  $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'");
+  $packages = $db->query("SELECT * FROM farms WHERE deleted = '0' ORDER BY name");
+  $customers = $db->query("SELECT * FROM customers WHERE deleted = '0' ORDER BY customer_name");
 }
 ?>
 
@@ -35,7 +35,7 @@ else{
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark"><?=$languageArray['dashboard_code'][$language] ?></h1>
+        <h1 class="m-0 text-dark"><?=$languageArray['weighing_report_code'][$language] ?></h1>
       </div><!-- /.col -->
     </div><!-- /.row -->
   </div><!-- /.container-fluid -->
@@ -50,18 +50,26 @@ else{
         <div class="card">
           <div class="card-body">
             <div class="row">
-              <div class="form-group col-4">
-                <label>Date range: <span id="range"></span></label>
-
-                <div class="input-group">
-                  <button type="button" class="btn btn-default float-right" id="daterange-btn">
-                    <i class="far fa-calendar-alt"></i> Date range picker
-                    <i class="fas fa-caret-down"></i>
-                  </button>
+              <div class="form-group col-3">
+                <label><?=$languageArray['from_date_code'][$language] ?>:</label>
+                <div class="input-group date" id="fromDatePicker" data-target-input="nearest">
+                  <input type="text" class="form-control datetimepicker-input" data-target="#fromDatePicker" id="fromDate"/>
+                  <div class="input-group-append" data-target="#fromDatePicker" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div></div>
                 </div>
               </div>
 
-              <div class="col-4">
+              <div class="form-group col-3">
+                <label><?=$languageArray['to_date_code'][$language] ?>:</label>
+                <div class="input-group date" id="toDatePicker" data-target-input="nearest">
+                  <input type="text" class="form-control datetimepicker-input" data-target="#toDatePicker" id="toDate"/>
+                  <div class="input-group-append" data-target="#toDatePicker" data-toggle="datetimepicker">
+                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-3">
                 <div class="form-group">
                   <label><?=$languageArray['farm_code'][$language] ?></label>
                   <select class="form-control select2" id="farmFilter" name="farmFilter" style="width: 100%;">
@@ -73,7 +81,7 @@ else{
                 </div>
               </div>
 
-              <div class="col-4">
+              <div class="col-3">
                 <div class="form-group">
                   <label><?=$languageArray['customer_code'][$language] ?></label>
                   <select class="form-control select2" style="width: 100%;" id="customerFilter" name="customerFilter" style="display: none;">
@@ -85,6 +93,24 @@ else{
                 </div>
               </div>
             </div>
+
+            <!--div class="row">
+              <div class="form-group col-3">
+                <label>Vehicle No</label>
+                <input class="form-control" type="text" id="vehicleFilter" placeholder="Vehicle No">
+              </div>
+
+              <div class="form-group col-3">
+                <label>Invoice No</label>
+                <input class="form-control" type="text" id="invoiceFilter" placeholder="Invoice No">
+              </div>
+
+              <div class="form-group col-3">
+                <label>Batch No</label>
+                <input class="form-control" type="text" id="batchFilter" placeholder="Batch No">
+              </div>
+            </div-->
+
             <div class="row">
               <div class="col-9"></div>
               <div class="col-3">
@@ -142,22 +168,25 @@ else{
         <div class="card card-primary">
           <div class="card-header">
             <div class="row">
-              <div class="col-12"><?=$languageArray['dashboard_code'][$language] ?></div>
-              <!--div class="col-2">
+              <div class="col-6"><?=$languageArray['weighing_report_code'][$language] ?></div>
+              <div class="col-2">
                 <button type="button" class="btn btn-block bg-gradient-info btn-sm"  id="officeSearch">
                   <i class="fas fa-newspaper"></i>
+                  <?=$languageArray['export_office_report_code'][$language] ?>
                 </button>
               </div>
               <div class="col-2">
                 <button type="button" class="btn btn-block bg-gradient-warning btn-sm"  id="farmSearch">
                   <i class="fas fa-file"></i>
+                  <?=$languageArray['export_farm_report_code'][$language] ?>
                 </button>
               </div>
               <div class="col-2">
                 <button type="button" class="btn btn-block bg-gradient-success btn-sm"  id="excelSearch">
                   <i class="fas fa-file-excel"></i>
+                  <?=$languageArray['export_excels_code'][$language] ?>
                 </button>
-              </div-->
+              </div>
             </div>
           </div>
 
@@ -165,22 +194,17 @@ else{
             <table id="weightTable" class="table table-bordered table-striped display">
               <thead>
                 <tr>
+                  <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
                   <th>Serial No</th>
                   <th>Customer</th>
+                  <th>Product</th>
+                  <th>Vehicle No.</th>
+                  <!--th>Driver Name</th-->
                   <th>Farm</th>
-                  <th>Number of <br>Cages</th>
-                  <th>Number of <br>Birds</th>
-                  <th>Average Birds <br>Weight</th>
+                  <th>Completed <br>Date Time</th>
+                  <th></th>
                 </tr>
               </thead>
-              <tfoot>
-                <tr>
-                    <th colspan="3">Total</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                </tr>
-              </tfoot>
             </table>
           </div>
         </div>
@@ -194,111 +218,12 @@ $(function () {
   const today = new Date();
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(today.getDate() - 7);
-  var started = formatDate(today) + " 00:00:00";
-  var ended = formatDate(today) + " 23:59:59";
-  var dateRange = formatDate(today) + ' - ' + formatDate(today);
-  $('#range').html(dateRange);
+  var started = formatDate2(sevenDaysAgo);
+  var ended = formatDate2(today);
   
   $('.select2').select2({
-    allowClear: true,
-    placeholder: "Please Select"
-  })
-
-  $('#daterange-btn').daterangepicker(
-    {
-      ranges   : {
-        'Today'       : [moment(), moment()],
-        'Yesterday'   : [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-        'Last 7 Days' : [moment().subtract(6, 'days'), moment()],
-        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-        'This Month'  : [moment().startOf('month'), moment().endOf('month')],
-        'Last Month'  : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-      },
-      startDate: moment(),
-      endDate  : moment()
-    },
-    function (start, end) {
-      var startFormatted = formatDate(start) + " 00:00:00";
-      var endFormatted = formatDate(end) + " 23:59:59";
-      var dateRange = start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY');
-      $('#range').html(dateRange);
-      started = startFormatted;
-      ended = endFormatted;
-      var statusFilter = $('#farmFilter').val() ? $('#farmFilter').val() : '';
-      var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
-
-      //Destroy the old Datatable
-      $("#weightTable").DataTable().clear().destroy();
-
-      //Create new Datatable
-      table = $("#weightTable").DataTable({
-        "responsive": true,
-        "autoWidth": false,
-        'processing': true,
-        'serverSide': true,
-        'serverMethod': 'post',
-        'searching': false,
-        'order': [[ 0, 'asc' ]],
-        'columnDefs': [ { orderable: false, targets: [0] }],
-        'ajax': {
-          'type': 'POST',
-          'url':'php/filterCount.php',
-          'data': {
-            fromDate: startFormatted,
-            toDate: endFormatted,
-            farm: statusFilter,
-            customer: customerNoFilter
-          } 
-        },
-        'columns': [
-            {
-                data: 'serial_no',
-                render: function(data, type, row) {
-                    var userId = row.id; // Assuming 'id' is the user ID from the server data
-                    return '<a href="https://ccb.syncweigh.com/printportrait.php?userID=' + userId + '" target="_blank">' + data + '</a>';
-                }
-            },
-            { data: 'customer' },
-            { data: 'farm_id' },
-            { data: 'total_cages' },
-            { data: 'total_birds' },
-            { data: 'average_bird' }
-        ],
-        "rowCallback": function( row, data, index ) {
-          $('td', row).css('background-color', '#E6E6FA');
-        },
-        "drawCallback": function(settings) {
-          $('#spinnerLoading').hide();
-          /*$('#salesInfo').html(settings.json.done);
-          $('#purchaseInfo').html(settings.json.inprogress);
-          $('#localInfo').html(settings.json.total);*/
-        },
-        "footerCallback": function(row, data, start, end, display) {
-            var api = this.api();
-
-            // Calculate total for 'total_cages' column
-            var totalCages = api
-                .column(3, { page: 'current' })
-                .data()
-                .reduce(function(a, b) {
-                    return a + parseInt(b, 10);
-                }, 0);
-
-            // Calculate total for 'total_birds' column
-            var totalBirds = api
-                .column(4, { page: 'current' })
-                .data()
-                .reduce(function(a, b) {
-                    return a + parseInt(b, 10);
-                }, 0);
-
-            // Update footer with the total
-            $(api.column(3).footer()).html(totalCages);
-            $(api.column(4).footer()).html(totalBirds);
-        }
-      });
-    }
-  );
+    allowClear: true
+  });
 
   var table = $("#weightTable").DataTable({
     "responsive": true,
@@ -307,11 +232,11 @@ $(function () {
     'serverSide': true,
     'serverMethod': 'post',
     'searching': false,
-    'order': [[ 0, 'asc' ]],
+    'order': [[ 1, 'asc' ]],
     'columnDefs': [ { orderable: false, targets: [0] }],
     'ajax': {
       'type': 'POST',
-      'url':'php/filterCount.php',
+      'url':'php/filterBillboardOther.php',
       'data': {
         fromDate: started,
         toDate: ended,
@@ -320,18 +245,36 @@ $(function () {
       } 
     },
     'columns': [
-      {
-        data: 'serial_no',
-        render: function(data, type, row) {
-            var userId = row.id; // Assuming 'id' is the user ID from the server data
-            return '<a href="https://ccb.syncweigh.com/printportrait.php?userID=' + userId + '" target="_blank">' + data + '</a>';
+        {
+          // Add a checkbox with a unique ID for each row
+          data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+          className: 'select-checkbox',
+          orderable: false,
+          render: function (data, type, row) {
+            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+          }
+        },
+        { data: 'serial_no' },
+        { data: 'customer' },
+        { data: 'product' },
+        { data: 'lorry_no' },
+        //{ data: 'driver_name' },
+        { data: 'farm_id' },
+        { data: 'end_time' },
+        {
+          data: 'id',
+          render: function (data, type, row) {
+            return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/print.php?userID=' + data + '\');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/printportrait.php?userID=' + data + '\');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
+          }
         }
-      },
-      { data: 'customer' },
-      { data: 'farm_id' },
-      { data: 'total_cages' },
-      { data: 'total_birds' },
-      { data: 'average_bird' }
+      /*{ 
+        className: 'dt-control',
+        orderable: false,
+        data: null,
+        render: function ( data, type, row ) {
+          return '<td class="table-elipse" data-toggle="collapse" data-target="#demo'+row.serialNo+'"><i class="fas fa-angle-down"></i></td>';
+        }
+      }*/
     ],
     "rowCallback": function( row, data, index ) {
       $('td', row).css('background-color', '#E6E6FA');
@@ -341,37 +284,27 @@ $(function () {
       /*$('#salesInfo').html(settings.json.done);
       $('#purchaseInfo').html(settings.json.inprogress);
       $('#localInfo').html(settings.json.total);*/
-    },
-    "footerCallback": function(row, data, start, end, display) {
-        var api = this.api();
-
-        // Calculate total for 'total_cages' column
-        var totalCages = api
-            .column(3, { page: 'current' })
-            .data()
-            .reduce(function(a, b) {
-                return a + parseInt(b, 10);
-            }, 0);
-
-        // Calculate total for 'total_birds' column
-        var totalBirds = api
-            .column(4, { page: 'current' })
-            .data()
-            .reduce(function(a, b) {
-                return a + parseInt(b, 10);
-            }, 0);
-
-        // Update footer with the total
-        $(api.column(3).footer()).html(totalCages);
-        $(api.column(4).footer()).html(totalBirds);
     }
+  });
+
+  //Date picker
+  $('#fromDatePicker').datetimepicker({
+      icons: { time: 'far fa-clock' },
+      format: 'DD/MM/YYYY',
+      defaultDate: sevenDaysAgo
+  });
+
+  $('#toDatePicker').datetimepicker({
+      icons: { time: 'far fa-clock' },
+      format: 'DD/MM/YYYY',
+      defaultDate: new Date
   });
 
   $('#filterSearch').on('click', function(){
     $('#spinnerLoading').show();
 
-    var fromDateValue = started;
-    var toDateValue = ended;
+    var fromDateValue = $('#fromDate').val().replace(", ", " ");
+    var toDateValue = $('#toDate').val().replace(", ", " ");
     var statusFilter = $('#farmFilter').val() ? $('#farmFilter').val() : '';
     var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
 
@@ -390,7 +323,7 @@ $(function () {
       'columnDefs': [ { orderable: false, targets: [0] }],
       'ajax': {
         'type': 'POST',
-        'url':'php/filterCount.php',
+        'url':'php/filterBillboardOther.php',
         'data': {
           fromDate: fromDateValue,
           toDate: toDateValue,
@@ -400,17 +333,27 @@ $(function () {
       },
       'columns': [
         {
-            data: 'serial_no',
-            render: function(data, type, row) {
-                var userId = row.id; // Assuming 'id' is the user ID from the server data
-                return '<a href="https://ccb.syncweigh.com/printportrait.php?userID=' + userId + '" target="_blank">' + data + '</a>';
-            }
+          // Add a checkbox with a unique ID for each row
+          data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+          className: 'select-checkbox',
+          orderable: false,
+          render: function (data, type, row) {
+            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+          }
         },
+        { data: 'serial_no' },
         { data: 'customer' },
+        { data: 'product' },
+        { data: 'lorry_no' },
+        //{ data: 'driver_name' },
         { data: 'farm_id' },
-        { data: 'total_cages' },
-        { data: 'total_birds' },
-        { data: 'average_bird' }
+        { data: 'end_time' },
+        {
+          data: 'id',
+          render: function (data, type, row) {
+            return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/print.php?userID=' + data + '\');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/printportrait.php?userID=' + data + '\');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
+          }
+        }
       ],
       "rowCallback": function( row, data, index ) {
         $('td', row).css('background-color', '#E6E6FA');
@@ -420,31 +363,87 @@ $(function () {
         /*$('#salesInfo').html('Total Transaction: ' + settings.json.salesTotal + '<br>Total Incoming: ' + settings.json.salesWeight + ' kg<br>Total Outgoing: ' + settings.json.salesTare + ' kg<br>Total Net Weight: ' +settings.json.salesNet+ ' kg');
         $('#purchaseInfo').html('Total Transaction: ' + settings.json.purchaseTotal + '<br>Total Incoming: ' + settings.json.purchaseWeight + ' kg<br>Total Outgoing: ' + settings.json.purchaseTare + ' kg<br>Total Net Weight: ' +settings.json.purchaseNet+ ' kg');
         $('#localInfo').html('Total Transaction: ' + settings.json.localTotal + '<br>Total Incoming: ' + settings.json.localWeight + ' kg<br>Total Outgoing: ' + settings.json.localTare + ' kg<br>Total Net Weight: ' +settings.json.localNet+ ' kg');*/
-      },
-      "footerCallback": function(row, data, start, end, display) {
-            var api = this.api();
-
-            // Calculate total for 'total_cages' column
-            var totalCages = api
-                .column(3, { page: 'current' })
-                .data()
-                .reduce(function(a, b) {
-                    return a + parseInt(b, 10);
-                }, 0);
-
-            // Calculate total for 'total_birds' column
-            var totalBirds = api
-                .column(4, { page: 'current' })
-                .data()
-                .reduce(function(a, b) {
-                    return a + parseInt(b, 10);
-                }, 0);
-
-            // Update footer with the total
-            $(api.column(3).footer()).html(totalCages);
-            $(api.column(4).footer()).html(totalBirds);
-        }
+      }
     });
+  });
+
+  $('#excelSearch').on('click', function(){
+    var fromDateValue = '';
+    var toDateValue = '';
+
+    if($('#fromDate').val()){
+      var convert1 = $('#fromDate').val().replace(", ", " ");
+      convert1 = convert1.replace(":", "/");
+      convert1 = convert1.replace(":", "/");
+      convert1 = convert1.replace(" ", "/");
+      convert1 = convert1.replace(" pm", "");
+      convert1 = convert1.replace(" am", "");
+      convert1 = convert1.replace(" PM", "");
+      convert1 = convert1.replace(" AM", "");
+      var convert2 = convert1.split("/");
+      var date  = new Date(convert2[2], convert2[1] - 1, convert2[0], convert2[3], convert2[4], convert2[5]);
+      fromDateValue = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    }
+    
+    if($('#toDate').val()){
+      var convert3 = $('#toDate').val().replace(", ", " ");
+      convert3 = convert3.replace(":", "/");
+      convert3 = convert3.replace(":", "/");
+      convert3 = convert3.replace(" ", "/");
+      convert3 = convert3.replace(" pm", "");
+      convert3 = convert3.replace(" am", "");
+      convert3 = convert3.replace(" PM", "");
+      convert3 = convert3.replace(" AM", "");
+      var convert4 = convert3.split("/");
+      var date2  = new Date(convert4[2], convert4[1] - 1, convert4[0], convert4[3], convert4[4], convert4[5]);
+      toDateValue = date2.getFullYear() + "-" + (date2.getMonth() + 1) + "-" + date2.getDate() + " " + date2.getHours() + ":" + date2.getMinutes() + ":" + date2.getSeconds();
+    }
+
+    var statusFilter = $('#statusFilter').val() ? $('#statusFilter').val() : '';
+    var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
+    
+    window.open("php/export.php?fromDate="+fromDateValue+"&toDate="+toDateValue+
+    "&farm="+statusFilter+"&customer="+customerNoFilter);
+
+  });
+
+  $('#officeSearch').on('click', function(){
+    var selectedIds = []; // An array to store the selected 'id' values
+
+    $("#weightTable tbody input[type='checkbox']").each(function () {
+      if (this.checked) {
+        selectedIds.push($(this).val());
+      }
+    });
+
+    if (selectedIds.length > 0) {
+      window.open("php/printportrait.php?ids="+JSON.stringify(selectedIds));
+    } 
+    else {
+      alert("Please select at least one DO to update.");
+    }
+  });
+
+  $('#farmSearch').on('click', function(){
+    var selectedIds = []; // An array to store the selected 'id' values
+
+    $("#weightTable tbody input[type='checkbox']").each(function () {
+      if (this.checked) {
+        selectedIds.push($(this).val());
+      }
+    });
+
+    if (selectedIds.length > 0) {
+      window.open("php/print.php?ids="+JSON.stringify(selectedIds));
+    } 
+    else {
+      alert("Please select at least one DO to update.");
+    }
+  });
+  
+  $('#selectAllCheckbox').on('change', function() {
+    var checkboxes = $('#weightTable tbody input[type="checkbox"]');
+    checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
   });
 });
 

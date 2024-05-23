@@ -251,13 +251,7 @@ $(function () {
           } 
         },
         'columns': [
-            {
-                data: 'serial_no',
-                render: function(data, type, row) {
-                    var userId = row.id; // Assuming 'id' is the user ID from the server data
-                    return '<a href="https://ccb.syncweigh.com/printportrait.php?userID=' + userId + '" target="_blank">' + data + '</a>';
-                }
-            },
+            { data: 'serial_no' },
             { data: 'customer' },
             { data: 'farm_id' },
             { data: 'total_cages' },
@@ -320,13 +314,7 @@ $(function () {
       } 
     },
     'columns': [
-      {
-        data: 'serial_no',
-        render: function(data, type, row) {
-            var userId = row.id; // Assuming 'id' is the user ID from the server data
-            return '<a href="https://ccb.syncweigh.com/printportrait.php?userID=' + userId + '" target="_blank">' + data + '</a>';
-        }
-      },
+      { data: 'serial_no' },
       { data: 'customer' },
       { data: 'farm_id' },
       { data: 'total_cages' },
@@ -399,13 +387,7 @@ $(function () {
         }
       },
       'columns': [
-        {
-            data: 'serial_no',
-            render: function(data, type, row) {
-                var userId = row.id; // Assuming 'id' is the user ID from the server data
-                return '<a href="https://ccb.syncweigh.com/printportrait.php?userID=' + userId + '" target="_blank">' + data + '</a>';
-            }
-        },
+        { data: 'serial_no' },
         { data: 'customer' },
         { data: 'farm_id' },
         { data: 'total_cages' },
@@ -445,6 +427,80 @@ $(function () {
             $(api.column(4).footer()).html(totalBirds);
         }
     });
+  });
+
+  $('#excelSearch').on('click', function(){
+    var fromDateValue = '';
+    var toDateValue = '';
+
+    if($('#fromDate').val()){
+      var convert1 = $('#fromDate').val().replace(", ", " ");
+      convert1 = convert1.replace(":", "/");
+      convert1 = convert1.replace(":", "/");
+      convert1 = convert1.replace(" ", "/");
+      convert1 = convert1.replace(" pm", "");
+      convert1 = convert1.replace(" am", "");
+      convert1 = convert1.replace(" PM", "");
+      convert1 = convert1.replace(" AM", "");
+      var convert2 = convert1.split("/");
+      var date  = new Date(convert2[2], convert2[1] - 1, convert2[0], convert2[3], convert2[4], convert2[5]);
+      fromDateValue = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    }
+    
+    if($('#toDate').val()){
+      var convert3 = $('#toDate').val().replace(", ", " ");
+      convert3 = convert3.replace(":", "/");
+      convert3 = convert3.replace(":", "/");
+      convert3 = convert3.replace(" ", "/");
+      convert3 = convert3.replace(" pm", "");
+      convert3 = convert3.replace(" am", "");
+      convert3 = convert3.replace(" PM", "");
+      convert3 = convert3.replace(" AM", "");
+      var convert4 = convert3.split("/");
+      var date2  = new Date(convert4[2], convert4[1] - 1, convert4[0], convert4[3], convert4[4], convert4[5]);
+      toDateValue = date2.getFullYear() + "-" + (date2.getMonth() + 1) + "-" + date2.getDate() + " " + date2.getHours() + ":" + date2.getMinutes() + ":" + date2.getSeconds();
+    }
+
+    var statusFilter = $('#statusFilter').val() ? $('#statusFilter').val() : '';
+    var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
+    
+    window.open("php/export.php?fromDate="+fromDateValue+"&toDate="+toDateValue+
+    "&farm="+statusFilter+"&customer="+customerNoFilter);
+
+  });
+
+  $('#officeSearch').on('click', function(){
+    var selectedIds = []; // An array to store the selected 'id' values
+
+    $("#weightTable tbody input[type='checkbox']").each(function () {
+      if (this.checked) {
+        selectedIds.push($(this).val());
+      }
+    });
+
+    if (selectedIds.length > 0) {
+      window.open("php/printportrait.php?ids="+JSON.stringify(selectedIds));
+    } 
+    else {
+      alert("Please select at least one DO to update.");
+    }
+  });
+
+  $('#farmSearch').on('click', function(){
+    var selectedIds = []; // An array to store the selected 'id' values
+
+    $("#weightTable tbody input[type='checkbox']").each(function () {
+      if (this.checked) {
+        selectedIds.push($(this).val());
+      }
+    });
+
+    if (selectedIds.length > 0) {
+      window.open("php/print.php?ids="+JSON.stringify(selectedIds));
+    } 
+    else {
+      alert("Please select at least one DO to update.");
+    }
   });
 });
 

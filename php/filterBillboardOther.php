@@ -67,17 +67,17 @@ if($searchValue != ''){
 
 if($role_code == 'ADMIN' || $role_code == 'MANAGER'){
     ## Total number of records without filtering
-    $sel = mysqli_query($db,"select count(*) as allcount from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete' AND farms.category IN ('CCB', 'Contract')");
+    $sel = mysqli_query($db,"select count(*) as allcount from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete' AND farms.category IN ('Other')");
     $records = mysqli_fetch_assoc($sel);
     $totalRecords = $records['allcount'];
     
     ## Total number of record with filtering
-    $sel = mysqli_query($db,"select count(*) as allcount from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete' AND farms.category IN ('CCB', 'Contract')".$searchQuery);
+    $sel = mysqli_query($db,"select count(*) as allcount from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete' AND farms.category IN ('Other')".$searchQuery);
     $records = mysqli_fetch_assoc($sel);
     $totalRecordwithFilter = $records['allcount'];
     
     ## Fetch records
-    $empQuery = "select weighing.*, farms.name from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete' AND farms.category IN ('CCB', 'Contract')".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+    $empQuery = "select weighing.*, farms.name from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete' AND farms.category IN ('Other')".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
     $empRecords = mysqli_query($db, $empQuery);
 }
 else{
@@ -87,17 +87,17 @@ else{
         ## Total number of records without filtering
         //$defaultQuery = 'JSON_CONTAINS(weighing.weighted_by, \'["'.$userId.'"]\') > 0 OR JSON_CONTAINS(weighing.weighted_by, \'['.$userId.']\') AND weighing.farm_id IN ('.$commaSeparatedString.')';
         $defaultQuery = 'weighing.farm_id IN ('.$commaSeparatedString.')';
-        $sel = mysqli_query($db,"select count(*) as allcount from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete' AND farms.category IN ('CCB', 'Contract') AND ".$defaultQuery);
+        $sel = mysqli_query($db,"select count(*) as allcount from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete' AND farms.category IN ('Other') AND ".$defaultQuery);
         $records = mysqli_fetch_assoc($sel);
         $totalRecords = $records['allcount'];
         
         ## Total number of record with filtering
-        $sel = mysqli_query($db,"select count(*) as allcount from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete' AND farms.category IN ('CCB', 'Contract') AND ".$defaultQuery.' '.$searchQuery);
+        $sel = mysqli_query($db,"select count(*) as allcount from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete' AND farms.category IN ('Other') AND ".$defaultQuery.' '.$searchQuery);
         $records = mysqli_fetch_assoc($sel);
         $totalRecordwithFilter = $records['allcount'];
         
         ## Fetch records
-        $empQuery = "select weighing.*, farms.name from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete' AND farms.category IN ('CCB', 'Contract') AND ".$defaultQuery.' '.$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+        $empQuery = "select weighing.*, farms.name from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete' AND farms.category IN ('Other') AND ".$defaultQuery.' '.$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
         $empRecords = mysqli_query($db, $empQuery);
     }
     else{

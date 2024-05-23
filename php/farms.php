@@ -8,10 +8,11 @@ if(!isset($_SESSION['userID'])){
     echo 'window.location.href = "../login.html";</script>';
 }
 
-if(isset($_POST['code'], $_POST['packages'], $_POST['address'])){
+if(isset($_POST['code'], $_POST['packages'], $_POST['address'], $_POST['category'])){
     $code = filter_input(INPUT_POST, 'code', FILTER_SANITIZE_STRING);
     $packages = filter_input(INPUT_POST, 'packages', FILTER_SANITIZE_STRING);
     $address = filter_input(INPUT_POST, 'address', FILTER_SANITIZE_STRING);
+    $category = filter_input(INPUT_POST, 'category', FILTER_SANITIZE_STRING);
     $address2 = null;
     $address3 = null;
     $address4 = null;
@@ -35,8 +36,8 @@ if(isset($_POST['code'], $_POST['packages'], $_POST['address'])){
     }
 
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE farms SET farms_code=?, name=?, address=?, address2=?, address3=?, address4=?, states=?, suppliers=? WHERE id=?")) {
-            $update_stmt->bind_param('sssssssss', $code, $packages, $address, $address2, $address3, $address4, $states, $supplier, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE farms SET farms_code=?, name=?, address=?, address2=?, address3=?, address4=?, states=?, suppliers=?, category=? WHERE id=?")) {
+            $update_stmt->bind_param('ssssssssss', $code, $packages, $address, $address2, $address3, $address4, $states, $supplier, $category, $_POST['id']);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -61,8 +62,8 @@ if(isset($_POST['code'], $_POST['packages'], $_POST['address'])){
         }
     }
     else{
-        if ($insert_stmt = $db->prepare("INSERT INTO farms (farms_code, name, address, address2, address3, address4, states, suppliers) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('ssssssss', $code, $packages, $address, $address2, $address3, $address4, $states, $supplier);
+        if ($insert_stmt = $db->prepare("INSERT INTO farms (farms_code, name, address, address2, address3, address4, states, suppliers, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('sssssssss', $code, $packages, $address, $address2, $address3, $address4, $states, $supplier, $category);
             
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {
