@@ -46,6 +46,8 @@ function totalWeight($strings){
 
 function rearrangeList($weightDetails) {
     global $mapOfWeights, $totalGross, $totalCrate, $totalReduce, $totalNet, $totalCrates, $totalBirds, $totalMaleBirds, $totalMaleCages, $totalFemaleBirds, $totalFemaleCages, $totalMixedBirds, $totalMixedCages, $mapOfBirdsToCages;
+    $mapOfWeights = [];
+    $mapOfBirdsToCages = [];
 
     if (!empty($weightDetails)) {
         $array1 = array(); // group
