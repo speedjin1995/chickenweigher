@@ -14,9 +14,8 @@ function filterData(&$str){
 $fileName = "Weight-data_" . date('Y-m-d') . ".xls";
  
 // Column names 
-$fields = array('SERIAL NO', 'CUSTOMER', 'PRODUCT NO', 'VEHICLE NO', 'DRIVER NAME', 'FARM', 'WEIGHTED BY', 'START WEIGHT DATE', 'END WEIGHT DATE', 
-                'GROSS WEIGHT', 'TARE WEIGHT', 'REDUCE WEIGHT', 'NET WEIGHT', 'NUMBER OF BIRDS', 'NUMBER OF CAGES',
-                'GRADE', 'GENDER', 'HOUSE NUMBER', 'GROUP NUMBER', 'WEIGHT DATE TIME', 'REMARKS'); 
+$fields = array('SERIAL NO', 'ORDER NO', 'BOOKING DATE TIME', 'CUSTOMER', 'PRODUCT NO', 'VEHICLE NO', 'DRIVER NAME', 'FARM', 'WEIGHTED BY', 'START WEIGHT DATE', 'END WEIGHT DATE', 
+                'GROSS WEIGHT', 'CAGE WEIGHT', 'NET WEIGHT', 'NUMBER OF BIRDS', 'NUMBER OF CAGES', 'GRADE', 'GENDER', 'HOUSE NUMBER', 'GROUP NUMBER', 'WEIGHT TIME', 'REMARKS'); 
 
 
 // Display column names as first row 
@@ -26,14 +25,14 @@ $excelData = implode("\t", array_values($fields)) . "\n";
 $searchQuery = " ";
 
 if($_GET['fromDate'] != null && $_GET['fromDate'] != ''){
-    $fromDate = new DateTime($_GET['fromDate']);
-    $fromDateTime = date_format($fromDate,"Y-m-d H:i:s");
+    $fromDate = DateTime::createFromFormat('d/m/Y', $_GET['fromDate']);
+    $fromDateTime = date_format($fromDate,"Y-m-d 00:00:00");
     $searchQuery = " and created_datetime >= '".$fromDateTime."'";
 }
 
 if($_GET['toDate'] != null && $_GET['toDate'] != ''){
-    $toDate = new DateTime($_GET['toDate']);
-    $toDateTime = date_format($toDate,"Y-m-d H:i:s");
+    $toDate = DateTime::createFromFormat('d/m/Y', $_GET['toDate']);
+    $toDateTime = date_format($toDate,"Y-m-d 23:59:59");
     $searchQuery .= " and created_datetime <= '".$toDateTime."'";
 }
 
@@ -52,10 +51,11 @@ echo $query->num_rows;
 if($query->num_rows > 0){ 
     // Output each row of the data 
     while($row = $query->fetch_assoc()){ 
-        $cid = $row['weighted_by'];
+        $cid = json_decode($row['weighted_by'], true)[0];
         $weight_data = json_decode($row['weight_data'], true);
         $weight_time = json_decode($row['weight_time'], true);
         $weighted_by = '';
+        $farm = '';
             
         if ($update_stmt = $db->prepare("SELECT * FROM users WHERE id=?")) {
             $update_stmt->bind_param('s', $cid);
@@ -70,12 +70,22 @@ if($query->num_rows > 0){
             }
         }
         
+        if ($update_stmt2 = $db->prepare("SELECT * FROM farms WHERE id=?")) {
+            $update_stmt2->bind_param('s', $row['farm_id']);
+        
+            // Execute the prepared query.
+            if ($update_stmt2->execute()) {
+                $result2 = $update_stmt2->get_result();
+                
+                if ($row1 = $result2->fetch_assoc()) {
+                    $farm = $row1['name'];
+                }
+            }
+        }
+        
         for($i=0; $i<count($weight_data); $i++){
-            $lineData = array($row['serial_no'], $row['customer'], $row['product'], $row['lorry_no'], $row['driver_name'], $row['farm_id'],
-            $weighted_by, $row['start_time'], $row['end_time'], $weight_data[$i]['grossWeight'], $weight_data[$i]['tareWeight'], 
-            $weight_data[$i]['reduceWeight'], $weight_data[$i]['netWeight'], $weight_data[$i]['numberOfBirds'], $weight_data[$i]['numberOfCages'], 
-            $weight_data[$i]['grade'], $weight_data[$i]['sex'], $weight_data[$i]['houseNumber'], $weight_data[$i]['groupNumber'], $weight_time[$i], 
-            $weight_data[$i]['remark']);
+            $lineData = array($row['serial_no'], $row['po_no'], $row['booking_date'], $row['customer'], $row['product'], $row['lorry_no'], $row['driver_name'], $farm,
+            $weighted_by, $row['start_time'], $row['end_time'], $weight_data[$i]['grossWeight'], $weight_data[$i]['tareWeight'], $weight_data[$i]['netWeight'], $weight_data[$i]['numberOfBirds'], $weight_data[$i]['numberOfCages'], $weight_data[$i]['grade'], $weight_data[$i]['sex'], $weight_data[$i]['houseNumber'], $weight_data[$i]['groupNumber'], ($weight_time[$i] ?? ''), $weight_data[$i]['remark']);
         }
         
         array_walk($lineData, 'filterData'); 
