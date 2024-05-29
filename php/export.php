@@ -83,10 +83,46 @@ if($query->num_rows > 0){
             }
         }
         
+        $groupList = array();
+        $groupCheck = array();
+        
         for($i=0; $i<count($weight_data); $i++){
-            $lineData = array($row['serial_no'], $row['po_no'], $row['booking_date'], $row['customer'], $row['product'], $row['lorry_no'], $row['driver_name'], $farm,
-            $weighted_by, $row['start_time'], $row['end_time'], $weight_data[$i]['grossWeight'], $weight_data[$i]['tareWeight'], $weight_data[$i]['netWeight'], $weight_data[$i]['numberOfBirds'], $weight_data[$i]['numberOfCages'], $weight_data[$i]['grade'], $weight_data[$i]['sex'], $weight_data[$i]['houseNumber'], $weight_data[$i]['groupNumber'], ($weight_time[$i] ?? ''), $weight_data[$i]['remark']);
+            if(!in_array($weight_data[$i]['groupNumber'], $groupCheck)){
+                $groupList[] = array(
+                    "groupNo" => $weight_data[$i]['groupNumber'],
+                    "totalGross" => 0,
+                    "totalTare" => 0,
+                    "totalTare" => 0,
+                    "totalCage" => 0,
+                    "totalBird" => 0,
+                    "houseNumber" => $weight_data[$i]['houseNumber'],
+                    "grade" => $weight_data[$i]['grade'],
+                    "sex" => $weight_data[$i]['sex']
+                );
+                
+                array_push($groupCheck, $weight_data[$i]['groupNumber']);
+            }
+            
+            $key = array_search($weight_data[$i]['groupNumber'], $groupCheck);
+            $groupList[$key]['totalGross'] += (float)$weight_data[$i]['grossWeight'];
+            $groupList[$key]['totalTare'] += (float)$weight_data[$i]['tareWeight'];
+            $groupList[$key]['totalCage'] += (int)$weight_data[$i]['numberOfCages'];
+            $groupList[$key]['totalBird'] += (int)$weight_data[$i]['numberOfBirds'];
         }
+        
+        for($j=0; $j<count($groupList); $j++){
+            $totalNet = $groupList[$j]['totalGross'] - $groupList[$j]['totalTare'];
+            $assigned_seconds = strtotime ( $row['start_time'] );
+            $completed_seconds = strtotime ( $row['end_time'] );
+            $duration = $completed_seconds - $assigned_seconds;
+            $minutes = floor($duration / 60);
+            $seconds = $duration % 60;
+            $time = sprintf('%d mins %d secs', $minutes, $seconds);
+            
+            $lineData = array($row['serial_no'], $row['po_no'], $row['booking_date'], $row['customer'], $row['product'], $row['lorry_no'], $row['driver_name'], $farm,
+            $weighted_by, $row['start_time'], $row['end_time'], $groupList[$j]['totalGross'], $groupList[$j]['totalTare'], $totalNet, $groupList[$j]['totalBird'], $groupList[$j]['totalCage'], $groupList[$j]['grade'], $groupList[$j]['sex'], $groupList[$j]['houseNumber'], $groupList[$j]['groupNo'], $time, $row['remark']);
+        }
+        
         
         array_walk($lineData, 'filterData'); 
         $excelData .= implode("\t", array_values($lineData)) . "\n"; 
