@@ -180,7 +180,7 @@ if(isset($_GET['userID'])){
             .table-bordered th, .table-bordered td {
                 border: 1px dashed black;
                 font-family: sans-serif;
-                font-size: 10px;
+                font-size: 12px;
                 height: 22px
             } 
 
@@ -240,9 +240,9 @@ if(isset($_GET['userID'])){
             #footer {
                 position: fixed;
                 padding: 10px 10px 0px 10px;
-                bottom: 0;
+                bottom:-10;
                 width: 100%;
-                height: auto;
+                height: 25%;
             }
         </style>
     </head>
@@ -293,7 +293,7 @@ if(isset($_GET['userID'])){
                         <td style="width: 50%;border-top:0px;padding: 0 0.7rem;">
                             <p>
                                 <span style="font-size: 14px;font-family: sans-serif;font-weight: bold;">Total Crates : </span>
-                                <span style="font-size: 14px;font-family: sans-serif;">'.$row['total_cage'].'</span>
+                                <span style="font-size: 14px;font-family: sans-serif;">'.$totalCrates.'</span>
                             </p>
                         </td>
                         <td style="width: 50%;border-top:0px;padding: 0 0.7rem;">
@@ -514,7 +514,7 @@ if(isset($_GET['userID'])){
                                             </tr>
                                             <tr>
                                                 <td style="text-align: center;font-size: 14px;"><b>Avg. Bird Wt.</b></td>
-                                                <td style="text-align: center;font-size: 14px;">'.number_format((float)$row['average_bird'], 2, '.', '').'</td>
+                                                <td style="text-align: center;font-size: 14px;">'.number_format((($totalWeight - $totalCrate)/$totalBirds), 2, '.', '').'</td>
                                             </tr>
                                         </tbody>
                                     </table>

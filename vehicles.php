@@ -218,7 +218,7 @@ $(function () {
         const data = new Uint8Array(e.target.result);
         const workbook = XLSX.read(data, { type: 'array' });
 
-        const sheetName = workbook.SheetNames[4];
+        const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
         jsonData = XLSX.utils.sheet_to_json(sheet);
         console.log(jsonData);
@@ -268,10 +268,10 @@ function edit(id){
         if(obj.status === 'success'){
             $('#vehicleModal').find('#id').val(obj.message.id);
             $('#vehicleModal').find('#vehicleNumber').val(obj.message.veh_number);
-            $('#vehicleModal').find('#driver').val(obj.message.driver);
+            $('#vehicleModal').find('#driver').val(obj.message.driver).trigger('change');
             $('#vehicleModal').find('#attendance1').val(obj.message.attandence_1);
             $('#vehicleModal').find('#attendance2').val(obj.message.attandence_2);
-            $('#vehicleModal').find('#customer').val(obj.message.customers);
+            $('#vehicleModal').find('#customer').val(obj.message.customers).trigger('change');
             $('#vehicleModal').modal('show');
             
             $('#vehicleForm').validate({

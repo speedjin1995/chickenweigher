@@ -47,7 +47,6 @@ function totalWeight($strings){
 function rearrangeList($weightDetails) {
     global $mapOfWeights, $totalGross, $totalCrate, $totalReduce, $totalNet, $totalCrates, $totalBirds, $totalMaleBirds, $totalMaleCages, $totalFemaleBirds, $totalFemaleCages, $totalMixedBirds, $totalMixedCages, $mapOfBirdsToCages;
 
-
     if (!empty($weightDetails)) {
         $array1 = array(); // group
         $array2 = array(); // house
@@ -66,6 +65,14 @@ function rearrangeList($weightDetails) {
             $key = array_search($element['groupNumber'], $array1);
             array_push($mapOfWeights[$key]['weightList'], $element);
             
+
+            $totalGross += floatval($element['grossWeight']);
+            $totalCrate += floatval($element['tareWeight']);
+            $totalReduce += floatval($element['reduceWeight']);
+            $totalNet += floatval($element['netWeight']);
+            $totalCrates += intval($element['numberOfCages']);
+            $totalBirds += intval($element['numberOfBirds']);
+            
             if(!in_array($element['birdsPerCages'], $array3)){
                 $mapOfBirdsToCages[] = array( 
                     'numberOfBirds' => $element['birdsPerCages'],
@@ -77,14 +84,6 @@ function rearrangeList($weightDetails) {
             
             $keyB = array_search($element['birdsPerCages'], $array3);
             $mapOfBirdsToCages[$keyB]['count'] += (int)$element['numberOfCages'];
-            
-
-            $totalGross += floatval($element['grossWeight']);
-            $totalCrate += floatval($element['tareWeight']);
-            $totalReduce += floatval($element['reduceWeight']);
-            $totalNet += floatval($element['netWeight']);
-            $totalCrates += intval($element['numberOfCages']);
-            $totalBirds += intval($element['numberOfBirds']);
 
             if ($element['sex'] == 'Male') {
                 $totalMaleBirds += intval($element['numberOfBirds']);
@@ -128,22 +127,24 @@ if(isset($_GET['userID'])){
                 $seconds = $duration % 60;
                 
                 // Format minutes and seconds
-                $time = sprintf('%d mins %d secs', $minutes, $seconds);
+                $time = sprintf('%d m %d s', $minutes, $seconds);
                 $weightData = json_decode($row['weight_data'], true);
                 $totalWeight = totalWeight($weightData);
                 rearrangeList($weightData);
                 $weightTime = json_decode($row['weight_time'], true);
                 $userName = "Pri Name";
 
-                if ($select_stmt2 = $db->prepare("select * FROM users WHERE id=?")) {
-                    $uid = $row['weighted_by'];
-                    $select_stmt2->bind_param('s', $uid);
-
-                    if ($select_stmt2->execute()) {
-                        $result2 = $select_stmt2->get_result();
-
-                        if ($row2= $result2->fetch_assoc()) { 
-                            $userName = $row2['name'];
+                if($row['weighted_by'] != null){
+                    if ($select_stmt2 = $db->prepare("select * FROM users WHERE id=?")) {
+                        $uid = json_decode($row['weighted_by'], true)[0];
+                        $select_stmt2->bind_param('s', $uid);
+    
+                        if ($select_stmt2->execute()) {
+                            $result2 = $select_stmt2->get_result();
+    
+                            if ($row2= $result2->fetch_assoc()) { 
+                                $userName = $row2['name'];
+                            }
                         }
                     }
                 }
@@ -158,7 +159,15 @@ if(isset($_GET['userID'])){
                     margin-top: 0.1in;
                     margin-bottom: 0.1in;
                 }
+                
             } 
+            
+            body{
+                width: 21cm;
+                height: 29.7cm;
+                margin: 30mm 45mm 30mm 45mm; 
+                /* change the margins as you want them to be. */
+           } 
 
             table {
                 width: 100%;
@@ -180,7 +189,7 @@ if(isset($_GET['userID'])){
             .table-bordered th, .table-bordered td {
                 border: 1px dashed black;
                 font-family: sans-serif;
-                font-size: 10px;
+                font-size: 12px;
                 height: 22px
             } 
 
@@ -238,7 +247,6 @@ if(isset($_GET['userID'])){
             }
             
             #footer {
-                position: fixed;
                 padding: 10px 10px 0px 10px;
                 bottom: 0;
                 width: 100%;
@@ -293,7 +301,7 @@ if(isset($_GET['userID'])){
                         <td style="width: 50%;border-top:0px;padding: 0 0.7rem;">
                             <p>
                                 <span style="font-size: 14px;font-family: sans-serif;font-weight: bold;">Total Crates : </span>
-                                <span style="font-size: 14px;font-family: sans-serif;">'.$row['total_cage'].'</span>
+                                <span style="font-size: 14px;font-family: sans-serif;">'.$totalCrates.'</span>
                             </p>
                         </td>
                         <td style="width: 50%;border-top:0px;padding: 0 0.7rem;">
@@ -514,7 +522,7 @@ if(isset($_GET['userID'])){
                                             </tr>
                                             <tr>
                                                 <td style="text-align: center;font-size: 14px;"><b>Avg. Bird Wt.</b></td>
-                                                <td style="text-align: center;font-size: 14px;">'.number_format((float)$row['average_bird'], 2, '.', '').'</td>
+                                                <td style="text-align: center;font-size: 14px;">'.number_format((($totalWeight - $totalCrate)/$totalBirds), 2, '.', '').'</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -545,9 +553,21 @@ if(isset($_GET['userID'])){
                     </table>
                 </div>
             </div>
-        </body></html>';
+            <button id="print-button" onclick="printPreview()">Print Preview</button>
+        </body>
+    </html>';
 
                 echo $message;
+                echo "<script>
+                    function printPreview() {
+                        var printWindow = window.open('', '_blank');
+                        printWindow.document.write('<html><title>".$row['po_no']."_".substr($row['customer'], 0, 15)."_".$row['serial_no']."</title><style>@media print{@page{margin-left:.4in;margin-right:.4in;margin-top:.1in;margin-bottom:.1in}}table{width:100%;border-collapse:collapse}.table td,.table th{padding:.7rem;vertical-align:top;border-top:1px solid #dee2e6}.table-bordered{border:1px dashed #000;border-collapse:collapse}.table-bordered td,.table-bordered th{border:1px dashed #000;font-family:sans-serif;font-size: 12px;height:22px}.table-full{border:1px solid #000;border-collapse:collapse;padding:0 .7rem}.table-full td,.table-full th{border:1px solid #000;font-family:sans-serif;padding:0 .7rem}.row{display:flex;flex-wrap:wrap;margin-top:20px}.col-md-3{position:relative;width:25%}.col-md-9{position:relative;width:75%}.col-md-7{position:relative;width:58.333333%}.col-md-5{position:relative;width:41.666667%}.col-md-6{position:relative;width:50%}.col-md-4{position:relative;width:33.333333%}.col-md-8{position:relative;width:66.666667%}#footer{position:fixed;padding:10px 10px 0 10px;bottom:-10;width:100%;height:25%}</style><body>');
+                        printWindow.document.write(document.getElementById('preview-container').innerHTML);
+                        printWindow.document.write('</body></html>');
+                        printWindow.document.close();
+                        printWindow.print();
+                    }
+               </script>";
             }
             else{
                 echo json_encode(

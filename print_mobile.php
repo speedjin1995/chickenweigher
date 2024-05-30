@@ -177,17 +177,19 @@ if(isset($_GET['userID'])){
                 rearrangeList($weightData);
                 $weightTime = json_decode($row['weight_time'], true);
                 $cage_data = json_decode($row['cage_data'], true);
-                $userName = "Pri Name";
+                $userName = "-";
 
-                if ($select_stmt2 = $db->prepare("select * FROM users WHERE id=?")) {
-                    $uid = $row['weighted_by'];
-                    $select_stmt2->bind_param('s', $uid);
-
-                    if ($select_stmt2->execute()) {
-                        $result2 = $select_stmt2->get_result();
-
-                        if ($row2= $result2->fetch_assoc()) { 
-                            $userName = $row2['name'];
+                if($row['weighted_by'] != null){
+                    if ($select_stmt2 = $db->prepare("select * FROM users WHERE id=?")) {
+                        $uid = json_decode($row['weighted_by'], true)[0];
+                        $select_stmt2->bind_param('s', $uid);
+    
+                        if ($select_stmt2->execute()) {
+                            $result2 = $select_stmt2->get_result();
+    
+                            if ($row2= $result2->fetch_assoc()) { 
+                                $userName = $row2['name'];
+                            }
                         }
                     }
                 }
@@ -384,7 +386,7 @@ if(isset($_GET['userID'])){
                         <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                             <p>
                                 <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Crate Wt (kg) : </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format($row['average_cage'], 2).'</span>
+                                <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format(($totalCrate / $totalCrates), 2).'</span>
                             </p>
                         </td>
                         <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -404,7 +406,7 @@ if(isset($_GET['userID'])){
                         <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                             <p>
                                 <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg) &nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format($totalNet, 2).'</span>
+                                <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format(($totalGross - $totalCrate), 2).'</span>
                             </p>
                         </td>
                         <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -456,7 +458,7 @@ if(isset($_GET['userID'])){
                     
                     $countCage = 1;
                     $indexCount2 = 11;
-                    $indexStringCage = '<tr><td style="border-top:0px;padding: 0 0.7rem;">
+                    $indexStringCage = '<tr><td style="border-top:0px;padding: 0 0.7rem;width: 20%;">
                         <p>
                             <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">1</span>
                         </p>
@@ -464,7 +466,7 @@ if(isset($_GET['userID'])){
                     
                     foreach ($cage_data as $cage) {
                         if ($countCage < 10) {
-                            $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;">
+                            $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;">
                                 <p>
                                     <span style="font-size: 12px;font-family: sans-serif;">' . str_replace('kg', '', $cage['data']) .  '/' . $cage['number'] . '</span>
                                 </p>
@@ -472,7 +474,7 @@ if(isset($_GET['userID'])){
                             $countCage++;
                         }
                         else {
-                            $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;">
+                            $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;">
                                 <p>
                                     <span style="font-size: 12px;font-family: sans-serif;">' . str_replace('kg', '', $cage['data']) . '/' . $cage['number'] . '</span>
                                 </p>
@@ -483,7 +485,7 @@ if(isset($_GET['userID'])){
     
                     if ($countCage > 0) {
                         for ($k = 0; $k <= (10 - $countCage); $k++) {
-                            $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;"><p><span style="font-size: 12px;font-family: sans-serif;"></span></p></td>';
+                            $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;"><p><span style="font-size: 12px;font-family: sans-serif;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td>';
                         }
                         $indexStringCage .= '</tr>';
                     }
@@ -617,21 +619,21 @@ if(isset($_GET['userID'])){
                                                 $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
                                             }
                                             else{
-                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSNet/$totalSBirds, 2, '.', '').'</td>';
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format(($totalSGross - $totalSCrate)/$totalSBirds, 2, '.', '').'</td>';
                                             }
                                             
                                             if($totalACages <= 0){
                                                 $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
                                             }
                                             else{
-                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalANet/$totalABirds, 2, '.', '').'</td>';
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format(($totalAGross - $totalACrate)/$totalABirds, 2, '.', '').'</td>';
                                             }
                                             
                                             if($totalBirds <= 0){
                                                 $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
                                             }
                                             else{
-                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalNet/$totalBirds, 2, '.', '').'</td>';
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format(($totalGross - $totalCrate)/$totalBirds, 2, '.', '').'</td>';
                                             }
                                         $message.= '</tr>
                                         <tr>

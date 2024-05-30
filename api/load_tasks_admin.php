@@ -3,7 +3,7 @@ require_once 'db_connect.php';
 
 $post = json_decode(file_get_contents('php://input'), true);
 
-$staffId = $post['userId'];
+//$staffId = $post['userId'];
 $now = date("Y-m-d 00:00:00");
 $end = date("Y-m-d 23:59:59");
 $values = array();
@@ -69,7 +69,8 @@ while($row = $result->fetch_assoc()){
         'grade'=>$row['grade'],
         'gender'=>$row['gender'],
         'house_no'=>$row['house_no'],
-        'remark'=>$row['remark']
+        'remark'=>$row['remark'],
+        'status'=>$row['status']
     );
 }
 

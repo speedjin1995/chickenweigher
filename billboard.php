@@ -218,8 +218,8 @@ $(function () {
   const today = new Date();
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(today.getDate() - 7);
-  var started = formatDate(sevenDaysAgo);
-  var ended = formatDate(today);
+  var started = formatDate2(sevenDaysAgo);
+  var ended = formatDate2(today);
   
   $('.select2').select2({
     allowClear: true
@@ -370,13 +370,11 @@ $(function () {
   $('#excelSearch').on('click', function(){
     var fromDateValue = $('#fromDate').val();
     var toDateValue = $('#toDate').val();
-
     var statusFilter = $('#statusFilter').val() ? $('#statusFilter').val() : '';
     var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
     
     window.open("php/export.php?fromDate="+fromDateValue+"&toDate="+toDateValue+
     "&farm="+statusFilter+"&customer="+customerNoFilter);
-
   });
 
   $('#officeSearch').on('click', function(){

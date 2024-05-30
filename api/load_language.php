@@ -20,6 +20,6 @@ echo json_encode(
     array(
         "status" => "success", 
         "languages" => $languages
-    )
+    ), JSON_UNESCAPED_UNICODE
 );
 ?>

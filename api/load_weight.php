@@ -20,7 +20,7 @@ if(($row2 = $stmt2->fetch_assoc()) !== null){
 }
 
 //$stmt = $db->prepare("SELECT * from weighing WHERE id = '6'");
-$stmt = $db->prepare("SELECT * from weighing WHERE status='Complete' AND `deleted` = '0' ORDER BY `created_datetime`");
+$stmt = $db->prepare("SELECT * from weighing WHERE status='Complete' AND `deleted` = '0' ORDER BY `booking_date` DESC");
 //$stmt->bind_param('ss', $now, $end);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -94,6 +94,7 @@ while($row = $result->fetch_assoc()){
                 'id'=>$row['id'],
                 'serial_no'=>$row['serial_no'],
                 'booking_date'=>$row['booking_date'],
+                'po_no'=>$row['po_no'],
                 'group_no'=>$row['group_no'],
                 'customer'=>$row['customer'],
                 'supplier'=>$row['supplier'],

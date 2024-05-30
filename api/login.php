@@ -4,6 +4,12 @@ require_once 'db_connect.php';
 session_start();
 
 $post = json_decode(file_get_contents('php://input'), true);
+$services = 'Login';
+$requests = json_encode($post);
+
+$stmtL = $db->prepare("INSERT INTO api_requests (services, request) VALUES (?, ?)");
+$stmtL->bind_param('ss', $services, $requests);
+$stmtL->execute();
 
 $username=$post['userEmail'];
 $password=$post['userPassword'];

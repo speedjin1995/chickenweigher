@@ -97,6 +97,6 @@ echo json_encode(
         "grades"=> $data7, 
         "drivers"=> $data9,
         "indicators"=>$data0
-    )
+    ),JSON_HEX_APOS
 );
 ?>

@@ -75,7 +75,8 @@ while($row = $result->fetch_assoc()){
                     'grade'=>$row['grade'],
                     'gender'=>$row['gender'],
                     'house_no'=>$row['house_no'],
-                    'remark'=>$row['remark']
+                    'remark'=>$row['remark'],
+                    'status'=>$row['status']
                 );
                 
                 array_push($checking, $row['id']);
@@ -110,7 +111,8 @@ while($row = $result->fetch_assoc()){
                 'grade'=>$row['grade'],
                 'gender'=>$row['gender'],
                 'house_no'=>$row['house_no'],
-                'remark'=>$row['remark']
+                'remark'=>$row['remark'],
+                'status'=>$row['status']
             );
             
             array_push($checking, $row['id']);

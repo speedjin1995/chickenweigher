@@ -19,7 +19,6 @@ if ($data !== null) {
     $driverName = null;
     $attendance1 = null;
 	$attendance2 = null;
-    $address2 = null;
 
     if(isset($data['veh_number']) && $data['veh_number'] != null && $data['veh_number'] != ''){
         $vehicleNumber = $data['veh_number'];
@@ -33,11 +32,8 @@ if ($data !== null) {
     if(isset($data['attandence_2']) && $data['attandence_2'] != null && $data['attandence_2'] != ''){
         $attendance2 = $data['attandence_2'];
     }
-    if(isset($data['address2']) && $data['reg_no'] != null && $data['address2'] != ''){
-        $address2 = $data['address2'];
-    }
 
-    $driver = "";
+    $driver = null;
 
     $empQuery = "SELECT * FROM transporters WHERE deleted = '0' and transporter_name like '%".$driverName."%'";
     $empRecords = mysqli_query($db, $empQuery);

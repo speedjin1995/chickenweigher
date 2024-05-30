@@ -10,7 +10,7 @@ if(isset($_POST['bookingDate'], $_POST['customerNo'], $_POST['product'], $_POST[
 	$product = filter_input(INPUT_POST, 'product', FILTER_SANITIZE_STRING);
 	$farm = filter_input(INPUT_POST, 'farm', FILTER_SANITIZE_STRING);
 	$bookingDate = filter_input(INPUT_POST, 'bookingDate', FILTER_SANITIZE_STRING);
-	$dateTime = DateTime::createFromFormat('d/m/Y h:i:s A', $bookingDate);
+	$dateTime = DateTime::createFromFormat('d/m/Y', $bookingDate);
 	$formattedDate = $dateTime->format('Y-m-d H:i:s');
 	$formattedDate2 = $dateTime->format('Y-m-d 00:00:00');
 	

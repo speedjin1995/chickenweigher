@@ -181,7 +181,7 @@ if(isset($_GET['userID'])){
                 $weightTime = json_decode($row['weight_time'], true);
                 $cage_data = json_decode($row['cage_data'], true);
                 $userName = "-";
-                $pages = ceil($totalCount / 150);
+                $pages = ceil($totalCount / 180);
                 $page = 1;
 
                 if($row['weighted_by'] != null){
@@ -210,6 +210,12 @@ if(isset($_GET['userID'])){
                     margin-top: 0.1in;
                     margin-bottom: 0.1in;
                 }
+            }
+            
+            body{
+                width: 21cm;
+                height: 29.7cm;
+                margin: 30mm 45mm 30mm 45mm;
             }
 
             table {
@@ -282,7 +288,6 @@ if(isset($_GET['userID'])){
             }
             
             #footer {
-                position: fixed;
                 padding: 10px 10px 0px 10px;
                 bottom: 0;
                 width: 100%;
@@ -291,9 +296,9 @@ if(isset($_GET['userID'])){
         </style>
     </head><body>';
     
-    $noOfRows = 0;
-    for($p=0; $p<$pages; $p++){
-        $message .= '<div id="container">
+    //$noOfRows = 0;
+    //for($p=0; $p<$pages; $p++){
+        $message .= '<div id="preview-container">
             <table class="table">
                 <tbody>
                     <tr>
@@ -398,7 +403,7 @@ if(isset($_GET['userID'])){
                         <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                             <p>
                                 <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Crate Wt (kg) : </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format($row['average_cage'], 2).'</span>
+                                <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format(($totalCrate / $totalCrates), 2).'</span>
                             </p>
                         </td>
                         <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -418,7 +423,7 @@ if(isset($_GET['userID'])){
                         <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                             <p>
                                 <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg) &nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format($totalNet, 2).'</span>
+                                <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format(($totalGross - $totalCrate), 2).'</span>
                             </p>
                         </td>
                         <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -566,32 +571,32 @@ if(isset($_GET['userID'])){
                                         </p>
                                     </td>';
                                     $count++;
-                                    $noOfRows+=10;
+                                    //$noOfRows+=10;
                                 }
                                 
-                                if($noOfRows >= 150){
+                                /*if($noOfRows >= 150){
                                     $reachNewPage = true;
                                     break;
-                                }
+                                }*/
                                 
                                 $totalCount++;
                             }
                             
-                            if($reachNewPage){
+                            /*if($reachNewPage){
                                 break;
-                            }
+                            }*/
             
                             if ($count > 0) {
                                 for ($k = 0; $k < (10 - $count); $k++) {
                                     $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;"><p><span style="font-size: 12px;font-family: sans-serif;"></span></p></td>';
                                 }
                                 $indexString .= '</tr>';
-                                $noOfRows++;
+                                //$noOfRows++;
                             }
                             
-                            if($noOfRows >= 150){
+                            /*($noOfRows >= 150){
                                 break;
-                            }
+                            }*/
             
                             $message .= $indexString;
                             $message .= '</tbody></table><br>';
@@ -602,7 +607,7 @@ if(isset($_GET['userID'])){
                 }
             }
             
-            $message .= '</div><div id="footer">
+            $message .= '<div id="footer">
                 <hr>
                 <table class="table">
                     <tbody>
@@ -648,21 +653,21 @@ if(isset($_GET['userID'])){
                                                 $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
                                             }
                                             else{
-                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSNet/$totalSBirds, 2, '.', '').'</td>';
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format(($totalSGross - $totalSCrate)/$totalSBirds, 2, '.', '').'</td>';
                                             }
                                             
                                             if($totalACages <= 0){
                                                 $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
                                             }
                                             else{
-                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalANet/$totalABirds, 2, '.', '').'</td>';
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format(($totalAGross - $totalACrate)/$totalABirds, 2, '.', '').'</td>';
                                             }
                                             
                                             if($totalBirds <= 0){
                                                 $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
                                             }
                                             else{
-                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalNet/$totalBirds, 2, '.', '').'</td>';
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format(($totalGross - $totalCrate)/$totalBirds, 2, '.', '').'</td>';
                                             }
                                         $message.= '</tr>
                                         <tr>
@@ -747,37 +752,41 @@ if(isset($_GET['userID'])){
                 </table>
             </div>';
             
-        $page++;
+        /*$page++;
         $noOfRows = 0;
         
         if($p != ($pages - 1)){
             $message .= '<p style="page-break-after: always;">&nbsp;</p>';
         }
-    }
+    }*/
     
     
         //</div>
         //<button id="print-button" onclick="printPreview()">Print Preview</button>
-    $message .= '</body></html>';
+    $message .= '</div><button id="print-button" onclick="printPreview()">Print Preview</button></body></html>';
                 
                 echo $message;
-                echo "<script>
+                /*echo "<script>
                     setTimeout(function(){
+                        document.getElementById('footer').style.position = 'fixed';
+                        document.body.style.width = 'auto';
+                        document.body.style.height = 'auto';
+                        document.body.style.margin = '0';
                         document.title = 'F-" . $row['po_no'] . "_" . substr($row['customer'], 0, 15) . "_" . $row['serial_no'] . "';
                         window.print();
                         window.close();
                     }, 1000);
-                </script>";
-                /*echo "<script>
+                </script>";*/
+                echo "<script>
                     function printPreview() {
                         var printWindow = window.open('', '_blank');
-                        printWindow.document.write('<html><title>F-".$row['po_no']."_".substr($row['customer'], 0, 15)."_".$row['serial_no']."</title><style>@media print{@page{margin-left:.3in;margin-right:.3in;margin-top:.1in;margin-bottom:.1in}}table{width:100%;border-collapse:collapse}.table td,.table th{padding:.7rem;vertical-align:top;border-top:1px solid #dee2e6}.table-bordered{border:1px solid #000}.table-bordered td,.table-bordered th{border:1px solid #000;font-family:sans-serif}.row{display:flex;flex-wrap:wrap;margin-top:20px}.col-md-3{position:relative;width:25%}.col-md-9{position:relative;width:75%}.col-md-7{position:relative;width:58.333333%}.col-md-5{position:relative;width:41.666667%}.col-md-6{position:relative;width:50%}.col-md-4{position:relative;width:33.333333%}.col-md-8{position:relative;width:66.666667%}#container{min-height: 75vh; display: table;width: 100%;}#footer{position:fixed;padding:10px 10px 0 10px;bottom:0;width:100%;height:auto}</style><body>');
+                        printWindow.document.write('<html><title>F-".$row['po_no']."_".substr($row['customer'], 0, 15)."_".$row['serial_no']."</title><style>@media print{@page{margin-left:.3in;margin-right:.3in;margin-top:.1in;margin-bottom:.1in}}table{width:100%;border-collapse:collapse}.table td,.table th{padding:.7rem;vertical-align:top;border-top:1px solid #dee2e6}.table-bordered{border:1px solid #000}.table-bordered td,.table-bordered th{border:1px solid #000;font-family:sans-serif}.row{display:flex;flex-wrap:wrap;margin-top:20px}.col-md-3{position:relative;width:25%}.col-md-9{position:relative;width:75%}.col-md-7{position:relative;width:58.333333%}.col-md-5{position:relative;width:41.666667%}.col-md-6{position:relative;width:50%}.col-md-4{position:relative;width:33.333333%}.col-md-8{position:relative;width:66.666667%}#container {min-height: 75vh;display: table;width: 100%;}#footer{position:fixed;padding:10px 10px 0 10px;bottom:0;width:100%;height:auto}</style><body>');
                         printWindow.document.write(document.getElementById('preview-container').innerHTML);
                         printWindow.document.write('</body></html>');
                         printWindow.document.close();
                         printWindow.print();
                     }
-               </script>";*/
+               </script>";
             }
             else{
                 echo json_encode(

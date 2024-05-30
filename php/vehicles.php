@@ -23,7 +23,7 @@ if(isset($_POST['vehicleNumber'], $_POST['driver'])){
         $attendance2 = filter_input(INPUT_POST, 'attendance2', FILTER_SANITIZE_STRING);
     }
 
-    if($_POST['customer'] != null && $_POST['customer'] != ''){
+    if(isset($_POST['customer']) && $_POST['customer'] != null && $_POST['customer'] != ''){
         $customers = filter_input(INPUT_POST, 'customer', FILTER_SANITIZE_STRING);
     }
     

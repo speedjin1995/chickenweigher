@@ -293,10 +293,15 @@ var currency = "1";
 $(function () {
   $('#customerNoHidden').hide();
   $('#supplierNoHidden').hide();
+  const today = new Date();
+  const sevenDaysAgo = new Date(today);
+  sevenDaysAgo.setDate(today.getDate() - 7);
+  var started = formatDate(today) + " 00:00:00";
+  var ended = formatDate(sevenDaysAgo) + " 23:59:59";
 
   $('.select2').select2({
     allowClear: true,
-    placeholder: "Please Select"
+    placeholder: "Please select"
   })
 
   var table = $("#weightTable").DataTable({
@@ -321,14 +326,13 @@ $(function () {
       { data: 'lorry_no' },
       { data: 'driver_name' },
       { data: 'farm_id' },
-      { 
-        className: 'dt-control',
-        orderable: false,
-        data: null,
-        render: function ( data, type, row ) {
-          return '<td class="table-elipse" data-toggle="collapse" data-target="#demo'+row.serialNo+'"><i class="fas fa-angle-down"></i></td>';
+      {
+            className: 'dt-control',
+            orderable: false,
+            data: null,
+            defaultContent: '<i class="fas fa-angle-down"></i>',
+            responsivePriority: 1
         }
-      }
     ],
     "rowCallback": function( row, data, index ) {
       $('td', row).css('background-color', '#E6E6FA');
@@ -367,19 +371,19 @@ $(function () {
   //Date picker
   $('#fromDatePicker').datetimepicker({
       icons: { time: 'far fa-clock' },
-      format: 'DD/MM/YYYY HH:mm:ss A',
+      format: 'DD/MM/YYYY',
       defaultDate: new Date
   });
 
   $('#toDatePicker').datetimepicker({
     icons: { time: 'far fa-clock' },
-    format: 'DD/MM/YYYY HH:mm:ss A',
+    format: 'DD/MM/YYYY',
     defaultDate: new Date
   });
 
   $('#bookingDatePicker').datetimepicker({
     icons: { time: 'far fa-clock' },
-    format: 'DD/MM/YYYY hh:mm:ss A',
+    format: 'DD/MM/YYYY',
     minDate: new Date,
     defaultDate: new Date
   });
@@ -387,37 +391,8 @@ $(function () {
   $('#filterSearch').on('click', function(){
     $('#spinnerLoading').show();
 
-    var fromDateValue = '';
-    var toDateValue = '';
-
-    if($('#fromDate').val()){
-      var convert1 = $('#fromDate').val().replace(", ", " ");
-      convert1 = convert1.replace(":", "/");
-      convert1 = convert1.replace(":", "/");
-      convert1 = convert1.replace(" ", "/");
-      convert1 = convert1.replace(" pm", "");
-      convert1 = convert1.replace(" am", "");
-      convert1 = convert1.replace(" PM", "");
-      convert1 = convert1.replace(" AM", "");
-      var convert2 = convert1.split("/");
-      var date  = new Date(convert2[2], convert2[1] - 1, convert2[0], convert2[3], convert2[4], convert2[5]);
-      fromDateValue = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-    }
-    
-    if($('#toDate').val()){
-      var convert3 = $('#toDate').val().replace(", ", " ");
-      convert3 = convert3.replace(":", "/");
-      convert3 = convert3.replace(":", "/");
-      convert3 = convert3.replace(" ", "/");
-      convert3 = convert3.replace(" pm", "");
-      convert3 = convert3.replace(" am", "");
-      convert3 = convert3.replace(" PM", "");
-      convert3 = convert3.replace(" AM", "");
-      var convert4 = convert3.split("/");
-      var date2  = new Date(convert4[2], convert4[1] - 1, convert4[0], convert4[3], convert4[4], convert4[5]);
-      toDateValue = date2.getFullYear() + "-" + (date2.getMonth() + 1) + "-" + date2.getDate() + " " + date2.getHours() + ":" + date2.getMinutes() + ":" + date2.getSeconds();
-    }
-
+    var fromDateValue = $('#fromDate').val();
+    var toDateValue = $('#toDate').val();
     var statusFilter = $('#statusFilter').val() ? $('#statusFilter').val() : '';
     var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
 
@@ -732,7 +707,7 @@ function formatNormal2 (row) {
 }
 
 function newEntry(){
-  var currentDate = moment().format('DD/MM/YYYY hh:mm:ss A');
+  var currentDate = moment().format('DD/MM/YYYY');
   $('#extendModal').find('#id').val("");
   $('#extendModal').find('#customerNo').select2('destroy').val('').select2();
   $('#extendModal').find('#product').select2('destroy').val('').select2();
