@@ -73,16 +73,38 @@ function rearrangeList($weightDetails) {
             $totalCrates += intval($element['numberOfCages']);
             $totalBirds += intval($element['numberOfBirds']);
             
-            if(!in_array($element['birdsPerCages'], $array3)){
-                $mapOfBirdsToCages[] = array( 
-                    'numberOfBirds' => $element['birdsPerCages'],
-                    'count' => 0
-                );
-
-                array_push($array3, $element['birdsPerCages']);
+            if($element['birdsPerCages'] != null){
+                if(!in_array($element['birdsPerCages'], $array3)){
+                    $mapOfBirdsToCages[] = array( 
+                        'numberOfBirds' => $element['birdsPerCages'],
+                        'count' => 0
+                    );
+    
+                    array_push($array3, $element['birdsPerCages']);
+                }
+            }
+            else{
+                $birdsPerCages = (string)((int)$element['numberOfBirds'] / (int)$element['numberOfCages']);
+                
+                if(!in_array($birdsPerCages, $array3)){
+                    $mapOfBirdsToCages[] = array( 
+                        'numberOfBirds' => $birdsPerCages,
+                        'count' => 0
+                    );
+    
+                    array_push($array3, $birdsPerCages);
+                }
             }
             
-            $keyB = array_search($element['birdsPerCages'], $array3);
+            if($element['birdsPerCages'] != null){
+                 $keyB = array_search($element['birdsPerCages'], $array3);
+            }
+            else{
+                 $birdsPerCages = (string)((int)$element['numberOfBirds'] / (int)$element['numberOfCages']);
+                 $keyB = array_search($birdsPerCages, $array3);
+            }
+            
+           
             $mapOfBirdsToCages[$keyB]['count'] += (int)$element['numberOfCages'];
 
             if ($element['sex'] == 'Male') {

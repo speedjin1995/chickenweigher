@@ -13,7 +13,7 @@ else{
 
 if(isset($_POST['code'], $_POST['name'])){
     $code = filter_input(INPUT_POST, 'code', FILTER_SANITIZE_STRING);
-    $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
+    $name = $_POST['name'];
     $reg_no = null;
 	$address = null;
     $address2 = null;

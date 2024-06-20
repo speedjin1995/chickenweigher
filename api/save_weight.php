@@ -5,7 +5,12 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 session_start();
 $post = json_decode(file_get_contents('php://input'), true);
 
+$services = 'Save_Weight';
+$requests = json_encode($post);
 
+$stmtL = $db->prepare("INSERT INTO api_requests (services, request) VALUES (?, ?)");
+$stmtL->bind_param('ss', $services, $requests);
+$stmtL->execute();
 
 if(isset($post['status'], $post['product'], $post['timestampData']
 , $post['vehicleNumber'], $post['driverName'], $post['farmId']
@@ -41,6 +46,10 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 	$remark = $post['remark'];
 	$startTime = $post['startTime'];
 	$endTime = $post['endTime'];
+	
+	$startDateTimeObj = new DateTime($startTime);
+    $startDateTime = $startDateTimeObj->format("Y-m-d 00:00:00");
+    $startDateTime2 = $startDateTimeObj->format("Ymd");
 
     $doNo = null;
 	$customerName = null;
@@ -81,10 +90,10 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 	}
 
 	if(isset($post['serialNo']) && ($post['serialNo'] == null || $post['serialNo'] == '')){
-		$serialNo = 'S'.date("Ymd");
+		$serialNo = 'S'.$startDateTime2;
 
 		if ($select_stmt = $db->prepare("SELECT COUNT(*) FROM weighing WHERE booking_date >= ? AND deleted='0'")) {
-            $select_stmt->bind_param('s', $today);
+            $select_stmt->bind_param('s', $startDateTime);
             
             // Execute the prepared query.
             if (! $select_stmt->execute()) {
@@ -133,7 +142,7 @@ if(isset($post['status'], $post['product'], $post['timestampData']
                         // If the serial number already exists, increment the count and generate a new serial number
                         $count++; // Increment the count
                         $charSize = strlen(strval($count));
-                        $serialNo = 'S'.date("Ymd"); // Reset the serial number
+                        $serialNo = 'S'.$startDateTime2; // Reset the serial number
                         
                         // Generate the new serial number
                         for($ind = 0; $ind < (4 - (int)$charSize); $ind++) {

@@ -6,20 +6,39 @@ if(!isset($_SESSION['userID'])){
   echo 'window.location.href = "login.html";</script>';
 }
 else{
-  $user = $_SESSION['userID'];
-  $language = $_SESSION['language'];
-  $_SESSION['page']='dashboard';
-  $stmt = $db->prepare("SELECT * from users where id = ?");
+    $user = $_SESSION['userID'];
+    $language = $_SESSION['language'];
+    $_SESSION['page']='dashboard';
+    $stmt = $db->prepare("SELECT * from users where id = ?");
 	$stmt->bind_param('s', $user);
 	$stmt->execute();
 	$result = $stmt->get_result();
+	$role = "NORMAL";
+	$farms = [];
 	
 	if(($row = $result->fetch_assoc()) !== null){
-    $role = $row['role_code'];
-  }
+       if($row['farms'] != null){
+            $farms = json_decode($row['farms'], true);
+        }
+	    
+        $role = $row['role_code'];
+    }
 
-  $packages = $db->query("SELECT * FROM farms WHERE deleted = '0'");
-  $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'");
+    $packages = $db->query("SELECT * FROM farms WHERE deleted = '0'");
+    $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'");
+  
+    if($role == 'MANAGER' || $role == 'ADMIN'){
+        $packages = $db->query("SELECT * FROM farms WHERE deleted = '0' ORDER BY name");
+    }
+    else{
+        if(count($farms) > 0){
+            $commaSeparatedString = implode(',', $farms);
+            $packages = $db->query("SELECT * FROM farms WHERE deleted = '0' AND id IN ($commaSeparatedString) ORDER BY name");
+        }
+        else{
+            $packages = [];
+        }
+    }
 }
 ?>
 

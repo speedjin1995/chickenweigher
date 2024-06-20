@@ -1,7 +1,7 @@
 <?php
 
 require_once 'db_connect.php';
-// // Load the database configuration file 
+session_start(); 
  
 // Filter the excel data 
 function filterData(&$str){ 
@@ -42,6 +42,25 @@ if($_GET['farm'] != null && $_GET['farm'] != '' && $_GET['farm'] != '-'){
 
 if($_GET['customer'] != null && $_GET['customer'] != '' && $_GET['customer'] != '-'){
     $searchQuery .= " and customer = '".$_GET['customer']."'";
+}
+
+$farms = array();
+$userId = $_SESSION['userID'];
+
+$stmt = $db->prepare("SELECT * from users where id = ?");
+$stmt->bind_param('s', $userId);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if(($row = $result->fetch_assoc()) !== null){
+    if($row['farms'] != null){
+        $farms = json_decode($row['farms'], true);
+        
+        if(count($farms) > 0){
+            $commaSeparatedString = implode(',', $farms);
+            $searchQuery .= ' AND farm_id IN ('.$commaSeparatedString.')';
+        }
+    }
 }
 
 // Fetch records from database
@@ -121,11 +140,11 @@ if($query->num_rows > 0){
             
             $lineData = array($row['serial_no'], $row['po_no'], $row['booking_date'], $row['customer'], $row['product'], $row['lorry_no'], $row['driver_name'], $farm,
             $weighted_by, $row['start_time'], $row['end_time'], $groupList[$j]['totalGross'], $groupList[$j]['totalTare'], $totalNet, $groupList[$j]['totalBird'], $groupList[$j]['totalCage'], $groupList[$j]['grade'], $groupList[$j]['sex'], $groupList[$j]['houseNumber'], $groupList[$j]['groupNo'], $time, $row['remark']);
+        
+            
+            array_walk($lineData, 'filterData'); 
+            $excelData .= implode("\t", array_values($lineData)) . "\n";
         }
-        
-        
-        array_walk($lineData, 'filterData'); 
-        $excelData .= implode("\t", array_values($lineData)) . "\n"; 
     } 
 }else{ 
     $excelData .= 'No records found...'. "\n"; 

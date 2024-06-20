@@ -1,6 +1,28 @@
 <?php
 ## Database configuration
 require_once 'db_connect.php';
+session_start();
+$farms = array();
+
+if(!isset($_SESSION['userID'])){
+    echo '<script type="text/javascript">';
+    echo 'window.location.href = "../login.html";</script>';
+}
+else{
+    $userId = $_SESSION['userID'];
+    $role_code = $_SESSION['role_code'];
+    
+    $stmt = $db->prepare("SELECT * from users where id = ?");
+    $stmt->bind_param('s', $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if(($row = $result->fetch_assoc()) !== null){
+        if($row['farms'] != null){
+            $farms = json_decode($row['farms'], true);
+        }
+    }
+}
 
 ## Read value
 $draw = $_POST['draw'];
@@ -29,6 +51,12 @@ if (isset($_POST['farm']) && is_array($_POST['farm']) && count($_POST['farm']) >
     }, $_POST['farm']);
     
     // Join sanitized farm IDs with commas to form an SQL IN clause
+    $farmsList = implode(',', $farms);
+    
+    // Append to search query
+    $searchQuery .= " AND farm_id IN ($farmsList)";
+}
+else if(count($farms) > 0){
     $farmsList = implode(',', $farms);
     
     // Append to search query

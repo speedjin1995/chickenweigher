@@ -2,24 +2,42 @@
 require_once 'php/languageSetting.php';
 
 if(!isset($_SESSION['userID'])){
-  echo '<script type="text/javascript">';
-  echo 'window.location.href = "login.html";</script>';
+    echo '<script type="text/javascript">';
+    echo 'window.location.href = "login.html";</script>';
 }
 else{
-  $user = $_SESSION['userID'];
-  $language = $_SESSION['language'];
-  $_SESSION['page']='billboard';
-  $stmt = $db->prepare("SELECT * from users where id = ?");
-	$stmt->bind_param('s', $user);
-	$stmt->execute();
-	$result = $stmt->get_result();
-	
-	if(($row = $result->fetch_assoc()) !== null){
-    $role = $row['role_code'];
-  }
-
-  $packages = $db->query("SELECT * FROM farms WHERE deleted = '0' ORDER BY name");
-  $customers = $db->query("SELECT * FROM customers WHERE deleted = '0' ORDER BY customer_name");
+    $user = $_SESSION['userID'];
+    $language = $_SESSION['language'];
+    $_SESSION['page']='billboard';
+    $farms = array();
+    $stmt = $db->prepare("SELECT * from users where id = ?");
+    $stmt->bind_param('s', $user);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $roles = "NORMAL";
+    	
+    if(($row = $result->fetch_assoc()) !== null){
+        if($row['farms'] != null){
+            $farms = json_decode($row['farms'], true);
+        }
+        
+        $roles = $row['role_code'];
+    }
+    
+    if($roles == 'MANAGER' || $roles == 'ADMIN'){
+        $packages = $db->query("SELECT * FROM farms WHERE deleted = '0' ORDER BY name");
+    }
+    else{
+        if(count($farms) > 0){
+            $commaSeparatedString = implode(',', $farms);
+            $packages = $db->query("SELECT * FROM farms WHERE deleted = '0' AND id IN ($commaSeparatedString) ORDER BY name");
+        }
+        else{
+            $packages = [];
+        }
+    }
+    
+    $customers = $db->query("SELECT * FROM customers WHERE deleted = '0' ORDER BY customer_name");
 }
 ?>
 
@@ -370,7 +388,7 @@ $(function () {
   $('#excelSearch').on('click', function(){
     var fromDateValue = $('#fromDate').val();
     var toDateValue = $('#toDate').val();
-    var statusFilter = $('#statusFilter').val() ? $('#statusFilter').val() : '';
+    var statusFilter = $('#farmFilter').val() ? $('#farmFilter').val() : '';
     var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
     
     window.open("php/export.php?fromDate="+fromDateValue+"&toDate="+toDateValue+
