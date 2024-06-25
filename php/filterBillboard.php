@@ -60,6 +60,10 @@ if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] 
 	$searchQuery .= " and customer = '".$_POST['customer']."'";
 }
 
+if(isset($_POST['vehicle']) && $_POST['vehicle'] != null && $_POST['vehicle'] != '' && $_POST['vehicle'] != '-'){
+	$searchQuery .= " and lorry_no = '".$_POST['vehicle']."'";
+}
+
 if($searchValue != ''){
   $searchQuery = " and (weighing.serial_no like '%".$searchValue."%' or 
   weighing.lorry_no like '%".$searchValue."%' )";

@@ -35,9 +35,13 @@ if(isset($_POST['code'], $_POST['packages'], $_POST['address'], $_POST['category
         $supplier = filter_input(INPUT_POST, 'supplier', FILTER_SANITIZE_STRING);
     }
 
+    if(isset($_POST['product']) && $_POST['product'] != null && $_POST['product'] != ''){
+        $product = filter_input(INPUT_POST, 'product', FILTER_SANITIZE_STRING);
+    }
+
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE farms SET farms_code=?, name=?, address=?, address2=?, address3=?, address4=?, states=?, suppliers=?, category=? WHERE id=?")) {
-            $update_stmt->bind_param('ssssssssss', $code, $packages, $address, $address2, $address3, $address4, $states, $supplier, $category, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE farms SET farms_code=?, name=?, address=?, address2=?, address3=?, address4=?, states=?, suppliers=?, category=?, product=? WHERE id=?")) {
+            $update_stmt->bind_param('sssssssssss', $code, $packages, $address, $address2, $address3, $address4, $states, $supplier, $category, $product, $_POST['id']);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -62,8 +66,8 @@ if(isset($_POST['code'], $_POST['packages'], $_POST['address'], $_POST['category
         }
     }
     else{
-        if ($insert_stmt = $db->prepare("INSERT INTO farms (farms_code, name, address, address2, address3, address4, states, suppliers, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('sssssssss', $code, $packages, $address, $address2, $address3, $address4, $states, $supplier, $category);
+        if ($insert_stmt = $db->prepare("INSERT INTO farms (farms_code, name, address, address2, address3, address4, states, suppliers, category, product) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('ssssssssss', $code, $packages, $address, $address2, $address3, $address4, $states, $supplier, $category, $product);
             
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {

@@ -19,6 +19,7 @@ else{
     }
 
   $vehicles = $db->query("SELECT * FROM vehicles WHERE deleted = '0'"); // Vehicles
+  $vehicles2 = $db->query("SELECT * FROM vehicles WHERE deleted = '0'"); // Vehicles
   $products = $db->query("SELECT * FROM products WHERE deleted = '0'"); // Products
   $farms = $db->query("SELECT * FROM farms WHERE deleted = '0' ORDER BY name");
   $farms2 = $db->query("SELECT * FROM farms WHERE deleted = '0' ORDER BY name");
@@ -57,21 +58,25 @@ else{
           <div class="card-body">
             <div class="row">
               <div class="form-group col-3">
-                <label><?=$languageArray['from_date_code'][$language] ?>:</label>
-                <div class="input-group date" id="fromDatePicker" data-target-input="nearest">
-                  <input type="text" class="form-control datetimepicker-input" data-target="#fromDatePicker" id="fromDate"/>
-                  <div class="input-group-append" data-target="#fromDatePicker" data-toggle="datetimepicker">
-                  <div class="input-group-text"><i class="fa fa-calendar"></i></div></div>
+                <label>Date range: <span id="range"></span></label>
+
+                <div class="input-group">
+                  <button type="button" class="btn btn-default float-right" id="daterange-btn">
+                    <i class="far fa-calendar-alt"></i> Date range picker
+                    <i class="fas fa-caret-down"></i>
+                  </button>
                 </div>
               </div>
 
-              <div class="form-group col-3">
-                <label><?=$languageArray['to_date_code'][$language] ?>:</label>
-                <div class="input-group date" id="toDatePicker" data-target-input="nearest">
-                  <input type="text" class="form-control datetimepicker-input" data-target="#toDatePicker" id="toDate"/>
-                  <div class="input-group-append" data-target="#toDatePicker" data-toggle="datetimepicker">
-                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                  </div>
+              <div class="col-3">
+                <div class="form-group">
+                  <label><?=$languageArray['vehicle_no_code'][$language] ?></label>
+                  <select class="form-control select2" id="vehFilter" name="vehFilter" style="width: 100%;">
+                    <option selected="selected">-</option>
+                    <?php while($rowStatusV=mysqli_fetch_assoc($vehicles2)){ ?>
+                      <option value="<?=$rowStatusV['veh_number'] ?>"><?=$rowStatusV['veh_number'] ?></option>
+                    <?php } ?>
+                  </select>
                 </div>
               </div>
 
@@ -118,15 +123,21 @@ else{
         <div class="card card-primary">
           <div class="card-header">
             <div class="row">
-              <div class="col-9"></div>
+              <div class="col-5"></div>
               <?php 
                 if($role == "ADMIN" || $role == "MANAGER"){
-                  echo '<div class="col-3">
-                  <button type="button" class="btn btn-block bg-gradient-warning btn-sm" onclick="newEntry()">'.$languageArray['add_new_weight_code'][$language].'</button>
-                </div>';
+                  echo '<div class="col-2">
+                          <input type="file" id="fileInput" accept=".xlsx, .xls" />
+                      </div>
+                      <div class="col-2">
+                          <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="importExcelbtn">'.$languageArray['import_excel_code'][$language].'</button>
+                      </div>  
+                      <div class="col-3">
+                        <button type="button" class="btn btn-block bg-gradient-warning btn-sm" onclick="newEntry()">'.$languageArray['add_new_weight_code'][$language].'</button>
+                      </div>';
                 }
                 else{
-                  echo '<div class="col-3"></div>';
+                  echo '<div class="col-7"></div>';
                 }
               ?>
             </div>
@@ -296,13 +307,89 @@ $(function () {
   const today = new Date();
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(today.getDate() - 7);
-  var started = formatDate(today) + " 00:00:00";
-  var ended = formatDate(sevenDaysAgo) + " 23:59:59";
+  var started = formatDate2(today);
+  var ended = formatDate2(today);
 
   $('.select2').select2({
     allowClear: true,
     placeholder: "Please select"
-  })
+  });
+
+  $('#daterange-btn').daterangepicker(
+    {
+      ranges   : {
+        'Today'       : [moment(), moment()],
+        'Yesterday'   : [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+        'Last 7 Days' : [moment().subtract(6, 'days'), moment()],
+        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+        'This Month'  : [moment().startOf('month'), moment().endOf('month')],
+        'Last Month'  : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+      },
+      startDate: moment(),
+      endDate  : moment()
+    },
+    function (start, end) {
+      var startFormatted = formatDate2(start);
+      var endFormatted = formatDate2(end);
+      var dateRange = start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY');
+      $('#range').html(dateRange);
+      started = startFormatted;
+      ended = endFormatted;
+      var statusFilter = $('#farmFilter').val() ? $('#farmFilter').val() : '';
+      var vehicleFilter = $('#vehFilter').val() ? $('#vehFilter').val() : '';
+      var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
+
+      //Destroy the old Datatable
+      $("#weightTable").DataTable().clear().destroy();
+
+      //Create new Datatable
+      table = $("#weightTable").DataTable({
+        "responsive": true,
+        "autoWidth": false,
+        'processing': true,
+        'serverSide': true,
+        'serverMethod': 'post',
+        'searching': false,
+        'order': [[ 6, 'asc' ]],
+        //'columnDefs': [ { orderable: false, targets: [0] }],
+        'ajax': {
+          'type': 'POST',
+          'url':'php/filterWeight.php',
+          'data': {
+            fromDate: startFormatted,
+            toDate: endFormatted,
+            farm: statusFilter,
+            customer: customerNoFilter,
+            vehicle: vehicleFilter
+          } 
+        },
+        'columns': [
+          { data: 'no' },
+          { data: 'booking_date' },
+          { data: 'serial_no' },
+          { data: 'po_no' },
+          { data: 'customer' },
+          { data: 'product' },
+          { data: 'lorry_no' },
+          { data: 'driver_name' },
+          { data: 'farm_id' },
+          {
+            className: 'dt-control',
+            orderable: false,
+            data: null,
+            defaultContent: '<i class="fas fa-angle-down"></i>',
+            responsivePriority: 1
+          }
+        ],
+        "rowCallback": function( row, data, index ) {
+          $('td', row).css('background-color', '#E6E6FA');
+        },
+        "drawCallback": function(settings) {
+          $('#spinnerLoading').hide();
+        }
+      });
+    }
+  );
 
   var table = $("#weightTable").DataTable({
     "responsive": true,
@@ -327,12 +414,12 @@ $(function () {
       { data: 'driver_name' },
       { data: 'farm_id' },
       {
-            className: 'dt-control',
-            orderable: false,
-            data: null,
-            defaultContent: '<i class="fas fa-angle-down"></i>',
-            responsivePriority: 1
-        }
+        className: 'dt-control',
+        orderable: false,
+        data: null,
+        defaultContent: '<i class="fas fa-angle-down"></i>',
+        responsivePriority: 1
+      }
     ],
     "rowCallback": function( row, data, index ) {
       $('td', row).css('background-color', '#E6E6FA');
@@ -369,7 +456,7 @@ $(function () {
   });
   
   //Date picker
-  $('#fromDatePicker').datetimepicker({
+  /*$('#fromDatePicker').datetimepicker({
       icons: { time: 'far fa-clock' },
       format: 'DD/MM/YYYY',
       defaultDate: new Date
@@ -379,7 +466,7 @@ $(function () {
     icons: { time: 'far fa-clock' },
     format: 'DD/MM/YYYY',
     defaultDate: new Date
-  });
+  });*/
 
   $('#bookingDatePicker').datetimepicker({
     icons: { time: 'far fa-clock' },
@@ -391,10 +478,11 @@ $(function () {
   $('#filterSearch').on('click', function(){
     $('#spinnerLoading').show();
 
-    var fromDateValue = $('#fromDate').val();
-    var toDateValue = $('#toDate').val();
+    var fromDateValue = started;
+    var toDateValue = ended;
     var statusFilter = $('#statusFilter').val() ? $('#statusFilter').val() : '';
     var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
+    var vehicleFilter = $('#vehFilter').val() ? $('#vehFilter').val() : '';
 
     //Destroy the old Datatable
     $("#weightTable").DataTable().clear().destroy();
@@ -417,6 +505,7 @@ $(function () {
           toDate: toDateValue,
           farm: statusFilter,
           customer: customerNoFilter,
+          vehicle: vehicleFilter
         }
       },
       'columns': [
@@ -586,6 +675,55 @@ $(function () {
       $('#driver').find('option[data-id="' + dataId + '"]').prop('selected', true);
       $('#driver').trigger('change');
     }
+  });
+
+  document.getElementById('fileInput').addEventListener('change', function (e) {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: 'array' });
+
+    const sheetName = workbook.SheetNames[3];
+    const sheet = workbook.Sheets[sheetName];
+    jsonData = XLSX.utils.sheet_to_json(sheet);
+    console.log(jsonData);
+    };
+    reader.readAsArrayBuffer(file);
+  });
+
+  $('#importExcelbtn').on('click', function(){
+      jsonData.forEach(function(row) {
+        $.ajax({
+            url: 'php/importExcelWeight.php',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(row),
+            success: function(response) {
+                var obj = JSON.parse(response); 
+                
+                if(obj.status === 'success'){
+                    $('#addModal').modal('hide');
+                    toastr["success"](obj.message, "Success:");
+                    $('#productTable').DataTable().ajax.reload();
+                    $('#spinnerLoading').hide();
+                }
+                else if(obj.status === 'failed'){
+                    toastr["error"](obj.message, "Failed:");
+                    $('#spinnerLoading').hide();
+                }
+                else{
+                    toastr["error"]("Something wrong when import", "Failed:");
+                    $('#spinnerLoading').hide();
+                }
+            },
+            error: function(error) {
+                toastr["error"](obj.message, "Failed:");
+                $('#spinnerLoading').hide();
+            }
+        });
+      })
   });
 });
 

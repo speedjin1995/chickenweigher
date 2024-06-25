@@ -147,7 +147,6 @@ function rearrangeList($weightDetails) {
     // Now you can work with $mapOfWeights and the calculated totals as needed.
 }
 
-
 if(isset($_GET['userID'])){
     $id = $_GET['userID'];
 
@@ -588,7 +587,7 @@ if(isset($_GET['userID'])){
             
                             if ($count > 0) {
                                 for ($k = 0; $k < (10 - $count); $k++) {
-                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;"><p><span style="font-size: 12px;font-family: sans-serif;"></span></p></td>';
+                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
                                 }
                                 $indexString .= '</tr>';
                                 //$noOfRows++;

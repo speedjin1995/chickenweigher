@@ -335,7 +335,7 @@ to get the desired effect
             with font-awesome or any other icon font library -->
           <li class="nav-item has-treeview menu-open">
             <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-bar-chart"></i>
+              <i class="nav-icon fas fa-chart-bar"></i>
               <p><?=$languageArray['dashboard_code'][$language] ?><i class="fas fa-angle-left right"></i></p>
             </a>
             <ul class="nav nav-treeview" style="display: block;">
@@ -529,9 +529,12 @@ to get the desired effect
 <script src="plugins/moment/moment.min.js"></script>
 <script src="plugins/inputmask/jquery.inputmask.min.js"></script>
 <script src="plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
 <script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
 <script src="plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 <script src="plugins/toastr/toastr.min.js"></script>
 <script src="plugins/moment/moment.min.js"></script>
 <script src="plugins/daterangepicker/daterangepicker.js"></script>

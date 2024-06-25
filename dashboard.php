@@ -6,10 +6,10 @@ if(!isset($_SESSION['userID'])){
   echo 'window.location.href = "login.html";</script>';
 }
 else{
-    $user = $_SESSION['userID'];
-    $language = $_SESSION['language'];
-    $_SESSION['page']='dashboard';
-    $stmt = $db->prepare("SELECT * from users where id = ?");
+  $user = $_SESSION['userID'];
+  $language = $_SESSION['language'];
+  $_SESSION['page']='dashboard';
+  $stmt = $db->prepare("SELECT * from users where id = ?");
 	$stmt->bind_param('s', $user);
 	$stmt->execute();
 	$result = $stmt->get_result();
@@ -17,28 +17,29 @@ else{
 	$farms = [];
 	
 	if(($row = $result->fetch_assoc()) !== null){
-       if($row['farms'] != null){
-            $farms = json_decode($row['farms'], true);
-        }
-	    
-        $role = $row['role_code'];
-    }
+      if($row['farms'] != null){
+          $farms = json_decode($row['farms'], true);
+      }
+    
+      $role = $row['role_code'];
+  }
 
-    $packages = $db->query("SELECT * FROM farms WHERE deleted = '0'");
-    $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'");
-  
-    if($role == 'MANAGER' || $role == 'ADMIN'){
-        $packages = $db->query("SELECT * FROM farms WHERE deleted = '0' ORDER BY name");
-    }
-    else{
-        if(count($farms) > 0){
-            $commaSeparatedString = implode(',', $farms);
-            $packages = $db->query("SELECT * FROM farms WHERE deleted = '0' AND id IN ($commaSeparatedString) ORDER BY name");
-        }
-        else{
-            $packages = [];
-        }
-    }
+  $packages = $db->query("SELECT * FROM farms WHERE deleted = '0'");
+  $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'");
+  $products = $db->query("SELECT * FROM products WHERE deleted = '0'"); // Products
+
+  if($role == 'MANAGER' || $role == 'ADMIN'){
+      $packages = $db->query("SELECT * FROM farms WHERE deleted = '0' ORDER BY name");
+  }
+  else{
+      if(count($farms) > 0){
+          $commaSeparatedString = implode(',', $farms);
+          $packages = $db->query("SELECT * FROM farms WHERE deleted = '0' AND id IN ($commaSeparatedString) ORDER BY name");
+      }
+      else{
+          $packages = [];
+      }
+  }
 }
 ?>
 
@@ -69,7 +70,7 @@ else{
         <div class="card">
           <div class="card-body">
             <div class="row">
-              <div class="form-group col-4">
+              <div class="form-group col-3">
                 <label>Date range: <span id="range"></span></label>
 
                 <div class="input-group">
@@ -80,7 +81,7 @@ else{
                 </div>
               </div>
 
-              <div class="col-4">
+              <div class="col-3">
                 <div class="form-group">
                   <label><?=$languageArray['farm_code'][$language] ?></label>
                   <select class="form-control select2" id="farmFilter" name="farmFilter" style="width: 100%;" multiple>
@@ -91,12 +92,23 @@ else{
                 </div>
               </div>
 
-              <div class="col-4">
+              <div class="col-3">
                 <div class="form-group">
                   <label><?=$languageArray['customer_code'][$language] ?></label>
                   <select class="form-control select2" style="width: 100%;" id="customerFilter" name="customerFilter" style="display: none;" multiple>
                     <?php while($rowCustomer=mysqli_fetch_assoc($customers)){ ?>
                       <option value="<?=$rowCustomer['customer_name'] ?>"><?=$rowCustomer['customer_name'] ?></option>
+                    <?php } ?>
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-3">
+                <div class="form-group">
+                  <label><?=$languageArray['product_code'][$language] ?></label>
+                  <select class="form-control select2" id="productFilter" name="productFilter" style="width: 100%;">
+                    <?php while($rowproducts=mysqli_fetch_assoc($products)){ ?>
+                      <option value="<?=$rowproducts['product_name'] ?>"><?=$rowproducts['product_name'] ?></option>
                     <?php } ?>
                   </select>
                 </div>
@@ -179,6 +191,9 @@ else{
           </div>
 
           <div class="card-body">
+            <div>
+              Show columns: <a class="toggle-vis" data-column="0">Serial No</a> - <a class="toggle-vis" data-column="1">Customer</a> - <a class="toggle-vis" data-column="2">Farm</a> - <a class="toggle-vis" data-column="3">Number of Cages</a> - <a class="toggle-vis" data-column="4">Number of Birds</a> - <a class="toggle-vis" data-column="5">Average Birds Weight</a> - <a class="toggle-vis" data-column="6">Start Datetime</a>
+            </div><br>
             <table id="weightTable" class="table table-bordered table-striped display">
               <thead>
                 <tr>
@@ -188,11 +203,13 @@ else{
                   <th>Number of <br>Cages</th>
                   <th>Number of <br>Birds</th>
                   <th>Average Birds <br>Weight</th>
+                  <th>Start <br>Datetime</th>
                 </tr>
               </thead>
               <tfoot>
                 <tr>
                     <th colspan="3">Total</th>
+                    <th></th>
                     <th></th>
                     <th></th>
                     <th></th>
@@ -215,6 +232,7 @@ $(function () {
   var ended = formatDate(today) + " 23:59:59";
   var dateRange = formatDate(today) + ' - ' + formatDate(today);
   $('#range').html(dateRange);
+  $('#productFilter').val('BROILER');
   
   $('.select2').select2({
     allowClear: true,
@@ -243,6 +261,7 @@ $(function () {
       ended = endFormatted;
       var statusFilter = $('#farmFilter').val() ? $('#farmFilter').val() : '';
       var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
+      var productFilter = $('#productFilter').val() ? $('#productFilter').val() : '';
 
       //Destroy the old Datatable
       $("#weightTable").DataTable().clear().destroy();
@@ -255,8 +274,8 @@ $(function () {
         'serverSide': true,
         'serverMethod': 'post',
         'searching': false,
-        'order': [[ 0, 'asc' ]],
-        'columnDefs': [ { orderable: false, targets: [0] }],
+        'order': [[ 6, 'asc' ]],
+        //'columnDefs': [ { orderable: false, targets: [0] }],
         'ajax': {
           'type': 'POST',
           'url':'php/filterCount.php',
@@ -264,7 +283,8 @@ $(function () {
             fromDate: startFormatted,
             toDate: endFormatted,
             farm: statusFilter,
-            customer: customerNoFilter
+            customer: customerNoFilter,
+            product: productFilter
           } 
         },
         'columns': [
@@ -279,7 +299,8 @@ $(function () {
             { data: 'farm_id' },
             { data: 'total_cages' },
             { data: 'total_birds' },
-            { data: 'average_bird' }
+            { data: 'average_bird' },
+            { data: 'start_time' }
         ],
         "rowCallback": function( row, data, index ) {
           $('td', row).css('background-color', '#E6E6FA');
@@ -324,8 +345,8 @@ $(function () {
     'serverSide': true,
     'serverMethod': 'post',
     'searching': false,
-    'order': [[ 0, 'asc' ]],
-    'columnDefs': [ { orderable: false, targets: [0] }],
+    'order': [[ 6, 'asc' ]],
+    //'columnDefs': [ { orderable: false, targets: [0] }],
     'ajax': {
       'type': 'POST',
       'url':'php/filterCount.php',
@@ -333,7 +354,8 @@ $(function () {
         fromDate: started,
         toDate: ended,
         farm: '',
-        customer: ''
+        customer: '',
+        product: 'BROILER'
       } 
     },
     'columns': [
@@ -348,7 +370,8 @@ $(function () {
       { data: 'farm_id' },
       { data: 'total_cages' },
       { data: 'total_birds' },
-      { data: 'average_bird' }
+      { data: 'average_bird' },
+      { data: 'start_time' }
     ],
     "rowCallback": function( row, data, index ) {
       $('td', row).css('background-color', '#E6E6FA');
@@ -391,6 +414,7 @@ $(function () {
     var toDateValue = ended;
     var statusFilter = $('#farmFilter').val() ? $('#farmFilter').val() : '';
     var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
+    var productFilter = $('#productFilter').val() ? $('#productFilter').val() : '';
 
     //Destroy the old Datatable
     $("#weightTable").DataTable().clear().destroy();
@@ -403,8 +427,8 @@ $(function () {
       'serverSide': true,
       'serverMethod': 'post',
       'searching': false,
-      'order': [[ 1, 'asc' ]],
-      'columnDefs': [ { orderable: false, targets: [0] }],
+      'order': [[ 6, 'asc' ]],
+      //'columnDefs': [ { orderable: false, targets: [0] }],
       'ajax': {
         'type': 'POST',
         'url':'php/filterCount.php',
@@ -413,6 +437,7 @@ $(function () {
           toDate: toDateValue,
           farm: statusFilter,
           customer: customerNoFilter,
+          product: productFilter
         }
       },
       'columns': [
@@ -427,7 +452,8 @@ $(function () {
         { data: 'farm_id' },
         { data: 'total_cages' },
         { data: 'total_birds' },
-        { data: 'average_bird' }
+        { data: 'average_bird' },
+        { data: 'start_time' }
       ],
       "rowCallback": function( row, data, index ) {
         $('td', row).css('background-color', '#E6E6FA');
@@ -461,6 +487,18 @@ $(function () {
             $(api.column(3).footer()).html(totalCages);
             $(api.column(4).footer()).html(totalBirds);
         }
+    });
+  });
+
+  document.querySelectorAll('a.toggle-vis').forEach((el) => {
+    el.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      let columnIdx = e.target.getAttribute('data-column');
+      let column = table.column(columnIdx);
+
+      // Toggle the visibility
+      column.visible(!column.visible());
     });
   });
 });
