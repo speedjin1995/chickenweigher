@@ -333,8 +333,6 @@ $(function () {
   );
 
   var table = $("#weightTable").DataTable({
-    "buttons": ["colvis"],
-    "lengthChange": false,
     "responsive": true,
     "autoWidth": false,
     'processing': true,
