@@ -462,8 +462,8 @@ $(function () {
   });
 
   $('#excelSearch').on('click', function(){
-    var fromDateValue = $('#fromDate').val();
-    var toDateValue = $('#toDate').val();
+    var fromDateValue = started;
+    var toDateValue = ended;
     var statusFilter = $('#farmFilter').val() ? $('#farmFilter').val() : '';
     var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
     
