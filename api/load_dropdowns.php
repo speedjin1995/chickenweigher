@@ -51,7 +51,8 @@ while($row3=mysqli_fetch_assoc($products)){
 while($row4=mysqli_fetch_assoc($farms)){
     $data4[] = array( 
         'id'=>$row4['id'],
-        'name'=>$row4['name']
+        'name'=>$row4['name'],
+        'product'=>$row4['product']
     );
 }
 
