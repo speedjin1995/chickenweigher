@@ -15,6 +15,7 @@ else{
     $stmt->execute();
     $result = $stmt->get_result();
     $roles = "NORMAL";
+    $actual_link = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]";
     	
     if(($row = $result->fetch_assoc()) !== null){
         if($row['farms'] != null){
@@ -191,7 +192,7 @@ else{
         <div class="card card-primary">
           <div class="card-header">
             <div class="row">
-              <div class="col-6"><?=$languageArray['weighing_report_code'][$language] ?></div>
+              <div class="col-4"><?=$languageArray['weighing_report_code'][$language] ?></div>
               <div class="col-2">
                 <button type="button" class="btn btn-block bg-gradient-info btn-sm"  id="officeSearch">
                   <i class="fas fa-newspaper"></i>
@@ -208,6 +209,12 @@ else{
                 <button type="button" class="btn btn-block bg-gradient-success btn-sm"  id="excelSearch">
                   <i class="fas fa-file-excel"></i>
                   <?=$languageArray['export_excels_code'][$language] ?>
+                </button>
+              </div>
+              <div class="col-2">
+                <button type="button" class="btn btn-block bg-gradient-secondary btn-sm"  id="excelHouseSearch">
+                  <i class="fas fa-file-excel"></i>
+                  <?=$languageArray['export_excels_house_code'][$language] ?>
                 </button>
               </div>
             </div>
@@ -243,8 +250,10 @@ else{
 $(function () {
   const today = new Date();
   const sevenDaysAgo = new Date(today);
+  const yesterday = new Date(today);
   sevenDaysAgo.setDate(today.getDate() - 7);
-  var started = formatDate2(sevenDaysAgo);
+  yesterday.setDate(today.getDate() - 1);
+  var started = formatDate2(yesterday);
   var ended = formatDate2(today);
   
   $('.select2').select2({
@@ -262,8 +271,8 @@ $(function () {
         'This Month'  : [moment().startOf('month'), moment().endOf('month')],
         'Last Month'  : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
       },
-      startDate: moment(),
-      endDate  : moment()
+      startDate: moment().subtract(1, 'days'),
+      endDate  : moment().subtract(1, 'days')
     },
     function (start, end) {
       var startFormatted = formatDate2(start);
@@ -318,7 +327,7 @@ $(function () {
           {
             data: 'id',
             render: function (data, type, row) {
-              return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/print.php?userID=' + data + '\');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/printportrait.php?userID=' + data + '\');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
+              return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="window.open(\'<?=$actual_link?>/print.php?userID=' + data + '\');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'<?=$actual_link?>/printportrait.php?userID=' + data + '\');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
             }
           }
         ],
@@ -370,7 +379,7 @@ $(function () {
       {
         data: 'id',
         render: function (data, type, row) {
-          return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/print.php?userID=' + data + '\');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/printportrait.php?userID=' + data + '\');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
+          return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="window.open(\'<?=$actual_link?>print.php?userID=' + data + '\');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'<?=$actual_link?>/printportrait.php?userID=' + data + '\');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
         }
       }
     ],
@@ -448,7 +457,7 @@ $(function () {
         {
           data: 'id',
           render: function (data, type, row) {
-            return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/print.php?userID=' + data + '\');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/printportrait.php?userID=' + data + '\');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
+            return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="window.open(\'<?=$actual_link?>/print.php?userID=' + data + '\');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'<?=$actual_link?>/printportrait.php?userID=' + data + '\');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
           }
         }
       ],
@@ -469,6 +478,15 @@ $(function () {
     
     window.open("php/export.php?fromDate="+fromDateValue+"&toDate="+toDateValue+
     "&farm="+statusFilter+"&customer="+customerNoFilter);
+  });
+  
+  $('#excelHouseSearch').on('click', function(){
+    var fromDateValue = started;
+    var toDateValue = ended;
+    var statusFilter = $('#farmFilter').val() ? $('#farmFilter').val() : '';
+    var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
+    
+    window.open("php/exportHouse.php?fromDate="+fromDateValue+"&toDate="+toDateValue+ "&farm="+statusFilter+"&customer="+customerNoFilter);
   });
 
   $('#officeSearch').on('click', function(){

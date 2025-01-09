@@ -30,16 +30,16 @@ else{
   $products = $db->query("SELECT * FROM products WHERE deleted = '0'"); // Products
 
   if($role == 'MANAGER' || $role == 'ADMIN'){
-      $packages = $db->query("SELECT * FROM farms WHERE deleted = '0' ORDER BY name");
+    $packages = $db->query("SELECT * FROM farms WHERE deleted = '0' ORDER BY name");
   }
   else{
-      if(count($farms) > 0){
-          $commaSeparatedString = implode(',', $farms);
-          $packages = $db->query("SELECT * FROM farms WHERE deleted = '0' AND id IN ($commaSeparatedString) ORDER BY name");
-      }
-      else{
-          $packages = [];
-      }
+    if(count($farms) > 0){
+        $commaSeparatedString = implode(',', $farms);
+        $packages = $db->query("SELECT * FROM farms WHERE deleted = '0' AND id IN ($commaSeparatedString) ORDER BY name");
+    }
+    else{
+        $packages = [];
+    }
   }
 }
 ?>
@@ -56,7 +56,7 @@ else{
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark"><?=$languageArray['dashboard_code'][$language] ?></h1>
+        <h1 class="m-0 text-dark"><?=$languageArray['ccb_farm_house_code'][$language] ?></h1>
       </div><!-- /.col -->
     </div><!-- /.row -->
   </div><!-- /.container-fluid -->
@@ -93,7 +93,7 @@ else{
                 </div>
               </div>
 
-              <div class="col-3">
+              <!--div class="col-3">
                 <div class="form-group">
                   <label><?=$languageArray['customer_code'][$language] ?></label>
                   <select class="form-control select2" style="width: 100%;" id="customerFilter" name="customerFilter" style="display: none;" multiple>
@@ -113,7 +113,7 @@ else{
                     <?php } ?>
                   </select>
                 </div>
-              </div>
+              </div-->
             </div>
             <div class="row">
               <div class="col-9"></div>
@@ -193,18 +193,18 @@ else{
 
           <div class="card-body">
             <div>
-              Show columns: <a class="toggle-vis" data-column="0">Serial No</a> - <a class="toggle-vis" data-column="1">Customer</a> - <a class="toggle-vis" data-column="2">Farm</a> - <a class="toggle-vis" data-column="3">Number of Cages</a> - <a class="toggle-vis" data-column="4">Number of Birds</a> - <a class="toggle-vis" data-column="5">Average Birds Weight</a> - <a class="toggle-vis" data-column="6">Start Datetime</a>
+              Show columns: <a class="toggle-vis" data-column="0">Serial No</a> - <a class="toggle-vis" data-column="1">DO</a> - <a class="toggle-vis" data-column="2">House</a> - <a class="toggle-vis" data-column="3">Total Cages</a> - <a class="toggle-vis" data-column="4">Total Birds</a> - <a class="toggle-vis" data-column="6">Average Birds Weight</a> - <a class="toggle-vis" data-column="5">Total Nett Weight</a>
             </div><br>
             <table id="weightTable" class="table table-bordered table-striped display">
               <thead>
                 <tr>
                   <th>Serial No</th>
-                  <th>Customer</th>
-                  <th>Farm</th>
-                  <th>Number of <br>Cages</th>
-                  <th>Number of <br>Birds</th>
+                  <th>DO Number</th>
+                  <th>House Number</th>
+                  <th>Total <br>Cages</th>
+                  <th>Total <br>Birds</th>
+                  <th>Total Nett<br>Weight</th>
                   <th>Average Birds <br>Weight</th>
-                  <th>Start <br>Datetime</th>
                 </tr>
               </thead>
               <tfoot>
@@ -233,7 +233,7 @@ $(function () {
   var ended = formatDate(today) + " 23:59:59";
   var dateRange = formatDate(today) + ' - ' + formatDate(today);
   $('#range').html(dateRange);
-  $('#productFilter').val('BROILER');
+  //$('#productFilter').val('BROILER');
   
   $('.select2').select2({
     allowClear: true,
@@ -275,11 +275,11 @@ $(function () {
         'serverSide': true,
         'serverMethod': 'post',
         'searching': false,
-        'order': [[ 6, 'asc' ]],
+        'order': [[ 0, 'asc' ]],
         //'columnDefs': [ { orderable: false, targets: [0] }],
         'ajax': {
           'type': 'POST',
-          'url':'php/filterCount.php',
+          'url':'php/filterHouse.php',
           'data': {
             fromDate: startFormatted,
             toDate: endFormatted,
@@ -296,12 +296,57 @@ $(function () {
                     return '<a href="<?=$actual_link?>/printportrait.php?userID=' + userId + '" target="_blank">' + data + '</a>';
                 }
             },
-            { data: 'customer' },
-            { data: 'farm_id' },
-            { data: 'total_cages' },
-            { data: 'total_birds' },
-            { data: 'average_bird' },
-            { data: 'start_time' }
+            { data: 'po_no' },
+            {
+                data: 'houseList',
+                render: function(data, type, row) {
+                    var houseNos = data.map(function(house) {
+                        return house.houseNo;
+                    }).join('<br>');
+        
+                    return houseNos;
+                }
+            },
+            {
+            data: 'houseList',
+                render: function(data, type, row) {
+                    var totalCages = data.map(function(house) {
+                        return house.totalCages;
+                    }).join('<br>');
+        
+                    return totalCages;
+                }
+            },
+            {
+                data: 'houseList',
+                render: function(data, type, row) {
+                    var totalBirds = data.map(function(house) {
+                        return house.totalBirds;
+                    }).join('<br>');
+        
+                    return totalBirds;
+                }
+            },
+            {
+                data: 'houseList',
+                render: function(data, type, row) {
+                    var totalNett = data.map(function(house) {
+                        return house.totalNett.toFixed(2); // Assuming you want to format the number
+                    }).join('<br>');
+        
+                    return totalNett;
+                }
+            },
+            {
+                data: 'houseList',
+                render: function(data, type, row) {
+                    var avgBirdsW = data.map(function(house) {
+                        return house.avgBirdsW.toFixed(2); // Assuming you want to format the number
+                    }).join('<br>');
+        
+                    return avgBirdsW;
+                }
+            }
         ],
         "rowCallback": function( row, data, index ) {
           $('td', row).css('background-color', '#E6E6FA');
@@ -346,11 +391,11 @@ $(function () {
     'serverSide': true,
     'serverMethod': 'post',
     'searching': false,
-    'order': [[ 6, 'asc' ]],
+    'order': [[ 0, 'asc' ]],
     //'columnDefs': [ { orderable: false, targets: [0] }],
     'ajax': {
       'type': 'POST',
-      'url':'php/filterCount.php',
+      'url':'php/filterHouse.php',
       'data': {
         fromDate: started,
         toDate: ended,
@@ -360,19 +405,64 @@ $(function () {
       } 
     },
     'columns': [
-      {
-        data: 'serial_no',
-        render: function(data, type, row) {
-            var userId = row.id; // Assuming 'id' is the user ID from the server data
-            return '<a href="<?=$actual_link?>/printportrait.php?userID=' + userId + '" target="_blank">' + data + '</a>';
+        {
+            data: 'serial_no',
+            render: function(data, type, row) {
+                var userId = row.id; // Assuming 'id' is the user ID from the server data
+                return '<a href="<?=$actual_link?>/printportrait.php?userID=' + userId + '" target="_blank">' + data + '</a>';
+            }
+        },
+        { data: 'po_no' },
+        {
+            data: 'houseList',
+            render: function(data, type, row) {
+                var houseNos = data.map(function(house) {
+                    return house.houseNo;
+                }).join('<br>');
+    
+                return houseNos;
+            }
+        },
+        {
+        data: 'houseList',
+            render: function(data, type, row) {
+                var totalCages = data.map(function(house) {
+                    return house.totalCages;
+                }).join('<br>');
+    
+                return totalCages;
+            }
+        },
+        {
+            data: 'houseList',
+            render: function(data, type, row) {
+                var totalBirds = data.map(function(house) {
+                    return house.totalBirds;
+                }).join('<br>');
+    
+                return totalBirds;
+            }
+        },
+        {
+            data: 'houseList',
+            render: function(data, type, row) {
+                var totalNett = data.map(function(house) {
+                    return house.totalNett.toFixed(2); // Assuming you want to format the number
+                }).join('<br>');
+    
+                return totalNett;
+            }
+        },
+        {
+            data: 'houseList',
+            render: function(data, type, row) {
+                var avgBirdsW = data.map(function(house) {
+                    return house.avgBirdsW.toFixed(2); // Assuming you want to format the number
+                }).join('<br>');
+    
+                return avgBirdsW;
+            }
         }
-      },
-      { data: 'customer' },
-      { data: 'farm_id' },
-      { data: 'total_cages' },
-      { data: 'total_birds' },
-      { data: 'average_bird' },
-      { data: 'start_time' }
     ],
     "rowCallback": function( row, data, index ) {
       $('td', row).css('background-color', '#E6E6FA');
@@ -428,11 +518,11 @@ $(function () {
       'serverSide': true,
       'serverMethod': 'post',
       'searching': false,
-      'order': [[ 6, 'asc' ]],
+      'order': [[ 0, 'asc' ]],
       //'columnDefs': [ { orderable: false, targets: [0] }],
       'ajax': {
         'type': 'POST',
-        'url':'php/filterCount.php',
+        'url':'php/filterHouse.php',
         'data': {
           fromDate: fromDateValue,
           toDate: toDateValue,
@@ -449,12 +539,57 @@ $(function () {
                 return '<a href="<?=$actual_link?>/printportrait.php?userID=' + userId + '" target="_blank">' + data + '</a>';
             }
         },
-        { data: 'customer' },
-        { data: 'farm_id' },
-        { data: 'total_cages' },
-        { data: 'total_birds' },
-        { data: 'average_bird' },
-        { data: 'start_time' }
+        { data: 'po_no' },
+        {
+            data: 'houseList',
+            render: function(data, type, row) {
+                var houseNos = data.map(function(house) {
+                    return house.houseNo;
+                }).join('<br>');
+    
+                return houseNos;
+            }
+        },
+        {
+            data: 'houseList',
+            render: function(data, type, row) {
+                var totalCages = data.map(function(house) {
+                    return house.totalCages;
+                }).join('<br>');
+    
+                return totalCages;
+            }
+        },
+        {
+            data: 'houseList',
+            render: function(data, type, row) {
+                var totalBirds = data.map(function(house) {
+                    return house.totalBirds;
+                }).join('<br>');
+    
+                return totalBirds;
+            }
+        },
+        {
+            data: 'houseList',
+            render: function(data, type, row) {
+                var totalNett = data.map(function(house) {
+                    return house.totalNett.toFixed(2); // Assuming you want to format the number
+                }).join('<br>');
+    
+                return totalNett;
+            }
+        },
+        {
+            data: 'houseList',
+            render: function(data, type, row) {
+                var avgBirdsW = data.map(function(house) {
+                    return house.avgBirdsW.toFixed(2); // Assuming you want to format the number
+                }).join('<br>');
+    
+                return avgBirdsW;
+            }
+        }
       ],
       "rowCallback": function( row, data, index ) {
         $('td', row).css('background-color', '#E6E6FA');
