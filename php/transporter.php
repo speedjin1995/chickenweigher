@@ -11,10 +11,15 @@ if(!isset($_SESSION['userID'])){
 if(isset($_POST['code'], $_POST['transporter'])){
     $code = filter_input(INPUT_POST, 'code', FILTER_SANITIZE_STRING);
     $transporter = filter_input(INPUT_POST, 'transporter', FILTER_SANITIZE_STRING);
+    $transporterIc = null;
+    
+    if(isset($_POST['transporter_ic']) && $_POST['transporter_ic'] != null && $_POST['transporter_ic'] != ''){
+        $transporterIc = filter_input(INPUT_POST, 'transporter_ic', FILTER_SANITIZE_STRING);
+    }
 
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE transporters SET transporter_code=?, transporter_name=? WHERE id=?")) {
-            $update_stmt->bind_param('sss', $code, $transporter, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE transporters SET transporter_code=?, transporter_name=?, transporter_ic=? WHERE id=?")) {
+            $update_stmt->bind_param('ssss', $code, $transporter, $transporterIc, $_POST['id']);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -39,8 +44,8 @@ if(isset($_POST['code'], $_POST['transporter'])){
         }
     }
     else{
-        if ($insert_stmt = $db->prepare("INSERT INTO transporters (transporter_code, transporter_name) VALUES (?, ?)")) {
-            $insert_stmt->bind_param('ss', $code, $transporter);
+        if ($insert_stmt = $db->prepare("INSERT INTO transporters (transporter_code, transporter_name, transporter_ic) VALUES (?, ?, ?)")) {
+            $insert_stmt->bind_param('sss', $code, $transporter, $transporterIc);
             
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {

@@ -35,6 +35,7 @@ while($row2=mysqli_fetch_assoc($vehicles)){
         'id'=>$row2['id'],
         'veh_number'=>$row2['veh_number'],
         'driver'=>$row2['driver'],
+        'driver2'=>$row2['driver2'],
         'attandence_1'=>$row2['attandence_1'],
         'attandence_2'=>$row2['attandence_2'],
         'customers'=>$row2['customers']
@@ -80,7 +81,8 @@ while($row7=mysqli_fetch_assoc($grades)){
 while($row9=mysqli_fetch_assoc($transporters)){
     $data9[] = array( 
         'id'=>$row9['id'],
-        'transporter_name'=>$row9['transporter_name']
+        'transporter_name'=>$row9['transporter_name'],
+        'transporter_ic'=>$row9['transporter_ic']
     );
 }
 

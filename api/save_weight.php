@@ -54,6 +54,9 @@ if(isset($post['status'], $post['product'], $post['timestampData']
     $doNo = null;
 	$customerName = null;
 	$supplierName = null;
+	$driverName2 = null;
+	$driverIc = null;
+	$driverIc2 = null;
 	$minWeight = null;
 	$maxWeight = null;
 	$attandence1 = null;
@@ -71,6 +74,18 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 
 	if(isset($post['customerName']) && $post['customerName'] != null && $post['customerName'] != ''){
 		$customerName = $post['customerName'];
+	}
+	
+	if(isset($post['driverName2']) && $post['driverName2'] != null && $post['driverName2'] != ''){
+		$driverName2 = $post['driverName2'];
+	}
+	
+	if(isset($post['driver_ic']) && $post['driver_ic'] != null && $post['driver_ic'] != ''){
+		$driverIc = $post['driver_ic'];
+	}
+	
+	if(isset($post['driver_ic2']) && $post['driver_ic2'] != null && $post['driver_ic2'] != ''){
+		$driverIc2 = $post['driver_ic2'];
 	}
 
 	if(isset($post['minWeight']) && $post['minWeight'] != null && $post['minWeight'] != ''){
@@ -187,10 +202,10 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 		$data2 = json_encode($timestampData);
 		$data3 = json_encode($cageDetails);
 
-		if ($update_stmt = $db->prepare("UPDATE weighing SET customer=?, supplier=?, product=?, driver_name=?, lorry_no=?, farm_id=?, average_cage=?, average_bird=?, 
-		minimum_weight=?, maximum_weight=?, weight_data=?, remark=?, start_time=?, weight_time=?, end_time=?, total_cage=?, number_of_cages=?, total_cages_weight=?, 
-		follower1=?, follower2=?, status=?, po_no=?, cage_data=?, weighted_by=? WHERE id=?")){
-			$update_stmt->bind_param('sssssssssssssssssssssssss', $customerName, $supplierName, $product, $driverName, 
+		if ($update_stmt = $db->prepare("UPDATE weighing SET customer=?, supplier=?, product=?, driver_name=?, driver_name2=?, driver_ic=?, driver_ic2=?, lorry_no=?, farm_id=?, 
+		average_cage=?, average_bird=?, minimum_weight=?, maximum_weight=?, weight_data=?, remark=?, start_time=?, weight_time=?, end_time=?, total_cage=?, number_of_cages=?, 
+		total_cages_weight=?, follower1=?, follower2=?, status=?, po_no=?, cage_data=?, weighted_by=? WHERE id=?")){
+			$update_stmt->bind_param('ssssssssssssssssssssssssssss', $customerName, $supplierName, $product, $driverName, $driverName2, $driverIc, $driverIc2,
 			$vehicleNumber, $farmId, $averageCage, $averageBird, $minWeight, $maxWeight, $data, $remark, $startTime, 
 			$data2, $endTime, $cratesCount, $numberOfCages, $totalCagesWeight, $attandence1, $attandence2, $status, $doNo, $data3, $weighted_by, $id);
 		
@@ -234,10 +249,10 @@ if(isset($post['status'], $post['product'], $post['timestampData']
 		$id = '0';
 
         if($insert){
-            if ($insert_stmt = $db->prepare("INSERT INTO weighing (serial_no, customer, supplier, product, driver_name, lorry_no, farm_id, 
+            if ($insert_stmt = $db->prepare("INSERT INTO weighing (serial_no, customer, supplier, product, driver_name, driver_name2, driver_ic, driver_ic2, lorry_no, farm_id, 
     		average_cage, average_bird, minimum_weight, maximum_weight, weight_data, remark, start_time, weight_time, end_time,total_cage, 
-    		number_of_cages, total_cages_weight, follower1, follower2, status, po_no, cage_data, booking_date, weighted_by, created_datetime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){		    
-    			$insert_stmt->bind_param('sssssssssssssssssssssssssss', $serialNo, $customerName, $supplierName, $product, $driverName, 
+    		number_of_cages, total_cages_weight, follower1, follower2, status, po_no, cage_data, booking_date, weighted_by, created_datetime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){		    
+    			$insert_stmt->bind_param('ssssssssssssssssssssssssssssss', $serialNo, $customerName, $supplierName, $product, $driverName, $driverName2, $driverIc, $driverIc2,
     			$vehicleNumber, $farmId, $averageCage, $averageBird, $minWeight, $maxWeight, $data, $remark, $startTime, $data2, $endTime,
     			$cratesCount, $numberOfCages, $totalCagesWeight, $attandence1, $attandence2, $status, $doNo, $data3, $startTime, $weighted_by, $currentDateTime);		
     			// Execute the prepared query.

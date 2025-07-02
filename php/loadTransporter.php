@@ -37,6 +37,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       "id"=>$row['id'],
       "transporter_code"=>$row['transporter_code'],
       "transporter_name"=>$row['transporter_name'],
+      "transporter_ic"=>$row['transporter_ic'],
       "deleted"=>$row['deleted']
     );
 }

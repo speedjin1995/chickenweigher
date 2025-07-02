@@ -15,7 +15,7 @@ else{
     $stmt->execute();
     $result = $stmt->get_result();
     $roles = "NORMAL";
-    $actual_link = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]";
+    $actual_link = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]/ccb/";
     	
     if(($row = $result->fetch_assoc()) !== null){
         if($row['farms'] != null){

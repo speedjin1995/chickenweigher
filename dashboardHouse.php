@@ -9,7 +9,7 @@ else{
   $user = $_SESSION['userID'];
   $language = $_SESSION['language'];
   $_SESSION['page']='dashboard';
-  $actual_link = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]";
+  $actual_link = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]/ccb";
   $stmt = $db->prepare("SELECT * from users where id = ?");
 	$stmt->bind_param('s', $user);
 	$stmt->execute();
@@ -30,16 +30,16 @@ else{
   $products = $db->query("SELECT * FROM products WHERE deleted = '0'"); // Products
 
   if($role == 'MANAGER' || $role == 'ADMIN'){
-    $packages = $db->query("SELECT * FROM farms WHERE deleted = '0' ORDER BY name");
+      $packages = $db->query("SELECT * FROM farms WHERE deleted = '0' ORDER BY name");
   }
   else{
-    if(count($farms) > 0){
-        $commaSeparatedString = implode(',', $farms);
-        $packages = $db->query("SELECT * FROM farms WHERE deleted = '0' AND id IN ($commaSeparatedString) ORDER BY name");
-    }
-    else{
-        $packages = [];
-    }
+      if(count($farms) > 0){
+          $commaSeparatedString = implode(',', $farms);
+          $packages = $db->query("SELECT * FROM farms WHERE deleted = '0' AND id IN ($commaSeparatedString) ORDER BY name");
+      }
+      else{
+          $packages = [];
+      }
   }
 }
 ?>

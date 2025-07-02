@@ -69,9 +69,9 @@ else if(count($farms) > 0){
 
 if (isset($_POST['customer']) && is_array($_POST['customer']) && count($_POST['customer']) > 0) {
   // Sanitize each customer name
-    $customers = array_map(function($customer) use ($db) {
-        return "'" . mysqli_real_escape_string($db, $customer) . "'";
-    }, $_POST['customer']);
+  $customers = array_map(function($customer) {
+    return "'" . $customer . "'";
+  }, $_POST['customer']);
   
   // Join sanitized customer names with commas to form an SQL IN clause
   $customersList = implode(',', $customers);
@@ -107,8 +107,33 @@ while($row = mysqli_fetch_assoc($empRecords)) {
   $totalWeigh = 0;
   $totalBirds = 0;
   $totalCages = 0;
+  $houseArray = array();
+  $houseCheck = array();
 
   for($i=0; $i<count($weight_data); $i++){
+    if(!in_array($weight_data[$i]['houseNumber'], $houseCheck)){
+        $houseArray[] = array(
+            "houseNo" => $weight_data[$i]['houseNumber'],
+            "totalCages" => 0,
+            "totalBirds" => 0,
+            "totalGross" => 0,
+            "totalTare" => 0,
+            "totalNett" => 0,
+            "avgBirdsW" => 0
+        );
+        
+        array_push($houseCheck, $weight_data[$i]['houseNumber']);
+    }
+    
+    $key = array_search($weight_data[$i]['houseNumber'], $houseCheck);
+    $houseArray[$key]['totalCages'] += (int)$weight_data[$i]['numberOfCages'];
+    $houseArray[$key]['totalBirds'] += (int)$weight_data[$i]['numberOfBirds'];
+    $houseArray[$key]['totalGross'] += (float)$weight_data[$i]['grossWeight'];
+    $houseArray[$key]['totalTare'] += (float)$weight_data[$i]['tareWeight'];
+    $houseArray[$key]['totalNett'] = (float)$houseArray[$key]['totalGross'] - (float)$houseArray[$key]['totalTare'];
+    $houseArray[$key]['avgBirdsW'] = (float)$houseArray[$key]['totalNett'] / (float)$houseArray[$key]['totalBirds'];
+
+    
     $totalBirds += (int)$weight_data[$i]['numberOfBirds'];
     $totalCages += (int)$weight_data[$i]['numberOfCages'];
     $totalWeigh += (float)$weight_data[$i]['netWeight'];
@@ -138,7 +163,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "start_time"=>$row['start_time'],
     "end_time"=>$row['end_time'],
     "total_birds"=>$totalBirds,
-    "total_cages"=>$totalCages
+    "total_cages"=>$totalCages,
+    "houseList" => $houseArray
   );
 
   $counter++;

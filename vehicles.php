@@ -10,6 +10,7 @@ else{
     $user = $_SESSION['userID'];
     $_SESSION['page']='vehicles';
     $transporters = $db->query("SELECT * FROM transporters WHERE deleted = '0'");
+    $transporters2 = $db->query("SELECT * FROM transporters WHERE deleted = '0'");
     $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'"); // Customers
 }
 ?>
@@ -52,6 +53,7 @@ else{
 									<th>No.</th>
 									<th>Vehicle No</th>
                                     <th>Driver</th>
+                                    <th>Driver 2</th>
                                     <th>Attandence 1</th>
                                     <th>Attandence 2</th>
 									<th>Actions</th>
@@ -90,6 +92,15 @@ else{
                             <option selected="selected">-</option>
                             <?php while($rowCustomer2=mysqli_fetch_assoc($transporters)){ ?>
                                 <option value="<?=$rowCustomer2['id'] ?>"><?=$rowCustomer2['transporter_name'] ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><?=$languageArray['driver_code'][$language] ?> 2</label>
+                        <select class="form-control select2" style="width: 100%;" id="driver2" name="driver2">
+                            <option selected="selected">-</option>
+                            <?php while($rowT2=mysqli_fetch_assoc($transporters2)){ ?>
+                                <option value="<?=$rowT2['id'] ?>"><?=$rowT2['transporter_name'] ?></option>
                             <?php } ?>
                         </select>
                     </div>
@@ -141,7 +152,8 @@ $(function () {
         'columns': [
             { data: 'counter' },
             { data: 'veh_number' },
-            { data: 'transporter_name' },
+            { data: 'driver_name' },
+            { data: 'driver2_name' },
             { data: 'attandence_1' },
             { data: 'attandence_2' },
             { 
@@ -190,6 +202,7 @@ $(function () {
         $('#vehicleModal').find('#id').val("");
         $('#vehicleModal').find('#vehicleNumber').val("");
         $('#vehicleModal').find('#driver').val("");
+        $('#vehicleModal').find('#driver2').val("");
         $('#vehicleModal').find('#attendance1').val("");
         $('#vehicleModal').find('#attendance2').val("");
         $('#vehicleModal').find('#customer').val("");
@@ -269,6 +282,7 @@ function edit(id){
             $('#vehicleModal').find('#id').val(obj.message.id);
             $('#vehicleModal').find('#vehicleNumber').val(obj.message.veh_number);
             $('#vehicleModal').find('#driver').val(obj.message.driver).trigger('change');
+            $('#vehicleModal').find('#driver2').val(obj.message.driver2).trigger('change');
             $('#vehicleModal').find('#attendance1').val(obj.message.attandence_1);
             $('#vehicleModal').find('#attendance2').val(obj.message.attandence_2);
             $('#vehicleModal').find('#customer').val(obj.message.customers).trigger('change');

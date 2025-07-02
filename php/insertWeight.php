@@ -34,6 +34,7 @@ if(isset($_POST['bookingDate'], $_POST['customerNo'], $_POST['product'], $_POST[
 	$remark = null;
 	$vehicleNo = null;
 	$driver = null;
+	$driver2 = null;
 	$serialNo = "";
 	$today = date("Y-m-d 00:00:00");
 	$assignTo = array();
@@ -83,6 +84,10 @@ if(isset($_POST['bookingDate'], $_POST['customerNo'], $_POST['product'], $_POST[
 
 	if(isset($_POST['driver']) && $_POST['driver'] != null && $_POST['driver'] != ''){
 		$driver = filter_input(INPUT_POST, 'driver', FILTER_SANITIZE_STRING);
+	}
+	
+	if(isset($_POST['driver2']) && $_POST['driver2'] != null && $_POST['driver2'] != ''){
+		$driver2 = filter_input(INPUT_POST, 'driver2', FILTER_SANITIZE_STRING);
 	}
 
 	if($_POST['id'] == null || $_POST['id'] == ''){
@@ -161,12 +166,12 @@ if(isset($_POST['bookingDate'], $_POST['customerNo'], $_POST['product'], $_POST[
 		}
 	}
 	else{
-		if ($insert_stmt = $db->prepare("INSERT INTO weighing (serial_no, group_no, customer, supplier, product, driver_name, lorry_no, 
+		if ($insert_stmt = $db->prepare("INSERT INTO weighing (serial_no, group_no, customer, supplier, product, driver_name, driver_name, lorry_no, 
 		farm_id, average_cage, average_bird, minimum_weight, maximum_weight, grade, gender, house_no, remark, weighted_by, status, 
-		min_crate, max_crate, po_no, created_by, booking_date, created_datetime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){
+		min_crate, max_crate, po_no, created_by, booking_date, created_datetime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){
 		    $data = null;
 			$data2 = null;
-			$insert_stmt->bind_param('ssssssssssssssssssssssss', $serialNo, $group, $customerName, $supplierName, $product, $driver, 
+			$insert_stmt->bind_param('sssssssssssssssssssssssss', $serialNo, $group, $customerName, $supplierName, $product, $driver, $driver2, 
 			$vehicleNo, $farm, $aveCage, $aveBird, $minWeight, $maxWeight, $grade, $gender, $houseNo, $remark, $assignTo, 
 			$status, $minCrate,$maxCrate, $poNo, $userId, $formattedDate, $currentDateTime);
 								

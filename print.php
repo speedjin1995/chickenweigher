@@ -106,13 +106,14 @@ function rearrangeList($weightDetails) {
             array_push($mapOfWeights[$key1]['weightList'], $element);
             array_push($mapOfHouses[$key3]['weightList'], $element);
 
+            
             $totalGross += floatval($element['grossWeight']);
             $totalCrate += floatval($element['tareWeight']);
             $totalReduce += floatval($element['reduceWeight']);
             $totalNet += floatval($element['netWeight']);
             $totalCrates += intval($element['numberOfCages']);
             $totalBirds += intval($element['numberOfBirds']);
-
+            
             if ($element['sex'] == 'Male') {
                 $totalMaleBirds += intval($element['numberOfBirds']);
                 $totalMaleCages += intval($element['numberOfCages']);
@@ -301,7 +302,7 @@ if(isset($_GET['userID'])){
             <table class="table">
                 <tbody>
                     <tr>
-                        <td style="width: 100%;border-top:0px;text-align:center;"><img src="https://ccb.syncweigh.com/assets/header.png" width="100%" height="auto" /></td>
+                        <td style="width: 100%;border-top:0px;text-align:center;"><img src="https://dglink.com.my/ccb/assets/header.png" width="100%" height="auto" /></td>
                     </tr>
                 </tbody>
             </table><br>
@@ -361,8 +362,8 @@ if(isset($_GET['userID'])){
                         </td>
                         <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                             <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Farmer &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;"></span>
+                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Driver IC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['driver_ic'].'</span>
                             </p>
                         </td>
                         <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -375,14 +376,14 @@ if(isset($_GET['userID'])){
                     <tr>
                         <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                             <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Attendant 1 : </span>
-                                <span style="font-size: 12px;font-family: sans-serif;"></span>
+                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Driver 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['driver_name2'].'</span>
                             </p>
                         </td>
                         <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                             <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Total Count&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.$totalCrates.'</span>
+                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Driver 2 IC&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['driver_ic2'].'</span>
                             </p>
                         </td>
                         <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -395,14 +396,14 @@ if(isset($_GET['userID'])){
                     <tr>
                         <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                             <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Attendant 2 : </span>
+                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Farmer &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
                                 <span style="font-size: 12px;font-family: sans-serif;"></span>
                             </p>
                         </td>
                         <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                             <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Crate Wt (kg) : </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format(($totalCrate / $totalCrates), 2).'</span>
+                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Total Count&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                <span style="font-size: 12px;font-family: sans-serif;">'.$totalCrates.'</span>
                             </p>
                         </td>
                         <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -415,14 +416,14 @@ if(isset($_GET['userID'])){
                     <tr>
                         <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                             <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Attendant 3 : </span>
-                                <span style="font-size: 12px;font-family: sans-serif;"></span>
+                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Attendant 1 : </span>
+                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['follower1'].'</span>
                             </p>
                         </td>
                         <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                             <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg) &nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format(($totalGross - $totalCrate), 2).'</span>
+                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Crate Wt (kg) : </span>
+                                <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format(($totalCrate / $totalCrates), 2).'</span>
                             </p>
                         </td>
                         <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -431,6 +432,21 @@ if(isset($_GET['userID'])){
                                 <span style="font-size: 12px;font-family: sans-serif;">'.$time.'</span>
                             </p>
                         </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                            <p>
+                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Attendant 2 : </span>
+                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['follower2'].'</span>
+                            </p>
+                        </td>
+                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                            <p>
+                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg) &nbsp;&nbsp;: </span>
+                                <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format(($totalGross - $totalCrate), 2).'</span>
+                            </p>
+                        </td>
+                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;"></td>
                     </tr>
                     <tr>
                         <td colspan="2" style="width: 60%;border-top:0px;padding: 0 0.7rem;">

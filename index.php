@@ -346,6 +346,12 @@ to get the desired effect
                 </a>
               </li>
               <li class="nav-item">
+                <a href="#dashboardHouse" data-file="dashboardHouse.php" class="nav-link link">
+                  <i class="nav-icon fas fa-check-square"></i>
+                  <p><?=$languageArray['ccb_farm_house_code'][$language] ?></p>
+                </a>
+              </li>
+              <li class="nav-item">
                 <a href="#otherDashboard" data-file="dashboardOther.php" class="nav-link link">
                   <i class="nav-icon fas fa-plus-square"></i>
                   <p><?=$languageArray['other_farm_code'][$language] ?></p>

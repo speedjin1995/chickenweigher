@@ -49,6 +49,7 @@ else{
 								<tr>
                                     <th>Code</th>
 									<th>Driver</th>
+									<th>Driver IC</th>
 									<th>Actions</th>
 								</tr>
 							</thead>
@@ -83,6 +84,10 @@ else{
                   <label for="transporter"><?=$languageArray['driver_code'][$language] ?> *</label>
                   <input type="text" class="form-control" name="transporter" id="transporter" placeholder="Enter Transporter Name" required>
                 </div>
+                <div class="form-group">
+                  <label for="transporter"><?=$languageArray['driver_ic_code'][$language] ?></label>
+                  <input type="text" class="form-control" name="transporter_ic" id="transporter_ic" placeholder="Enter Transporter IC">
+                </div>
               </div>
             </div>
             <div class="modal-footer justify-content-between">
@@ -110,6 +115,7 @@ $(function () {
         'columns': [
             { data: 'transporter_code' },
             { data: 'transporter_name' },
+            { data: 'transporter_ic' },
             { 
                 data: 'deleted',
                 render: function (data, type, row) {

@@ -1,117 +1,1164 @@
 [
-    {
-      "boundingPoly": {
-        "vertices": [
-          {
-            "x": 35,
-            "y": 17
-          },
-          {
-            "x": 150,
-            "y": 15
-          },
-          {
-            "x": 151,
-            "y": 52
-          },
-          {
-            "x": 36,
-            "y": 54
-          }
-        ]
-      },
-      "description": "724"
+  {
+    "grossWeight": "58.4",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "42",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "59.4",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "43",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "60.1",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "43.7",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "58.8",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "42.4",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "59.5",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "43.1",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "59.9",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "43.5",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "62.1",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "45.7",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "60.8",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "44.4",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "57.3",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "40.9",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "99.5",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "83.1",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "63",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "46.6",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "57.6",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "41.2",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "57.3",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "40.9",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "57.9",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "41.5",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "0",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "-16.4",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "58.9",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "42.5",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "57.2",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "40.8",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "62.8",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "46.4",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "59.5",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "43.1",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "19.5",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "3.1",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "62.2",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "45.8",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "60.8",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "44.4",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "61.4",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "45",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "61.8",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "45.4",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "59.5",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "43.1",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "58.1",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "41.7",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "65.4",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "49",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "61.2",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "44.8",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "53.7",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "37.3",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "58",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "41.6",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "60.5",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "44.1",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "59.5",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "43.1",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "66",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "49.6",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "59.4",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "43",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "60.6",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "44.2",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "59.7",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "43.3",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "0",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "-16.4",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "57.4",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "41",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "58.6",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "42.2",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "58.6",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "42.2",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "58.3",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "41.9",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "57",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "40.6",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "58.2",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "41.8",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "59.8",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "43.4",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "56.5",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "40.1",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "59.8",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "43.4",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "60.4",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "44",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "62.4",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "46",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "60.1",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "43.7",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "56.9",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "40.5",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "57.4",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "41",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "57.8",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "41.4",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "60.5",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "44.1",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "60.6",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "44.2",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "59.5",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "43.1",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "57.6",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "41.2",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "59",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "42.6",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "60.7",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "44.3",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "60.5",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "44.1",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "grossWeight": "59.7",
+    "tareWeight": "16.40",
+    "reduceWeight": "0.0",
+    "netWeight": "43.3",
+    "birdsPerCages": "12",
+    "numberOfBirds": "24",
+    "numberOfCages": "2",
+    "grade": "S",
+    "sex": "Mixed",
+    "houseNumber": "1",
+    "groupNumber": "1",
+    "remark": ""
+  },
+  {
+    "boundingPoly": {
+      "vertices": [
+        {
+          "x": 9,
+          "y": 8
+        },
+        {
+          "x": 88,
+          "y": 8
+        },
+        {
+          "x": 88,
+          "y": 34
+        },
+        {
+          "x": 9,
+          "y": 34
+        }
+      ]
     },
-    {
-      "boundingPoly": {
-        "vertices": [
-          {
-            "x": 27,
-            "y": 53
-          },
-          {
-            "x": 131,
-            "y": 52
-          },
-          {
-            "x": 131,
-            "y": 91
-          },
-          {
-            "x": 27,
-            "y": 92
-          }
-        ]
-      },
-      "description": "678"
+    "description": "607"
+  },
+  {
+    "boundingPoly": {
+      "vertices": [
+        {
+          "x": 7,
+          "y": 43
+        },
+        {
+          "x": 78,
+          "y": 43
+        },
+        {
+          "x": 78,
+          "y": 68
+        },
+        {
+          "x": 7,
+          "y": 68
+        }
+      ]
     },
-    {
-      "boundingPoly": {
-        "vertices": [
-          {
-            "x": 43,
-            "y": 98
-          },
-          {
-            "x": 135,
-            "y": 99
-          },
-          {
-            "x": 135,
-            "y": 132
-          },
-          {
-            "x": 43,
-            "y": 131
-          }
-        ]
-      },
-      "description": "700"
+    "description": "589"
+  },
+  {
+    "boundingPoly": {
+      "vertices": [
+        {
+          "x": 7,
+          "y": 76
+        },
+        {
+          "x": 76,
+          "y": 76
+        },
+        {
+          "x": 76,
+          "y": 96
+        },
+        {
+          "x": 7,
+          "y": 96
+        }
+      ]
     },
-    {
-      "boundingPoly": {
-        "vertices": [
-          {
-            "x": 35,
-            "y": 140
-          },
-          {
-            "x": 140,
-            "y": 136
-          },
-          {
-            "x": 141,
-            "y": 177
-          },
-          {
-            "x": 36,
-            "y": 181
-          }
-        ]
-      },
-      "description": "717"
+    "description": "598"
+  },
+  {
+    "boundingPoly": {
+      "vertices": [
+        {
+          "x": 11,
+          "y": 100
+        },
+        {
+          "x": 81,
+          "y": 100
+        },
+        {
+          "x": 81,
+          "y": 124
+        },
+        {
+          "x": 11,
+          "y": 124
+        }
+      ]
     },
-    {
-      "boundingPoly": {
-        "vertices": [
-          {
-            "x": 30,
-            "y": 181
-          },
-          {
-            "x": 140,
-            "y": 179
-          },
-          {
-            "x": 141,
-            "y": 218
-          },
-          {
-            "x": 31,
-            "y": 220
-          }
-        ]
-      },
-      "description": "670"
-    }
-  ]
+    "description": "605"
+  },
+  {
+    "boundingPoly": {
+      "vertices": [
+        {
+          "x": 8,
+          "y": 130
+        },
+        {
+          "x": 86,
+          "y": 128
+        },
+        {
+          "x": 87,
+          "y": 152
+        },
+        {
+          "x": 9,
+          "y": 154
+        }
+      ]
+    },
+    "description": "612"
+  },
+  {
+    "boundingPoly": {
+      "vertices": [
+        {
+          "x": 14,
+          "y": 162
+        },
+        {
+          "x": 82,
+          "y": 161
+        },
+        {
+          "x": 82,
+          "y": 183
+        },
+        {
+          "x": 14,
+          "y": 184
+        }
+      ]
+    },
+    "description": "599"
+  },
+  {
+    "boundingPoly": {
+      "vertices": [
+        {
+          "x": 15,
+          "y": 189
+        },
+        {
+          "x": 75,
+          "y": 189
+        },
+        {
+          "x": 75,
+          "y": 212
+        },
+        {
+          "x": 15,
+          "y": 212
+        }
+      ]
+    },
+    "description": "571"
+  },
+  {
+    "boundingPoly": {
+      "vertices": [
+        {
+          "x": 16,
+          "y": 212
+        },
+        {
+          "x": 87,
+          "y": 224
+        },
+        {
+          "x": 82,
+          "y": 252
+        },
+        {
+          "x": 11,
+          "y": 241
+        }
+      ]
+    },
+    "description": "609"
+  },
+  {
+    "boundingPoly": {
+      "vertices": [
+        {
+          "x": 12,
+          "y": 251
+        },
+        {
+          "x": 89,
+          "y": 250
+        },
+        {
+          "x": 89,
+          "y": 276
+        },
+        {
+          "x": 12,
+          "y": 277
+        }
+      ]
+    },
+    "description": "593"
+  },
+  {
+    "boundingPoly": {
+      "vertices": [
+        {
+          "x": 13,
+          "y": 278
+        },
+        {
+          "x": 96,
+          "y": 279
+        },
+        {
+          "x": 96,
+          "y": 302
+        },
+        {
+          "x": 13,
+          "y": 301
+        }
+      ]
+    },
+    "description": "553"
+  },
+  {
+    "boundingPoly": {
+      "vertices": [
+        {
+          "x": 21,
+          "y": 299
+        },
+        {
+          "x": 83,
+          "y": 309
+        },
+        {
+          "x": 79,
+          "y": 336
+        },
+        {
+          "x": 17,
+          "y": 326
+        }
+      ]
+    },
+    "description": "601"
+  },
+  {
+    "boundingPoly": {
+      "vertices": [
+        {
+          "x": 23,
+          "y": 336
+        },
+        {
+          "x": 96,
+          "y": 337
+        },
+        {
+          "x": 96,
+          "y": 362
+        },
+        {
+          "x": 23,
+          "y": 361
+        }
+      ]
+    },
+    "description": "603"
+  },
+  {
+    "boundingPoly": {
+      "vertices": [
+        {
+          "x": 21,
+          "y": 369
+        },
+        {
+          "x": 96,
+          "y": 368
+        },
+        {
+          "x": 96,
+          "y": 388
+        },
+        {
+          "x": 21,
+          "y": 389
+        }
+      ]
+    },
+    "description": "595"
+  },
+  {
+    "boundingPoly": {
+      "vertices": [
+        {
+          "x": 13,
+          "y": 402
+        },
+        {
+          "x": 89,
+          "y": 400
+        },
+        {
+          "x": 90,
+          "y": 419
+        },
+        {
+          "x": 14,
+          "y": 421
+        }
+      ]
+    },
+    "description": "578"
+  }
+]

@@ -12,7 +12,7 @@ else{
     $userId = $_SESSION['userID'];
     $role_code = $_SESSION['role_code'];
     
-    $stmt = $db->prepare("SELECT * from users where id = ?");
+    /*$stmt = $db->prepare("SELECT * from users where id = ?");
     $stmt->bind_param('s', $userId);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -21,7 +21,7 @@ else{
         if($row['farms'] != null){
             $farms = json_decode($row['farms'], true);
         }
-    }
+    }*/
 }
 
 ## Read value
@@ -36,6 +36,7 @@ $totalRecords = 0;
 $totalRecordwithFilter = 0;
 $data = 0;
 $empRecords = null;
+$id = '11';
 
 ## Search 
 $searchQuery = " ";
@@ -57,7 +58,7 @@ if($_POST['farm'] != null && $_POST['farm'] != '' && $_POST['farm'] != '-'){
 }
 
 if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){
-	$searchQuery .= " and customer = '".$_POST['customer']."'";
+	$searchQuery .= " and company = '".$_POST['customer']."'";
 }
 
 if($searchValue != ''){
@@ -65,61 +66,18 @@ if($searchValue != ''){
   weighing.lorry_no like '%".$searchValue."%' )";
 }
 
-if($role_code == 'ADMIN' || $role_code == 'MANAGER'){
-    ## Total number of records without filtering
-    $sel = mysqli_query($db,"select count(*) as allcount from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete' AND farms.category IN ('Other')");
-    $records = mysqli_fetch_assoc($sel);
-    $totalRecords = $records['allcount'];
-    
-    ## Total number of record with filtering
-    $sel = mysqli_query($db,"select count(*) as allcount from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete' AND farms.category IN ('Other')".$searchQuery);
-    $records = mysqli_fetch_assoc($sel);
-    $totalRecordwithFilter = $records['allcount'];
-    
-    ## Fetch records
-    $empQuery = "select weighing.*, farms.name from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete' AND farms.category IN ('Other')".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
-    $empRecords = mysqli_query($db, $empQuery);
-}
-else{
-    if(count($farms) > 0){
-        $commaSeparatedString = implode(',', $farms);
-        
-        ## Total number of records without filtering
-        //$defaultQuery = 'JSON_CONTAINS(weighing.weighted_by, \'["'.$userId.'"]\') > 0 OR JSON_CONTAINS(weighing.weighted_by, \'['.$userId.']\') AND weighing.farm_id IN ('.$commaSeparatedString.')';
-        $defaultQuery = 'weighing.farm_id IN ('.$commaSeparatedString.')';
-        $sel = mysqli_query($db,"select count(*) as allcount from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete' AND farms.category IN ('Other') AND ".$defaultQuery);
-        $records = mysqli_fetch_assoc($sel);
-        $totalRecords = $records['allcount'];
-        
-        ## Total number of record with filtering
-        $sel = mysqli_query($db,"select count(*) as allcount from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete' AND farms.category IN ('Other') AND ".$defaultQuery.' '.$searchQuery);
-        $records = mysqli_fetch_assoc($sel);
-        $totalRecordwithFilter = $records['allcount'];
-        
-        ## Fetch records
-        $empQuery = "select weighing.*, farms.name from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete' AND farms.category IN ('Other') AND ".$defaultQuery.' '.$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
-        $empRecords = mysqli_query($db, $empQuery);
-    }
-    else{
-        
-    }
-    /*else{
-        ## Total number of records without filtering
-        $defaultQuery = 'JSON_CONTAINS(weighing.weighted_by, \'["'.$userId.'"]\') > 0 OR JSON_CONTAINS(weighing.weighted_by, \'['.$userId.']\')';
-        $sel = mysqli_query($db,"select count(*) as allcount from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status<>'Complete' AND ".$defaultQuery);
-        $records = mysqli_fetch_assoc($sel);
-        $totalRecords = $records['allcount'];
-        
-        ## Total number of record with filtering
-        $sel = mysqli_query($db,"select count(*) as allcount from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status<>'Complete' AND ".$defaultQuery.' '.$searchQuery);
-        $records = mysqli_fetch_assoc($sel);
-        $totalRecordwithFilter = $records['allcount'];
-        
-        ## Fetch records
-        $empQuery = "select weighing.*, farms.name from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status<>'Complete' AND ".$defaultQuery.' '.$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
-        $empRecords = mysqli_query($db, $empQuery);
-    }*/
-}
+$sel = mysqli_query($db2,"select count(*) as allcount from weighing join companies on weighing.company = companies.id WHERE weighing.deleted = '0' AND weighing.status='Complete' AND companies.parent='$id'");
+$records = mysqli_fetch_assoc($sel);
+$totalRecords = $records['allcount'];
+
+## Total number of record with filtering
+$sel = mysqli_query($db2,"select count(*) as allcount from weighing join companies on weighing.company = companies.id WHERE weighing.deleted = '0' AND weighing.status='Complete' AND companies.parent='$id'".$searchQuery);
+$records = mysqli_fetch_assoc($sel);
+$totalRecordwithFilter = $records['allcount'];
+
+## Fetch records
+$empQuery = "select weighing.*, companies.name as compname from weighing join companies on weighing.company = companies.id WHERE weighing.deleted = '0' AND weighing.status='Complete' AND companies.parent='$id' ".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empRecords = mysqli_query($db2, $empQuery);
 
 
 $data = array();
@@ -127,6 +85,21 @@ $counter = 1;
 
 if($empRecords != null){
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $farm = '';
+            
+    if ($update_stmt2 = $db2->prepare("SELECT * FROM farms WHERE id=?")) {
+        $update_stmt2->bind_param('s', $row['farm_id']);
+    
+        // Execute the prepared query.
+        if ($update_stmt2->execute()) {
+            $result2 = $update_stmt2->get_result();
+            
+            if ($row1 = $result2->fetch_assoc()) {
+                $farm = $row1['name'];
+            }
+        }
+    }
+        
       $data[] = array( 
         "no"=>$counter,
         "id"=>$row['id'],
@@ -139,7 +112,7 @@ if($empRecords != null){
         "product"=>$row['product'],
         "driver_name"=>$row['driver_name'],
         "lorry_no"=>$row['lorry_no'],
-        "farm_id"=>$row['name'],
+        "farm_id"=>$farm,
         "average_cage"=>$row['average_cage'],
         "average_bird"=>$row['average_bird'],
         "minimum_weight"=>$row['minimum_weight'],
@@ -148,7 +121,8 @@ if($empRecords != null){
         "weight_data"=>json_decode($row['weight_data'], true),
         "created_datetime"=>$row['created_datetime'],
         "start_time"=>$row['start_time'],
-        "end_time"=>$row['end_time']
+        "end_time"=>$row['end_time'],
+        "compname"=>$row['compname'],
       );
     
       $counter++;

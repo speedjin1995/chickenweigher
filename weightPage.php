@@ -27,6 +27,7 @@ else{
   $customers2 = $db->query("SELECT * FROM customers WHERE deleted = '0' ORDER BY customer_name"); // Customers
   $users = $db->query("SELECT * FROM users WHERE deleted = '0'"); // Users
   $transporters = $db->query("SELECT * FROM transporters WHERE deleted = '0'"); // Drivers
+  $transporters2 = $db->query("SELECT * FROM transporters WHERE deleted = '0'"); // Drivers
 }
 ?>
 
@@ -221,7 +222,7 @@ else{
                 <select class="form-control select2" id="vehicleNo" name="vehicleNo">
                   <option selected="selected">-</option>
                   <?php while($row2=mysqli_fetch_assoc($vehicles)){ ?>
-                    <option value="<?=$row2['veh_number'] ?>" data-driver="<?=$row2['driver'] ?>"><?=$row2['veh_number'] ?></option>
+                    <option value="<?=$row2['veh_number'] ?>" data-driver="<?=$row2['driver'] ?>" data-driver2="<?=$row2['driver2'] ?>"><?=$row2['veh_number'] ?></option>
                   <?php } ?>
                 </select>
               </div>
@@ -232,6 +233,15 @@ else{
                   <option selected="selected">-</option>
                   <?php while($row5=mysqli_fetch_assoc($transporters)){ ?>
                     <option value="<?=$row5['transporter_name'] ?>" data-id="<?=$row5['id'] ?>"><?=$row5['transporter_name'] ?></option>
+                  <?php } ?>
+              </select>
+            </div>
+            <div class="form-group col-4">
+              <label><?=$languageArray['driver_code'][$language] ?> 2</label>
+              <select class="form-control select2" style="width: 100%;" id="driver2" name="driver2">
+                  <option selected="selected">-</option>
+                  <?php while($row52=mysqli_fetch_assoc($transporters2)){ ?>
+                    <option value="<?=$row52['transporter_name'] ?>" data-id="<?=$row52['id'] ?>"><?=$row52['transporter_name'] ?></option>
                   <?php } ?>
               </select>
             </div>
@@ -276,7 +286,7 @@ else{
                 </select>
               </div>
             </div>
-            <div class="col-8">
+            <div class="col-4">
               <div class="form-group">
                 <label><?=$languageArray['remark_code'][$language] ?></label>
                 <textarea class="form-control" rows="1" placeholder="Enter ..." id="remark" name="remark"></textarea>
@@ -670,10 +680,16 @@ $(function () {
 
   $('#vehicleNo').on('change', function(){
     var dataId = $(this).find('option:selected').attr('data-driver');
+    var dataId2 = $(this).find('option:selected').attr('data-driver2');
     
     if (dataId) {
       $('#driver').find('option[data-id="' + dataId + '"]').prop('selected', true);
       $('#driver').trigger('change');
+    }
+    
+    if (dataId2) {
+      $('#driver2').find('option[data-id="' + dataId2 + '"]').prop('selected', true);
+      $('#driver2').trigger('change');
     }
   });
 
@@ -850,6 +866,7 @@ function newEntry(){
   $('#extendModal').find('#customerNo').select2('destroy').val('').select2();
   $('#extendModal').find('#product').select2('destroy').val('').select2();
   $('#extendModal').find('#vehicleNo').select2('destroy').val('').select2();
+  $('#extendModal').find('#driver2').select2('destroy').val('').select2();
   $('#extendModal').find('#driver').select2('destroy').val('').select2();
   $('#extendModal').find('#farm').select2('destroy').val('').select2();
   $('#extendModal').find('#aveBird').val("");
@@ -899,6 +916,7 @@ function edit(id) {
       $('#extendModal').find('#product').val(obj.message.product).trigger('change');
       $('#extendModal').find('#vehicleNo').val(obj.message.lorry_no).trigger('change');
       $('#extendModal').find('#driver').val(obj.message.driver_name).trigger('change');
+      $('#extendModal').find('#driver2').val(obj.message.driver_name2).trigger('change');
       $('#extendModal').find('#farm').val(obj.message.farm_id).trigger('change');
       $('#extendModal').find('#aveBird').val(obj.message.average_bird);
       $('#extendModal').find('#aveCage').val(obj.message.average_cage);

@@ -25,16 +25,16 @@ foreach ($decoded_data as $item) {
         
         $weightdetails[] = array(
             "grossWeight" => (string)$desc,
-            "tareWeight" => "18.06", 
+            "tareWeight" => "16.40", 
             "reduceWeight" => "0.0", 
-            "netWeight" => (string)($desc - 18.06), 
-            "birdsPerCages" => "10", 
-            "numberOfBirds" => "20", 
+            "netWeight" => (string)($desc - 16.40), 
+            "birdsPerCages" => "12", 
+            "numberOfBirds" => "24", 
             "numberOfCages" => "2", 
             "grade" => "S", 
             "sex" => "Mixed", 
-            "houseNumber" => "9", 
-            "groupNumber" => "7", 
+            "houseNumber" => "1", 
+            "groupNumber" => "1", 
             "remark" => ""
         );
     }

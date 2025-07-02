@@ -9,6 +9,7 @@ else{
   $user = $_SESSION['userID'];
   $language = $_SESSION['language'];
   $_SESSION['page']='otherBillboard';
+  $actual_link = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]";
   $stmt = $db->prepare("SELECT * from users where id = ?");
 	$stmt->bind_param('s', $user);
 	$stmt->execute();
@@ -18,8 +19,8 @@ else{
     $role = $row['role_code'];
   }
 
-  $packages = $db->query("SELECT * FROM farms WHERE deleted = '0' ORDER BY name");
-  $customers = $db->query("SELECT * FROM customers WHERE deleted = '0' ORDER BY customer_name");
+  $packages = $db2->query("SELECT * FROM farms JOIN companies ON farms.customer = companies.id WHERE farms.deleted = '0' ORDER BY farms.name");
+  $customers = $db2->query("SELECT * FROM companies WHERE deleted = '0' AND parent = '11' ORDER BY name");
 }
 ?>
 
@@ -35,7 +36,7 @@ else{
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark"><?=$languageArray['weighing_report_code'][$language] ?></h1>
+        <h1 class="m-0 text-dark"><?=$languageArray['weighing_report_code'][$language] ?> (Others)</h1>
       </div><!-- /.col -->
     </div><!-- /.row -->
   </div><!-- /.container-fluid -->
@@ -69,7 +70,7 @@ else{
                 </div>
               </div>
 
-              <div class="col-3">
+              <div class="col-3" style="display:none;">
                 <div class="form-group">
                   <label><?=$languageArray['farm_code'][$language] ?></label>
                   <select class="form-control select2" id="farmFilter" name="farmFilter" style="width: 100%;">
@@ -83,11 +84,11 @@ else{
 
               <div class="col-3">
                 <div class="form-group">
-                  <label><?=$languageArray['customer_code'][$language] ?></label>
+                  <label><?=$languageArray['company_code'][$language] ?></label>
                   <select class="form-control select2" style="width: 100%;" id="customerFilter" name="customerFilter" style="display: none;">
                     <option selected="selected">-</option>
                     <?php while($rowCustomer=mysqli_fetch_assoc($customers)){ ?>
-                      <option value="<?=$rowCustomer['customer_name'] ?>"><?=$rowCustomer['customer_name'] ?></option>
+                      <option value="<?=$rowCustomer['id'] ?>"><?=$rowCustomer['name'] ?></option>
                     <?php } ?>
                   </select>
                 </div>
@@ -195,12 +196,10 @@ else{
               <thead>
                 <tr>
                   <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
-                  <th>Serial No</th>
+                  <th>Company</th>
                   <th>Customer</th>
                   <th>Product</th>
                   <th>Vehicle No.</th>
-                  <!--th>Driver Name</th-->
-                  <th>Farm</th>
                   <th>Completed <br>Date Time</th>
                   <th></th>
                 </tr>
@@ -217,8 +216,10 @@ else{
 $(function () {
   const today = new Date();
   const sevenDaysAgo = new Date(today);
+  const yesterday = new Date(today);
   sevenDaysAgo.setDate(today.getDate() - 7);
-  var started = formatDate2(sevenDaysAgo);
+  yesterday.setDate(today.getDate() - 1);
+  var started = formatDate2(yesterday);
   var ended = formatDate2(today);
   
   $('.select2').select2({
@@ -254,17 +255,15 @@ $(function () {
             return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
           }
         },
-        { data: 'serial_no' },
+        { data: 'compname' },
         { data: 'customer' },
         { data: 'product' },
         { data: 'lorry_no' },
-        //{ data: 'driver_name' },
-        { data: 'farm_id' },
         { data: 'end_time' },
         {
           data: 'id',
           render: function (data, type, row) {
-            return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/print.php?userID=' + data + '\');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/printportrait.php?userID=' + data + '\');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
+            return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="window.open(\'<?=$actual_link ?>/chickenweigher/print.php?userID=' + data + '\');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'<?=$actual_link ?>/chickenweigher/printportrait.php?userID=' + data + '\');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
           }
         }
       /*{ 
@@ -341,17 +340,15 @@ $(function () {
             return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
           }
         },
-        { data: 'serial_no' },
+        { data: 'compname' },
         { data: 'customer' },
         { data: 'product' },
         { data: 'lorry_no' },
-        //{ data: 'driver_name' },
-        { data: 'farm_id' },
         { data: 'end_time' },
         {
           data: 'id',
           render: function (data, type, row) {
-            return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/print.php?userID=' + data + '\');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'https://ccb.syncweigh.com/printportrait.php?userID=' + data + '\');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
+            return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="window.open(\'<?=$actual_link ?>/chickenweigher/print.php?userID=' + data + '\');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'<?=$actual_link ?>/chickenweigher/printportrait.php?userID=' + data + '\');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
           }
         }
       ],
