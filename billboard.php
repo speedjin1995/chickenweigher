@@ -70,7 +70,7 @@ else{
         <div class="card">
           <div class="card-body">
             <div class="row">
-            <div class="form-group col-3">
+              <div class="form-group col-3">
                 <label>Date range: <span id="range"></span></label>
 
                 <div class="input-group">

@@ -351,12 +351,14 @@ to get the desired effect
                   <p><?=$languageArray['ccb_farm_house_code'][$language] ?></p>
                 </a>
               </li>
-              <li class="nav-item">
-                <a href="#otherDashboard" data-file="dashboardOther.php" class="nav-link link">
-                  <i class="nav-icon fas fa-plus-square"></i>
-                  <p><?=$languageArray['other_farm_code'][$language] ?></p>
-                </a>
-              </li>
+              <?php if ($role == "ADMIN") { ?>
+                <li class="nav-item">
+                  <a href="#otherDashboard" data-file="dashboardOther.php" class="nav-link link">
+                    <i class="nav-icon fas fa-plus-square"></i>
+                    <p><?=$languageArray['other_farm_code'][$language] ?></p>
+                  </a>
+                </li>
+              <?php } ?>
             </ul>
           </li>
           <li class="nav-item">
@@ -377,12 +379,14 @@ to get the desired effect
                   <p><?=$languageArray['ccb_farm_code'][$language] ?></p>
                 </a>
               </li>
-              <li class="nav-item">
-                <a href="#otherBillboard" data-file="billboardOther.php" class="nav-link link">
-                  <i class="nav-icon fas fa-address-book"></i>
-                  <p><?=$languageArray['other_farm_code'][$language] ?></p>
-                </a>
-              </li>
+              <?php if ($role == "ADMIN") { ?>
+                <li class="nav-item">
+                    <a href="#otherBillboard" data-file="billboardOther.php" class="nav-link link">
+                      <i class="nav-icon fas fa-address-book"></i>
+                      <p><?=$languageArray['other_farm_code'][$language] ?></p>
+                    </a>
+                  </li>
+            <?php } ?>
             </ul>
           </li>
           <?php 
