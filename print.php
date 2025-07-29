@@ -203,19 +203,33 @@ if(isset($_GET['userID'])){
                 $message = '<html>
     <head>
         <style>
-            @media print {
-                @page {
-                    margin-left: 0.4in;
-                    margin-right: 0.4in;
-                    margin-top: 0.1in;
-                    margin-bottom: 0.1in;
+            @media screen {
+                .page-header {
+                    position: relative;
+                    background: white;
+                    padding: 10px;
+                    border-bottom: 1px solid #ccc;
+                    margin-bottom: 20px;
+                }
+                
+                .page-footer {
+                    position: relative;
+                    background: white;
+                    padding: 10px;
+                    border-top: 1px solid #ccc;
+                    margin-top: 20px;
+                }
+                
+                .main-content {
+                    margin: 0;
                 }
             }
             
             body{
                 width: 21cm;
                 height: 29.7cm;
-                margin: 30mm 45mm 30mm 45mm;
+                margin: 0;
+                font-family: sans-serif;
             }
 
             table {
@@ -286,19 +300,14 @@ if(isset($_GET['userID'])){
                 display: table;
                 width: 100%;
             }
-            
-            #footer {
-                padding: 10px 10px 0px 10px;
-                bottom: 0;
-                width: 100%;
-                height: auto;
-            }
         </style>
     </head><body>';
     
     //$noOfRows = 0;
     //for($p=0; $p<$pages; $p++){
-        $message .= '<div id="preview-container">
+        
+        // HEADER SECTION - Fixed on every page
+        $message .= '<div class="page-header">
             <table class="table">
                 <tbody>
                     <tr>
@@ -466,73 +475,79 @@ if(isset($_GET['userID'])){
                         <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
                             <p>
                                 <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Page No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$page.' of '.$pages.'</span>
+                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;" class="page-number">1 of 1</span>
                             </p>
                         </td>
                     </tr>
                 </tbody>
-            </table><br>
-    
-            
-            <table class="table">
-                <tbody>
-                    <tr style="border-top: 1px solid #000000;border-bottom: 1px solid #000000;font-family: sans-serif;">
-                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Crate No.  </span>
-                            </p>
-                        </td>
-                        <td colspan="10" style="width: 80%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Weight (kg) / Sample Crate </span>
-                            </p>
-                        </td>
-                    </tr>';
-                    
-                    $countCage = 1;
-                    $indexCount2 = 11;
-                    $indexStringCage = '<tr><td style="border-top:0px;padding: 0 0.7rem;width: 20%;">
-                        <p>
-                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">1</span>
-                        </p>
-                    </td>';
-                    
-                    foreach ($cage_data as $cage) {
-                        if ($countCage < 10) {
-                            $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;">
+            </table>
+        </div>
+        
+        <!-- MAIN CONTENT SECTION - Will flow between pages -->
+        <div class="main-content">
+            <div class="content-section">
+                <table class="table">
+                    <tbody>
+                        <tr style="border-top: 1px solid #000000;border-bottom: 1px solid #000000;font-family: sans-serif;">
+                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;">
                                 <p>
-                                    <span style="font-size: 12px;font-family: sans-serif;">' . str_replace('kg', '', $cage['data']) .  '/' . $cage['number'] . '</span>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Crate No.  </span>
                                 </p>
-                            </td>';
-                            $countCage++;
-                        }
-                        else {
-                            $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;">
+                            </td>
+                            <td colspan="10" style="width: 80%;border-top:0px;padding: 0 0.7rem;">
                                 <p>
-                                    <span style="font-size: 12px;font-family: sans-serif;">' . str_replace('kg', '', $cage['data']) . '/' . $cage['number'] . '</span>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Weight (kg) / Sample Crate </span>
                                 </p>
-                            </td></tr>'; // Move this line outside of the else block
-                            $countCage = 1;
+                            </td>
+                        </tr>';
+                        
+                        $countCage = 1;
+                        $indexCount2 = 11;
+                        $indexStringCage = '<tr><td style="border-top:0px;padding: 0 0.7rem;width: 20%;">
+                            <p>
+                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">1</span>
+                            </p>
+                        </td>';
+                        
+                        foreach ($cage_data as $cage) {
+                            if ($countCage < 10) {
+                                $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;">
+                                    <p>
+                                        <span style="font-size: 12px;font-family: sans-serif;">' . str_replace('kg', '', $cage['data']) .  '/' . $cage['number'] . '</span>
+                                    </p>
+                                </td>';
+                                $countCage++;
+                            }
+                            else {
+                                $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;">
+                                    <p>
+                                        <span style="font-size: 12px;font-family: sans-serif;">' . str_replace('kg', '', $cage['data']) . '/' . $cage['number'] . '</span>
+                                    </p>
+                                </td></tr>'; // Move this line outside of the else block
+                                $countCage = 1;
+                            }
                         }
-                    }
-    
-                    if ($countCage > 0) {
-                        for ($k = 0; $k <= (10 - $countCage); $k++) {
-                            $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;"><p><span style="font-size: 12px;font-family: sans-serif;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td>';
+        
+                        if ($countCage > 0) {
+                            for ($k = 0; $k <= (10 - $countCage); $k++) {
+                                $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;"><p><span style="font-size: 12px;font-family: sans-serif;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td>';
+                            }
+                            $indexStringCage .= '</tr>';
                         }
-                        $indexStringCage .= '</tr>';
-                    }
-    
-                    $message .= $indexStringCage;
-                $message .= '</tbody>
-            </table><br>';
+        
+                        $message .= $indexStringCage;
+                    $message .= '</tbody>
+                </table><br>
+            </div>';
             
             if (!empty($mapOfWeights)) {
                 foreach ($mapOfWeights as $group) {
+                    $message .= '<div class="group-section">';
                     $message .= '<p style="margin: 0px;"><u style="color: blue;">Group No. ' . $group['groupNumber'] . '</u></p>';
             
                     if (isset($group['houses']) && is_array($group['houses'])) {
                         foreach ($group['houses'] as $house) {
+                            $message .= '<div class="house-section">';
                             $message .= '<p style="margin: 0px;">House ' . $house['house'] . '</p>';
                             $message .= '<table class="table">';
                             $message .= '<tbody>';
@@ -615,171 +630,167 @@ if(isset($_GET['userID'])){
             
                             $message .= $indexString;
                             $message .= '</tbody></table><br>';
+                            $message .= '</div>'; // Close house-section
                         }
                     }
             
-                    //$message .= '</div><br>';
+                    $message .= '</div>'; // Close group-section
                 }
             }
             
-            $message .= '<div id="footer">
-                <hr>
-                <table class="table">
-                    <tbody>
-                        <tr>
-                            <td style="width: 50%;border-top:0px;">
-                                <p style="font-size: 12px;font-family: sans-serif;"><b>SUMMARY - TOTAL</b></p>
-                                <table class="table" style="width: 95%">
-                                    <tbody>
-                                        <tr>
-                                            <th style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;"></th>
-                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">S</th>
-                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">A</th>
-                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Total</th>
-                                        </tr>
-                                        <tr>
-                                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates</td>
-                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalSCages.'</td>
-                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalACages.'</td>
-                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalCrates.'</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Birds</td>
-                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalSBirds.'</td>
-                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalABirds.'</td>
-                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalBirds.'</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Gross Wt (kg)</td>
-                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSGross, 2, '.', '').'</td>
-                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalAGross, 2, '.', '').'</td>
-                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalGross, 2, '.', '').'</td>
-                                        </tr>';
-                                        $message .= '<tr>
-                                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates Wt (kg)</td>
-                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSCrate, 2, '.', '').'</td>
-                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalACrate, 2, '.', '').'</td>
-                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalCrate, 2, '.', '').'</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Avg kg/Bird</td>';
-                                            
-                                            if($totalSCages <= 0){
-                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
-                                            }
-                                            else{
-                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format(($totalSGross - $totalSCrate)/$totalSBirds, 2, '.', '').'</td>';
-                                            }
-                                            
-                                            if($totalACages <= 0){
-                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
-                                            }
-                                            else{
-                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format(($totalAGross - $totalACrate)/$totalABirds, 2, '.', '').'</td>';
-                                            }
-                                            
-                                            if($totalBirds <= 0){
-                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
-                                            }
-                                            else{
-                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format(($totalGross - $totalCrate)/$totalBirds, 2, '.', '').'</td>';
-                                            }
-                                        $message.= '</tr>
-                                        <tr>
-                                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg)</td>
-                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSGross - $totalSCrate, 2, '.', '').'</td>
-                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalAGross - $totalACrate, 2, '.', '').'</td>
-                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalGross - $totalCrate, 2, '.', '').'</td>
-                                        </tr>
-                                    </tbody>
-                                </table><br>
-
-                                <table class="table">
-                                    <tbody>
-                                        <tr>
-                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;"></th>
-                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Male</th>
-                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Female</th>
-                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Mixed</th>
-                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Total</th>
-                                        </tr>
-                                        <tr>
-                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates</td>
-                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMaleCages.'</td>
-                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalFemaleCages.'</td>
-                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMixedCages.'</td>
-                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalCrates.'</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Birds</td>
-                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMaleBirds.'</td>
-                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalFemaleBirds.'</td>
-                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMixedBirds.'</td>
-                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalBirds.'</td>
-                                        </tr>
-                                    </tbody>
-                                </table>';
-                                $message .= '</td>
-                            <td style="width: 50%;border-top:0px;">
-                                <p style="font-size: 12px;font-family: sans-serif;"><b>SUMMARY - BY HOUSE</b></p>
-                                <table class="table" style="width: 95%">
-                                    <tbody>
-                                        <tr>
-                                            <th style="width: 28%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;">H</th>
-                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Crates</th>
-                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Birds</th>
-                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Nett(kg)</th>
-                                            <th style="width: 22%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Average</th>
-                                        </tr>';
-
-                                        for($j=0; $j<count($mapOfHouses); $j++){
-                                            $group = $mapOfHouses[$j]['houseNumber'];
-                                            $crateIn = 0;
-                                            $birdsIn = 0;
-                                            $grossIn = 0.0;
-                                            $taresIn = 0.0;
-                                            $nettsIn = 0.0;
-                                            $average = 0.0;
-
-                                            foreach ($mapOfHouses[$j]['weightList'] as $element){
-                                                $crateIn += (int)$element['numberOfCages'];
-                                                $birdsIn += (int)$element['numberOfBirds'];
-                                                $grossIn += (float)$element['grossWeight'];
-                                                $taresIn += (float)$element['tareWeight'];
-                                            }
-
-                                            $nettsIn = $grossIn - $taresIn;
-                                            $average = $nettsIn / $birdsIn;
-                                            $message .= '<tr>
-                                                <td style="width: 28%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;text-align: center;">'.$group.'</td>
-                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$crateIn.'</td>
-                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$birdsIn.'</td>
-                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$nettsIn.'</td>
-                                                <td style="width: 22%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($average, 2, '.', '').'</td>
-                                            </tr>';
-                                        }
-                                    
-                                        $message .= '</tbody>
-                                </table>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>';
+        $message .= '</div>'; // Close main-content
             
-        /*$page++;
-        $noOfRows = 0;
+                    
+        $message .= '<!-- FOOTER SECTION - Fixed on every page -->
+        <div class="page-footer" id="footer">
+            <hr>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td style="width: 50%;border-top:0px;">
+                            <p style="font-size: 12px;font-family: sans-serif;"><b>SUMMARY - TOTAL</b></p>
+                            <table class="table" style="width: 95%">
+                                <tbody>
+                                    <tr>
+                                        <th style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;"></th>
+                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">S</th>
+                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">A</th>
+                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Total</th>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates</td>
+                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalSCages.'</td>
+                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalACages.'</td>
+                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalCrates.'</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Birds</td>
+                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalSBirds.'</td>
+                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalABirds.'</td>
+                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalBirds.'</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Gross Wt (kg)</td>
+                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSGross, 2, '.', '').'</td>
+                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalAGross, 2, '.', '').'</td>
+                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalGross, 2, '.', '').'</td>
+                                    </tr>';
+                                    $message .= '<tr>
+                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates Wt (kg)</td>
+                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSCrate, 2, '.', '').'</td>
+                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalACrate, 2, '.', '').'</td>
+                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalCrate, 2, '.', '').'</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Avg kg/Bird</td>';
+                                        
+                                        if($totalSCages <= 0){
+                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
+                                        }
+                                        else{
+                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format(($totalSGross - $totalSCrate)/$totalSBirds, 2, '.', '').'</td>';
+                                        }
+                                        
+                                        if($totalACages <= 0){
+                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
+                                        }
+                                        else{
+                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format(($totalAGross - $totalACrate)/$totalABirds, 2, '.', '').'</td>';
+                                        }
+                                        
+                                        if($totalBirds <= 0){
+                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
+                                        }
+                                        else{
+                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format(($totalGross - $totalCrate)/$totalBirds, 2, '.', '').'</td>';
+                                        }
+                                    $message.= '</tr>
+                                    <tr>
+                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg)</td>
+                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSGross - $totalSCrate, 2, '.', '').'</td>
+                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalAGross - $totalACrate, 2, '.', '').'</td>
+                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalGross - $totalCrate, 2, '.', '').'</td>
+                                    </tr>
+                                </tbody>
+                            </table><br>
+
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;"></th>
+                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Male</th>
+                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Female</th>
+                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Mixed</th>
+                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Total</th>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates</td>
+                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMaleCages.'</td>
+                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalFemaleCages.'</td>
+                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMixedCages.'</td>
+                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalCrates.'</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Birds</td>
+                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMaleBirds.'</td>
+                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalFemaleBirds.'</td>
+                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMixedBirds.'</td>
+                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalBirds.'</td>
+                                    </tr>
+                                </tbody>
+                            </table>';
+                            $message .= '</td>
+                        <td style="width: 50%;border-top:0px;">
+                            <p style="font-size: 12px;font-family: sans-serif;"><b>SUMMARY - BY HOUSE</b></p>
+                            <table class="table" style="width: 95%">
+                                <tbody>
+                                    <tr>
+                                        <th style="width: 28%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;">H</th>
+                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Crates</th>
+                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Birds</th>
+                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Nett(kg)</th>
+                                        <th style="width: 22%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Average</th>
+                                    </tr>';
+
+                                    for($j=0; $j<count($mapOfHouses); $j++){
+                                        $group = $mapOfHouses[$j]['houseNumber'];
+                                        $crateIn = 0;
+                                        $birdsIn = 0;
+                                        $grossIn = 0.0;
+                                        $taresIn = 0.0;
+                                        $nettsIn = 0.0;
+                                        $average = 0.0;
+
+                                        foreach ($mapOfHouses[$j]['weightList'] as $element){
+                                            $crateIn += (int)$element['numberOfCages'];
+                                            $birdsIn += (int)$element['numberOfBirds'];
+                                            $grossIn += (float)$element['grossWeight'];
+                                            $taresIn += (float)$element['tareWeight'];
+                                        }
+
+                                        $nettsIn = $grossIn - $taresIn;
+                                        $average = $nettsIn / $birdsIn;
+                                        $message .= '<tr>
+                                            <td style="width: 28%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;text-align: center;">'.$group.'</td>
+                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$crateIn.'</td>
+                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$birdsIn.'</td>
+                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$nettsIn.'</td>
+                                            <td style="width: 22%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($average, 2, '.', '').'</td>
+                                        </tr>';
+                                    }
+                                
+                                    $message .= '</tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         
-        if($p != ($pages - 1)){
-            $message .= '<p style="page-break-after: always;">&nbsp;</p>';
-        }
-    }*/
-    
-    
-        //</div>
-        //<button id="print-button" onclick="printPreview()">Print Preview</button>
-    $message .= '</div><button id="print-button" onclick="printPreview()">Print Preview</button></body></html>';
-                
+        <button id="print-button" onclick="printPreview()">Print Preview</button>
+        </body>
+        </html>';
+
                 echo $message;
                 /*echo "<script>
                     setTimeout(function(){
@@ -795,11 +806,254 @@ if(isset($_GET['userID'])){
                 echo "<script>
                     function printPreview() {
                         var printWindow = window.open('', '_blank');
-                        printWindow.document.write('<html><title>F-".$row['po_no']."_".substr($row['customer'], 0, 15)."_".$row['serial_no']."</title><style>@media print{@page{margin-left:.3in;margin-right:.3in;margin-top:.1in;margin-bottom:.1in}}table{width:100%;border-collapse:collapse}.table td,.table th{padding:.7rem;vertical-align:top;border-top:1px solid #dee2e6}.table-bordered{border:1px solid #000}.table-bordered td,.table-bordered th{border:1px solid #000;font-family:sans-serif}.row{display:flex;flex-wrap:wrap;margin-top:20px}.col-md-3{position:relative;width:25%}.col-md-9{position:relative;width:75%}.col-md-7{position:relative;width:58.333333%}.col-md-5{position:relative;width:41.666667%}.col-md-6{position:relative;width:50%}.col-md-4{position:relative;width:33.333333%}.col-md-8{position:relative;width:66.666667%}#container {min-height: 75vh;display: table;width: 100%;}#footer{position:fixed;padding:10px 10px 0 10px;bottom:0;width:100%;height:auto}</style><body>');
-                        printWindow.document.write(document.getElementById('preview-container').innerHTML);
+                        var currentHTML = document.documentElement.outerHTML;
+                        
+                        // Enhanced CSS for fixed headers and footers
+                        var enhancedCSS = `
+                        <style>
+                            @media print {
+                                @page {
+                                    margin: 0.5in 0.4in 0.1in 0.4in;
+                                    size: A4;
+                                }
+                                
+                                body {
+                                    margin: 0;
+                                    padding: 0;
+                                    font-family: sans-serif;
+                                }
+                                
+                                .page-header {
+                                    top: 0;
+                                    left: 0;
+                                    right: 0;
+                                    height: 300px;
+                                    background: white;
+                                    z-index: 1000;
+                                    padding: 10px;
+                                    margin-bottom: 20px;
+                                }
+                                
+                                .page-header-cloned {
+                                    position: static !important;
+                                    background: white;
+                                    padding: 10px;
+                                    margin-bottom: 20px;
+                                    border-bottom: 1px solid #ccc;
+                                    height: auto;
+                                }
+                                
+                                .page-footer {
+                                    position: fixed;
+                                    bottom: 0;
+                                    left: 0;
+                                    right: 0;
+                                    height: 260px;
+                                    background: white;
+                                    z-index: 1000;
+                                    padding: 10px;
+                                    margin-top: 20px;
+                                }
+                                
+                                .main-content {
+                                    margin-top: 50px;
+                                    margin-bottom: 280px;
+                                    padding-left: 0.1in;
+                                    padding-right: 0.1in;
+                                    page-break-inside: auto;
+                                }
+                                
+                                .main-content > *:first-child {
+                                    margin-top: 0;
+                                    padding-top: 0;
+                                }
+                                
+                                .content-section {
+                                    page-break-inside: avoid;
+                                    break-inside: avoid;
+                                    margin-bottom: 5px;
+                                }
+                                
+                                .group-section {
+                                    page-break-inside: avoid;
+                                    break-inside: avoid;
+                                    margin-bottom: 2px;
+                                }
+                                
+                                .house-section {
+                                    page-break-inside: avoid;
+                                    break-inside: avoid;
+                                    margin-bottom: 3px;
+                                }
+                                
+                                /* Page breaks now include cloned headers */
+                                .page-break {
+                                    page-break-before: always;
+                                    margin-top: 0;
+                                    padding-top: 20px;
+                                }
+                                
+                                /* Hide original fixed header on subsequent pages */
+                                .page-break .page-header:not(.page-header-cloned) {
+                                    display: none;
+                                }
+                                
+                                /* Optimize table spacing */
+                                .house-section table {
+                                    margin-bottom: 3px;
+                                }
+                                
+                                .content-section table {
+                                    margin-bottom: 5px;
+                                }
+                                
+                                /* Reduce padding in table cells */
+                                .table th, .table td {
+                                    padding: 0.3rem;
+                                }
+                                
+                                #print-button {
+                                    display: none !important;
+                                }
+                            }
+                            
+                            table {
+                                width: 100%;
+                                border-collapse: collapse;
+                            }
+                            
+                            .table th, .table td {
+                                padding: 0.70rem;
+                                vertical-align: top;
+                                border-top: 1px solid #dee2e6;
+                            }
+                            
+                            .table-bordered {
+                                border: 1px solid #000000;
+                            }
+                            
+                            .table-bordered th, .table-bordered td {
+                                border: 1px solid #000000;
+                                font-family: sans-serif;
+                            }
+                        </style>
+                        `;
+                        
+                        printWindow.document.write('<html><head><title>F-".$row['po_no']."_".substr($row['customer'], 0, 15)."_".$row['serial_no']."</title>' + enhancedCSS + '</head><body>');
+                        printWindow.document.write(currentHTML.replace(/<html[^>]*>.*?<body[^>]*>/is, '').replace(/<\/body>.*?<\/html>/is, ''));
                         printWindow.document.write('</body></html>');
                         printWindow.document.close();
-                        printWindow.print();
+                        
+                        // Smart page break calculator
+                        setTimeout(function() {
+                            function addSmartPageBreaks() {
+                                var doc = printWindow.document;
+                                var contentSection = doc.querySelector('.content-section');
+                                var houseSections = doc.querySelectorAll('.house-section');
+                                
+                                if (!contentSection || !houseSections.length) return;
+                                
+                                // Calculate available space (A4 size minus header/footer)
+                                var pageHeight = 1056; // A4 height in pixels at 96 DPI
+                                var headerHeight = 340; // Include margins and borders
+                                var footerHeight = 280; // Include margins and borders
+                                var padding = 30; // Safety margin
+                                var availableHeight = pageHeight - headerHeight - footerHeight - padding;
+                                                                
+                                // Start with content section height
+                                var currentPageHeight = contentSection.offsetHeight || 0;                                
+                                var totalPages = 1; // Start with page 1
+                                
+                                // Process each house section individually for better control
+                                for (var i = 0; i < houseSections.length; i++) {
+                                    var houseHeight = houseSections[i].offsetHeight;
+
+                                    // If adding this house would exceed the page, start new page
+                                    if (currentPageHeight + houseHeight > availableHeight && i > 0) {
+                                        // Add page break class to the house
+                                        houseSections[i].classList.add('page-break');
+                                        currentPageHeight = houseHeight; // Reset for new page
+                                        totalPages++; // Increment page count
+                                    } else {
+                                        // Add to current page
+                                        currentPageHeight += houseHeight;
+                                    }
+                                }
+                                                                
+                                // Update page numbers in headers and footers
+                                updatePageNumbers(doc, totalPages);
+                            }
+                            
+                            function updatePageNumbers(doc, totalPages) {
+                                // Update the first page number
+                                var firstPageNumber = doc.querySelector('.page-number');
+                                if (firstPageNumber) {
+                                    firstPageNumber.textContent = '1 of ' + totalPages;
+                                }
+                                
+                                // Clone headers for each page break with proper page numbers
+                                var pageBreaks = doc.querySelectorAll('.page-break');
+                                if (pageBreaks.length > 0) {
+                                    cloneHeadersForPages(doc, pageBreaks, totalPages);
+                                }
+                                                            }
+                            
+                            function cloneHeadersForPages(doc, pageBreaks, totalPages) {
+                                var originalHeader = doc.querySelector('.page-header');
+                                if (!originalHeader) return;
+                                
+                                // For each page break, clone the header and insert it
+                                for (var i = 0; i < pageBreaks.length; i++) {
+                                    var currentPageNum = i + 2; // Page 2, 3, 4, etc.
+                                    var pageBreakElement = pageBreaks[i];
+                                    
+                                    // Check if a cloned header already exists in this page break
+                                    var existingClonedHeader = pageBreakElement.querySelector('.page-header-cloned');
+                                    if (existingClonedHeader) {
+                                        // Remove existing cloned header to avoid duplicates
+                                        existingClonedHeader.remove();
+                                    }
+                                    
+                                    // Clone the original header completely
+                                    var clonedHeader = originalHeader.cloneNode(true);
+                                    
+                                    // Remove fixed positioning from the clone
+                                    clonedHeader.style.position = 'static';
+                                    clonedHeader.style.top = 'auto';
+                                    clonedHeader.style.left = 'auto';
+                                    clonedHeader.style.right = 'auto';
+                                    clonedHeader.style.zIndex = 'auto';
+                                    clonedHeader.style.marginTop = '0';
+                                    clonedHeader.style.marginBottom = '20px';
+                                    
+                                    // Ensure only one page number element exists in the cloned header
+                                    var allPageNumbers = clonedHeader.querySelectorAll('.page-number');
+                                    for (var j = 1; j < allPageNumbers.length; j++) {
+                                        allPageNumbers[j].remove(); // Remove duplicate page number elements
+                                    }
+                                    
+                                    // Update the page number in the cloned header
+                                    var clonedPageNumber = clonedHeader.querySelector('.page-number');
+                                    if (clonedPageNumber) {
+                                        clonedPageNumber.textContent = currentPageNum + ' of ' + totalPages;
+                                    }
+                                    
+                                    // Add a class to identify cloned headers
+                                    clonedHeader.classList.add('page-header-cloned');
+                                    
+                                    // Insert the cloned header at the beginning of the page break section
+                                    pageBreakElement.insertBefore(clonedHeader, pageBreakElement.firstChild);
+                                }
+                            }
+                            
+                            // Apply the smart page breaks
+                            addSmartPageBreaks();
+                            
+                            // Print after applying breaks
+                            setTimeout(function() {
+                                printWindow.print();
+                            }, 500);
+                        }, 500);
                     }
                </script>";
             }
