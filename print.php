@@ -831,16 +831,14 @@ if(isset($_GET['userID'])){
                                     background: white;
                                     z-index: 1000;
                                     padding: 10px;
-                                    margin-bottom: 20px;
                                 }
                                 
                                 .page-header-cloned {
                                     position: static !important;
                                     background: white;
-                                    padding: 10px;
-                                    margin-bottom: 20px;
-                                    border-bottom: 1px solid #ccc;
-                                    height: auto;
+                                    padding: 1px;
+                                    height: 300px;
+                                    z-index: 1000;
                                 }
                                 
                                 .page-footer {
@@ -852,15 +850,14 @@ if(isset($_GET['userID'])){
                                     background: white;
                                     z-index: 1000;
                                     padding: 10px;
-                                    margin-top: 20px;
+                                    margin-top: 10px;
                                 }
                                 
                                 .main-content {
-                                    margin-top: 50px;
-                                    margin-bottom: 280px;
                                     padding-left: 0.1in;
                                     padding-right: 0.1in;
                                     page-break-inside: auto;
+                                    min-height: calc(100vh - 600px);
                                 }
                                 
                                 .main-content > *:first-child {
@@ -912,6 +909,11 @@ if(isset($_GET['userID'])){
                                     padding: 0.3rem;
                                 }
                                 
+                                /* Ensure groups don't overlap with footer */
+                                .group-section:last-child {
+                                    margin-bottom: 50px;
+                                }
+                                
                                 #print-button {
                                     display: none !important;
                                 }
@@ -949,9 +951,9 @@ if(isset($_GET['userID'])){
                             function addSmartPageBreaks() {
                                 var doc = printWindow.document;
                                 var contentSection = doc.querySelector('.content-section');
-                                var houseSections = doc.querySelectorAll('.house-section');
+                                var groupSections = doc.querySelectorAll('.group-section');
                                 
-                                if (!contentSection || !houseSections.length) return;
+                                if (!contentSection) return;
                                 
                                 // Calculate available space (A4 size minus header/footer)
                                 var pageHeight = 1056; // A4 height in pixels at 96 DPI
@@ -964,19 +966,37 @@ if(isset($_GET['userID'])){
                                 var currentPageHeight = contentSection.offsetHeight || 0;                                
                                 var totalPages = 1; // Start with page 1
                                 
-                                // Process each house section individually for better control
-                                for (var i = 0; i < houseSections.length; i++) {
-                                    var houseHeight = houseSections[i].offsetHeight;
+                                // Process each group section to avoid splitting groups across pages
+                                for (var i = 0; i < groupSections.length; i++) {
+                                    var groupHeight = groupSections[i].offsetHeight;
+                                    var groupElement = groupSections[i];
 
-                                    // If adding this house would exceed the page, start new page
-                                    if (currentPageHeight + houseHeight > availableHeight && i > 0) {
-                                        // Add page break class to the house
-                                        houseSections[i].classList.add('page-break');
-                                        currentPageHeight = houseHeight; // Reset for new page
+                                    // If adding this group would exceed the page, start new page
+                                    if (currentPageHeight + groupHeight > availableHeight && i > 0) {
+                                        // Add page break class to the group
+                                        groupElement.classList.add('page-break');
+                                        currentPageHeight = groupHeight; // Reset for new page
                                         totalPages++; // Increment page count
                                     } else {
                                         // Add to current page
-                                        currentPageHeight += houseHeight;
+                                        currentPageHeight += groupHeight;
+                                    }
+                                    
+                                    // Also check individual house sections within large groups
+                                    var houseSections = groupElement.querySelectorAll('.house-section');
+                                    if (houseSections.length > 0 && groupHeight > availableHeight * 0.8) {
+                                        // If group is very large, allow house-level breaks within it
+                                        var groupCurrentHeight = 0;
+                                        for (var j = 0; j < houseSections.length; j++) {
+                                            var houseHeight = houseSections[j].offsetHeight;
+                                            if (groupCurrentHeight + houseHeight > availableHeight * 0.8 && j > 0) {
+                                                houseSections[j].classList.add('page-break');
+                                                groupCurrentHeight = houseHeight;
+                                                totalPages++;
+                                            } else {
+                                                groupCurrentHeight += houseHeight;
+                                            }
+                                        }
                                     }
                                 }
                                                                 
@@ -996,7 +1016,7 @@ if(isset($_GET['userID'])){
                                 if (pageBreaks.length > 0) {
                                     cloneHeadersForPages(doc, pageBreaks, totalPages);
                                 }
-                                                            }
+                            }
                             
                             function cloneHeadersForPages(doc, pageBreaks, totalPages) {
                                 var originalHeader = doc.querySelector('.page-header');
@@ -1025,6 +1045,7 @@ if(isset($_GET['userID'])){
                                     clonedHeader.style.zIndex = 'auto';
                                     clonedHeader.style.marginTop = '0';
                                     clonedHeader.style.marginBottom = '20px';
+                                    clonedHeader.style.visibility = 'visible';
                                     
                                     // Ensure only one page number element exists in the cloned header
                                     var allPageNumbers = clonedHeader.querySelectorAll('.page-number');
