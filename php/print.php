@@ -175,12 +175,12 @@ if(isset($_GET['ids'])){
 
             .page-header {
                 position: running(page-header);
-                font-size: 10px;
+                font-size: 12px;
             }
 
             .page-footer {
                 position: running(page-footer);
-                font-size: 10px;
+                font-size: 12px;
             }
 
             .page-content {
@@ -261,8 +261,6 @@ if(isset($_GET['ids'])){
     <body>';
     for($counter=0; $counter<count($idsArray); $counter++){
         $id = $idsArray[$counter];
-        $currentRecord = $counter + 1; // Current record number
-        $totalRecords = count($idsArray); // Total number of records
 
         if ($select_stmt = $db->prepare("select weighing.*, farms.name FROM weighing, farms WHERE weighing.farm_id = farms.id AND weighing.id=?")) {
             $select_stmt->bind_param('s', $id);
