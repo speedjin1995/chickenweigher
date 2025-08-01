@@ -202,290 +202,437 @@ if(isset($_GET['userID'])){
                 
                 $message = '<html>
     <head>
+        <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
         <style>
-            @media screen {
-                .page-header {
-                    position: relative;
-                    background: white;
-                    padding: 10px;
-                    border-bottom: 1px solid #ccc;
-                    margin-bottom: 20px;
+            @page {
+                margin-left: .3in;
+                margin-right: .3in;
+                margin-top: 3in;
+                margin-bottom: 3in;
+
+                @top-center {
+                    content: element(page-header);
                 }
-                
-                .page-footer {
-                    position: relative;
-                    background: white;
-                    padding: 10px;
-                    border-top: 1px solid #ccc;
-                    margin-top: 20px;
+
+                @bottom-center {
+                    content: element(page-footer);
                 }
-                
-                .main-content {
-                    margin: 0;
-                }
-            }
-            
-            body{
-                width: 21cm;
-                height: 29.7cm;
-                margin: 0;
-                font-family: sans-serif;
             }
 
+            .record {
+                page-break-after: always;
+            }
+
+            .page-header {
+                position: running(page-header);
+                font-size: 12px;
+            }
+
+            .page-footer {
+                position: running(page-footer);
+                font-size: 12px;
+            }
+
+            .page-content {
+                
+            }
+
+            .page-number::after {
+                content: counter(page);
+            }
+
+            .total-pages::after {
+                content: counter(pages);
+            }
+
+            /* Ensure page numbers are visible */
+            .page-number, .total-pages {
+                font-weight: bold;
+                color: #000;
+                display: inline;
+            }
+            
             table {
                 width: 100%;
                 border-collapse: collapse;
-                
-            } 
+            }
             
-            .table th, .table td {
-                padding: 0.70rem;
+            .table td,
+            .table th {
+                padding: .7rem;
                 vertical-align: top;
                 border-top: 1px solid #dee2e6;
-                
-            } 
+            }
             
             .table-bordered {
-                border: 1px solid #000000;
-            } 
+                border: 1px solid #000;
+            }
             
-            .table-bordered th, .table-bordered td {
-                border: 1px solid #000000;
+            .table-bordered td,
+            .table-bordered th {
+                border: 1px solid #000;
                 font-family: sans-serif;
-            } 
+            }
             
             .row {
                 display: flex;
                 flex-wrap: wrap;
                 margin-top: 20px;
-            } 
+            }
             
-            .col-md-3{
+            .col-md-3 {
                 position: relative;
                 width: 25%;
             }
             
-            .col-md-9{
+            .col-md-9 {
                 position: relative;
                 width: 75%;
             }
             
-            .col-md-7{
+            .col-md-7 {
                 position: relative;
                 width: 58.333333%;
             }
             
-            .col-md-5{
+            .col-md-5 {
                 position: relative;
                 width: 41.666667%;
             }
             
-            .col-md-6{
+            .col-md-6 {
                 position: relative;
                 width: 50%;
             }
             
-            .col-md-4{
+            .col-md-4 {
                 position: relative;
                 width: 33.333333%;
             }
             
-            .col-md-8{
+            .col-md-8 {
                 position: relative;
                 width: 66.666667%;
             }
-            
-            #container {
-                min-height: 75vh;
-                display: table;
-                width: 100%;
-            }
         </style>
-    </head><body>';
+    </head>
+    <body>
+    ';
     
     //$noOfRows = 0;
     //for($p=0; $p<$pages; $p++){
         
         // HEADER SECTION - Fixed on every page
-        $message .= '<div class="page-header">
-            <table class="table">
-                <tbody>
-                    <tr>
-                        <td style="width: 100%;border-top:0px;text-align:center;"><img src="https://dglink.com.my/ccb/assets/header.png" width="100%" height="auto" /></td>
-                    </tr>
-                </tbody>
-            </table><br>
+        $message .= '
+        <section class="record">
+            <div class="page-header">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td style="width: 100%;border-top:0px;text-align:center;"><img src="https://ccb.syncweigh.com/assets/header.png" width="100%" height="auto" /></td>
+                        </tr>
+                    </tbody>
+                </table>
             
-            <table class="table">
-                <tbody>
-                    <tr>
-                        <td colspan="2" style="width: 60%;border-top:0px;padding: 0 0.7rem;">';
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td colspan="2" style="width: 60%;border-top:0px;padding: 0 0.7rem;">';
 
-                        if(strpos($row['serial_no'], 'S') !== false){
-                            $message .= '<p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Customer &nbsp;&nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['customer'].'</span>
-                            </p>';
-                        }
-                        else{
-                            $message .= '<p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Supplier : </span>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['supplier'].'</span>
-                            </p>';
-                        }
-                            
-                        $message .= '</td>
-                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">DO No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;color: red;">'.$row['po_no'].'</span>
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Lorry No. &nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['lorry_no'].'</span>
-                            </p>
-                        </td>
-                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Farm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['name'].'</span>
-                            </p>
-                        </td>
-                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['start_time'].'</span>
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Driver &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['driver_name'].'</span>
-                            </p>
-                        </td>
-                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Driver IC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['driver_ic'].'</span>
-                            </p>
-                        </td>
-                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Issued By &nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.$userName.'</span>
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Driver 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['driver_name2'].'</span>
-                            </p>
-                        </td>
-                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Driver 2 IC&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['driver_ic2'].'</span>
-                            </p>
-                        </td>
-                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">First Record : </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['start_time'].'</span>
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Farmer &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;"></span>
-                            </p>
-                        </td>
-                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Total Count&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.$totalCrates.'</span>
-                            </p>
-                        </td>
-                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Last Record : </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['end_time'].'</span>
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Attendant 1 : </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['follower1'].'</span>
-                            </p>
-                        </td>
-                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Crate Wt (kg) : </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format(($totalCrate / $totalCrates), 2).'</span>
-                            </p>
-                        </td>
-                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Duration &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.$time.'</span>
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Attendant 2 : </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['follower2'].'</span>
-                            </p>
-                        </td>
-                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg) &nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format(($totalGross - $totalCrate), 2).'</span>
-                            </p>
-                        </td>
-                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" style="width: 60%;border-top:0px;padding: 0 0.7rem;">
-                            <p>&nbsp;</p>
-                        </td>
-                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
-                            <p>&nbsp;</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" style="width: 60%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Remark &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['remark'].'</span>
-                            </p>
-                        </td>
-                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
-                            <p>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Page No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;" class="page-number">1 of 1</span>
-                            </p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- MAIN CONTENT SECTION - Will flow between pages -->
-        <div class="main-content">
-            <div class="content-section">
+                            if(strpos($row['serial_no'], 'S') !== false){
+                                $message .= '<p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Customer &nbsp;&nbsp;&nbsp;: </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['customer'].'</span>
+                                </p>';
+                            }
+                            else{
+                                $message .= '<p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Supplier : </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['supplier'].'</span>
+                                </p>';
+                            }
+                                
+                            $message .= '</td>
+                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">DO No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;color: red;">'.$row['po_no'].'</span>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Lorry No. &nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;">'.$row['lorry_no'].'</span>
+                                </p>
+                            </td>
+                            <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Farm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;">'.$row['name'].'</span>
+                                </p>
+                            </td>
+                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;">'.$row['start_time'].'</span>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Driver &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;">'.$row['driver_name'].'</span>
+                                </p>
+                            </td>
+                            <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Farmer &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;"></span>
+                                </p>
+                            </td>
+                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Issued By &nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;">'.$userName.'</span>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Attendant 1 : </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;"></span>
+                                </p>
+                            </td>
+                            <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Total Count&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;">'.$totalCrates.'</span>
+                                </p>
+                            </td>
+                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">First Record : </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;">'.$row['start_time'].'</span>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Attendant 2 : </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;"></span>
+                                </p>
+                            </td>
+                            <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Crate Wt (kg) : </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format($row['average_cage'], 2).'</span>
+                                </p>
+                            </td>
+                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Last Record : </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;">'.$row['end_time'].'</span>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Attendant 3 : </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;"></span>
+                                </p>
+                            </td>
+                            <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg) &nbsp;&nbsp;: </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format($totalNet, 2).'</span>
+                                </p>
+                            </td>
+                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Duration &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;">'.$time.'</span>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="width: 60%;border-top:0px;padding: 0 0.7rem;">
+                                <p>&nbsp;</p>
+                            </td>
+                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                <p>&nbsp;</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="width: 60%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Remark &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['remark'].'</span>
+                                </p>
+                            </td>
+                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                <p>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Page No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;" class="page-number"></span>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;"> of </span>
+                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;" class="total-pages"></span>
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="page-footer">
+                <hr>
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td style="width: 50%;border-top:0px;">
+                                <p style="font-size: 12px;font-family: sans-serif;"><b>SUMMARY - TOTAL</b></p>
+                                <table class="table" style="width: 95%">
+                                    <tbody>
+                                        <tr>
+                                            <th style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;"></th>
+                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">S</th>
+                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">A</th>
+                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Total</th>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates</td>
+                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalSCages.'</td>
+                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalACages.'</td>
+                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalCrates.'</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Birds</td>
+                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalSBirds.'</td>
+                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalABirds.'</td>
+                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalBirds.'</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Gross Wt (kg)</td>
+                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSGross, 2, '.', '').'</td>
+                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalAGross, 2, '.', '').'</td>
+                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalGross, 2, '.', '').'</td>
+                                        </tr>';
+                                        $message .= '<tr>
+                                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates Wt (kg)</td>
+                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSCrate, 2, '.', '').'</td>
+                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalACrate, 2, '.', '').'</td>
+                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalCrate, 2, '.', '').'</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Avg kg/Bird</td>';
+                                            
+                                            if($totalSCages <= 0){
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
+                                            }
+                                            else{
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSNet/$totalSBirds, 2, '.', '').'</td>';
+                                            }
+                                            
+                                            if($totalACages <= 0){
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
+                                            }
+                                            else{
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalANet/$totalABirds, 2, '.', '').'</td>';
+                                            }
+                                            
+                                            if($totalBirds <= 0){
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
+                                            }
+                                            else{
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalNet/$totalBirds, 2, '.', '').'</td>';
+                                            }
+                                        $message.= '</tr>
+                                        <tr>
+                                            <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg)</td>
+                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSGross - $totalSCrate, 2, '.', '').'</td>
+                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalAGross - $totalACrate, 2, '.', '').'</td>
+                                            <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalGross - $totalCrate, 2, '.', '').'</td>
+                                        </tr>
+                                    </tbody>
+                                </table><br>
+
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;"></th>
+                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Male</th>
+                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Female</th>
+                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Mixed</th>
+                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Total</th>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates</td>
+                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMaleCages.'</td>
+                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalFemaleCages.'</td>
+                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMixedCages.'</td>
+                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalCrates.'</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Birds</td>
+                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMaleBirds.'</td>
+                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalFemaleBirds.'</td>
+                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMixedBirds.'</td>
+                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalBirds.'</td>
+                                        </tr>
+                                    </tbody>
+                                </table>';
+                                $message .= '</td>
+                            <td style="width: 50%;border-top:0px;">
+                                <p style="font-size: 12px;font-family: sans-serif;"><b>SUMMARY - BY HOUSE</b></p>
+                                <table class="table" style="width: 95%">
+                                    <tbody>
+                                        <tr>
+                                            <th style="width: 28%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;">H</th>
+                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Crates</th>
+                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Birds</th>
+                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Nett(kg)</th>
+                                            <th style="width: 22%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Average</th>
+                                        </tr>';
+
+                                        for($j=0; $j<count($mapOfHouses); $j++){
+                                            $group = $mapOfHouses[$j]['houseNumber'];
+                                            $crateIn = 0;
+                                            $birdsIn = 0;
+                                            $grossIn = 0.0;
+                                            $taresIn = 0.0;
+                                            $nettsIn = 0.0;
+                                            $average = 0.0;
+
+                                            foreach ($mapOfHouses[$j]['weightList'] as $element){
+                                                $crateIn += (int)$element['numberOfCages'];
+                                                $birdsIn += (int)$element['numberOfBirds'];
+                                                $grossIn += (float)$element['grossWeight'];
+                                                $taresIn += (float)$element['tareWeight'];
+                                            }
+
+                                            $nettsIn = $grossIn - $taresIn;
+                                            $average = $nettsIn / $birdsIn;
+                                            $message .= '<tr>
+                                                <td style="width: 28%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;text-align: center;">'.$group.'</td>
+                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$crateIn.'</td>
+                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$birdsIn.'</td>
+                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$nettsIn.'</td>
+                                                <td style="width: 22%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($average, 2, '.', '').'</td>
+                                            </tr>';
+                                        }
+                                    
+                                        $message .= '</tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="page-content">
                 <table class="table">
                     <tbody>
                         <tr style="border-top: 1px solid #000000;border-bottom: 1px solid #000000;font-family: sans-serif;">
@@ -503,7 +650,7 @@ if(isset($_GET['userID'])){
                         
                         $countCage = 1;
                         $indexCount2 = 11;
-                        $indexStringCage = '<tr><td style="border-top:0px;padding: 0 0.7rem;width: 20%;">
+                        $indexStringCage = '<tr><td style="border-top:0px;padding: 0 0.7rem;">
                             <p>
                                 <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">1</span>
                             </p>
@@ -511,7 +658,7 @@ if(isset($_GET['userID'])){
                         
                         foreach ($cage_data as $cage) {
                             if ($countCage < 10) {
-                                $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;">
+                                $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;">
                                     <p>
                                         <span style="font-size: 12px;font-family: sans-serif;">' . str_replace('kg', '', $cage['data']) .  '/' . $cage['number'] . '</span>
                                     </p>
@@ -519,7 +666,7 @@ if(isset($_GET['userID'])){
                                 $countCage++;
                             }
                             else {
-                                $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;">
+                                $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;">
                                     <p>
                                         <span style="font-size: 12px;font-family: sans-serif;">' . str_replace('kg', '', $cage['data']) . '/' . $cage['number'] . '</span>
                                     </p>
@@ -530,268 +677,154 @@ if(isset($_GET['userID'])){
         
                         if ($countCage > 0) {
                             for ($k = 0; $k <= (10 - $countCage); $k++) {
-                                $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;"><p><span style="font-size: 12px;font-family: sans-serif;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td>';
+                                $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;"><p><span style="font-size: 12px;font-family: sans-serif;"></span></p></td>';
                             }
                             $indexStringCage .= '</tr>';
                         }
         
                         $message .= $indexStringCage;
                     $message .= '</tbody>
-                </table><br>
-            </div>';
-            
-            if (!empty($mapOfWeights)) {
-                foreach ($mapOfWeights as $group) {
-                    $message .= '<div class="group-section">';
-                    $message .= '<p style="margin: 0px;"><u style="color: blue;">Group No. ' . $group['groupNumber'] . '</u></p>';
-            
-                    if (isset($group['houses']) && is_array($group['houses'])) {
-                        foreach ($group['houses'] as $house) {
-                            $message .= '<div class="house-section">';
-                            $message .= '<p style="margin: 0px;">House ' . $house['house'] . '</p>';
-                            $message .= '<table class="table">';
-                            $message .= '<tbody>';
-                            $message .= '<tr  style="border-top: 1px solid #000000;border-bottom: 1px solid #000000;font-family: sans-serif;">';
-                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;"><p>
-                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Grade ' . $house['weightList'][0]['grade'] . '</span>
-                                </p></td>';
-                            $message .= '<td colspan="10" style="width: 80%;border-top:0px;padding: 0 0.7rem;">
-                                <p>
-                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Weight (kg) / Bird (Nos)</span>
-                                </p>
-                            </td>
-                        </tr>';
-            
-                            $count = 0;
-                            $newRow = false;
-                            $reachNewPage = false;
-                            $totalCount = 0;
-                            $indexCount2 = 11;
-                            $oldWeight = "";
-                            $indexString = '<tr><td style="border-top:0px;padding: 0 0.7rem;width: 20%;">
-                                <p>
-                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">1</span>
-                                </p>
-                            </td>';
-                            
-                            foreach ($house['weightList'] as $element) {
-                                if ($count < 10) {
-                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;">' . $element['grossWeight'] . '/' . $element['numberOfBirds'] . '</span>
-                                        </p>
-                                    </td>';
-                                    $count++;
-                                    $newRow = false;
-                                }
-                                else {
-                                    $indexString .= '</tr>'; // Move this line outside of the else block
-                                    $count = 0;
-                                    $newRow = true;
-                                    $oldWeight = $element['grossWeight'] . '/' . $element['numberOfBirds'];
-                                    $indexString .= '<tr><td style="border-top:0px;padding: 0 0.7rem;width: 20%;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">' . $indexCount2 . '</span>
-                                        </p>
-                                    </td>';
-                                    $indexCount2 += 10;
-                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;">' . $oldWeight . '</span>
-                                        </p>
-                                    </td>';
-                                    $count++;
-                                    //$noOfRows+=10;
-                                }
+                </table><br>';
+                
+                if (!empty($mapOfWeights)) {
+                    foreach ($mapOfWeights as $group) {
+                        $message .= '<p style="margin: 0px;"><u style="color: blue;">Group No. ' . $group['groupNumber'] . '</u></p>';
+                
+                        if (isset($group['houses']) && is_array($group['houses'])) {
+                            foreach ($group['houses'] as $house) {
+                                $message .= '<p style="margin: 0px;">House ' . $house['house'] . '</p>';
+                                $message .= '<table class="table">';
+                                $message .= '<tbody>';
+                                $message .= '<tr  style="border-top: 1px solid #000000;border-bottom: 1px solid #000000;font-family: sans-serif;">';
+                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;"><p>
+                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Grade ' . $house['weightList'][0]['grade'] . '</span>
+                                    </p></td>';
+                                $message .= '<td colspan="10" style="width: 80%;border-top:0px;padding: 0 0.7rem;">
+                                    <p>
+                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Weight (kg) / Bird (Nos)</span>
+                                    </p>
+                                </td>
+                            </tr>';
+                
+                                $count = 0;
+                                $newRow = false;
+                                $indexCount2 = 11;
+                                $oldWeight = "";
+                                $indexString = '<tr><td style="border-top:0px;padding: 0 0.7rem;">
+                                    <p>
+                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">1</span>
+                                    </p>
+                                </td>';
                                 
-                                /*if($noOfRows >= 150){
-                                    $reachNewPage = true;
-                                    break;
-                                }*/
-                                
-                                $totalCount++;
-                            }
-                            
-                            /*if($reachNewPage){
-                                break;
-                            }*/
-            
-                            if ($count > 0) {
-                                for ($k = 0; $k < (10 - $count); $k++) {
-                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
-                                }
-                                $indexString .= '</tr>';
-                                //$noOfRows++;
-                            }
-                            
-                            /*($noOfRows >= 150){
-                                break;
-                            }*/
-            
-                            $message .= $indexString;
-                            $message .= '</tbody></table><br>';
-                            $message .= '</div>'; // Close house-section
-                        }
-                    }
-            
-                    $message .= '</div>'; // Close group-section
-                }
-            }
-            
-        $message .= '</div>'; // Close main-content
-            
-                    
-        $message .= '<!-- FOOTER SECTION - Fixed on every page -->
-        <div class="page-footer" id="footer">
-            <hr>
-            <table class="table">
-                <tbody>
-                    <tr>
-                        <td style="width: 50%;border-top:0px;">
-                            <p style="font-size: 12px;font-family: sans-serif;"><b>SUMMARY - TOTAL</b></p>
-                            <table class="table" style="width: 95%">
-                                <tbody>
-                                    <tr>
-                                        <th style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;"></th>
-                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">S</th>
-                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">A</th>
-                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Total</th>
-                                    </tr>
-                                    <tr>
-                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates</td>
-                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalSCages.'</td>
-                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalACages.'</td>
-                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalCrates.'</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Birds</td>
-                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalSBirds.'</td>
-                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalABirds.'</td>
-                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalBirds.'</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Gross Wt (kg)</td>
-                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSGross, 2, '.', '').'</td>
-                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalAGross, 2, '.', '').'</td>
-                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalGross, 2, '.', '').'</td>
-                                    </tr>';
-                                    $message .= '<tr>
-                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates Wt (kg)</td>
-                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSCrate, 2, '.', '').'</td>
-                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalACrate, 2, '.', '').'</td>
-                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalCrate, 2, '.', '').'</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Avg kg/Bird</td>';
-                                        
-                                        if($totalSCages <= 0){
-                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
-                                        }
-                                        else{
-                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format(($totalSGross - $totalSCrate)/$totalSBirds, 2, '.', '').'</td>';
-                                        }
-                                        
-                                        if($totalACages <= 0){
-                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
-                                        }
-                                        else{
-                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format(($totalAGross - $totalACrate)/$totalABirds, 2, '.', '').'</td>';
-                                        }
-                                        
-                                        if($totalBirds <= 0){
-                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
-                                        }
-                                        else{
-                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format(($totalGross - $totalCrate)/$totalBirds, 2, '.', '').'</td>';
-                                        }
-                                    $message.= '</tr>
-                                    <tr>
-                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg)</td>
-                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSGross - $totalSCrate, 2, '.', '').'</td>
-                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalAGross - $totalACrate, 2, '.', '').'</td>
-                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalGross - $totalCrate, 2, '.', '').'</td>
-                                    </tr>
-                                </tbody>
-                            </table><br>
-
-                            <table class="table">
-                                <tbody>
-                                    <tr>
-                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;"></th>
-                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Male</th>
-                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Female</th>
-                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Mixed</th>
-                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Total</th>
-                                    </tr>
-                                    <tr>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates</td>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMaleCages.'</td>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalFemaleCages.'</td>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMixedCages.'</td>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalCrates.'</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Birds</td>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMaleBirds.'</td>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalFemaleBirds.'</td>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMixedBirds.'</td>
-                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalBirds.'</td>
-                                    </tr>
-                                </tbody>
-                            </table>';
-                            $message .= '</td>
-                        <td style="width: 50%;border-top:0px;">
-                            <p style="font-size: 12px;font-family: sans-serif;"><b>SUMMARY - BY HOUSE</b></p>
-                            <table class="table" style="width: 95%">
-                                <tbody>
-                                    <tr>
-                                        <th style="width: 28%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;">H</th>
-                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Crates</th>
-                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Birds</th>
-                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Nett(kg)</th>
-                                        <th style="width: 22%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Average</th>
-                                    </tr>';
-
-                                    for($j=0; $j<count($mapOfHouses); $j++){
-                                        $group = $mapOfHouses[$j]['houseNumber'];
-                                        $crateIn = 0;
-                                        $birdsIn = 0;
-                                        $grossIn = 0.0;
-                                        $taresIn = 0.0;
-                                        $nettsIn = 0.0;
-                                        $average = 0.0;
-
-                                        foreach ($mapOfHouses[$j]['weightList'] as $element){
-                                            $crateIn += (int)$element['numberOfCages'];
-                                            $birdsIn += (int)$element['numberOfBirds'];
-                                            $grossIn += (float)$element['grossWeight'];
-                                            $taresIn += (float)$element['tareWeight'];
-                                        }
-
-                                        $nettsIn = $grossIn - $taresIn;
-                                        $average = $nettsIn / $birdsIn;
-                                        $message .= '<tr>
-                                            <td style="width: 28%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;text-align: center;">'.$group.'</td>
-                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$crateIn.'</td>
-                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$birdsIn.'</td>
-                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$nettsIn.'</td>
-                                            <td style="width: 22%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($average, 2, '.', '').'</td>
-                                        </tr>';
+                                foreach ($house['weightList'] as $element) {
+                                    if($newRow){
+                                        $indexString .= '<tr><td style="border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">' . $indexCount2 . '</span>
+                                            </p>
+                                        </td>';
+                                        $indexCount2 += 10;
+                                        $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;">' . $oldWeight . '</span>
+                                            </p>
+                                        </td>';
+                                        $count++;
                                     }
-                                
-                                    $message .= '</tbody>
-                            </table>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <button id="print-button" onclick="printPreview()">Print Preview</button>
+                                    
+                                    if ($count < 10) {
+                                        $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;">' . $element['grossWeight'] . '/' . $element['numberOfBirds'] . '</span>
+                                            </p>
+                                        </td>';
+                                        $count++;
+                                        $newRow = false;
+                                    }
+                                    else {
+                                        $indexString .= '</tr>'; // Move this line outside of the else block
+                                        $count = 0;
+                                        $newRow = true;
+                                        $oldWeight = $element['grossWeight'] . '/' . $element['numberOfBirds'];
+                                    }
+                                }
+                
+                                if ($count > 0) {
+                                    for ($k = 0; $k < (10 - $count); $k++) {
+                                        $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;"><p><span style="font-size: 12px;font-family: sans-serif;"></span></p></td>';
+                                    }
+                                    $indexString .= '</tr>';
+                                }
+                
+                                $message .= $indexString;
+                                $message .= '</tbody></table><br>';
+                            }
+                        }
+                
+                        //$message .= '</div><br>';
+                    }
+                }
+            
+            $message .= 
+            '</div>        
+        </section>
         </body>
         </html>';
 
+                // Add the button AFTER the HTML is closed - this ensures it's completely outside PagedJS scope
                 echo $message;
+
+                echo '
+                    <script src="../plugins/jquery/jquery.min.js"></script>
+                    <script src="../plugins/jquery-validation/jquery.validate.min.js"></script>
+
+                    <script>
+                        $(document).ready(function () {
+                            PagedPolyfill.preview().then(() => {
+                            const buttonWrapper = document.createElement("div");
+                            buttonWrapper.className = "print-button-wrapper";
+                            buttonWrapper.setAttribute("data-pagedjs-ignore", "");
+                            buttonWrapper.style.position = "fixed";
+                            buttonWrapper.style.bottom = "20px";
+                            buttonWrapper.style.left = "50%";
+                            buttonWrapper.style.transform = "translateX(-50%)";
+                            buttonWrapper.style.zIndex = "9999";
+
+                            const printButton = document.createElement("button");
+                            printButton.textContent = "🖨️ Print Preview";
+                            printButton.style.background = "#007bff"; // Bootstrap blue
+                            printButton.style.color = "#fff";
+                            printButton.style.border = "none";
+                            printButton.style.padding = "10px 20px";
+                            printButton.style.borderRadius = "6px";
+                            printButton.style.cursor = "pointer";
+                            printButton.style.fontSize = "14px";
+                            printButton.style.fontWeight = "500";
+                            printButton.style.fontFamily = "Segoe UI, sans-serif";
+                            printButton.style.boxShadow = "0 2px 6px rgba(0,0,0,0.15)";
+                            printButton.style.transition = "background 0.3s ease";
+
+                            printButton.onmouseover = () => {
+                                printButton.style.background = "#0056b3"; // darker on hover
+                            };
+                            printButton.onmouseout = () => {
+                                printButton.style.background = "#007bff";
+                            };
+
+                            printButton.onclick = function () {
+                                buttonWrapper.style.display = "none";
+                                setTimeout(() => {
+                                    window.print();
+                                    window.close();
+                                }, 100);
+                            };
+
+                            buttonWrapper.appendChild(printButton);
+                            document.body.appendChild(buttonWrapper);
+                        });
+                        });
+                    </script>
+                ';
                 /*echo "<script>
                     setTimeout(function(){
                         document.getElementById('footer').style.position = 'fixed';
@@ -803,280 +836,280 @@ if(isset($_GET['userID'])){
                         window.close();
                     }, 1000);
                 </script>";*/
-                echo "<script>
-                    function printPreview() {
-                        var printWindow = window.open('', '_blank');
-                        var currentHTML = document.documentElement.outerHTML;
+            //     echo "<script>
+            //         function printPreview() {
+            //             var printWindow = window.open('', '_blank');
+            //             var currentHTML = document.documentElement.outerHTML;
                         
-                        // Enhanced CSS for fixed headers and footers
-                        var enhancedCSS = `
-                        <style>
-                            @media print {
-                                @page {
-                                    margin: 0.5in 0.4in 0.1in 0.4in;
-                                    size: A4;
-                                }
+            //             // Enhanced CSS for fixed headers and footers
+            //             var enhancedCSS = `
+            //             <style>
+            //                 @media print {
+            //                     @page {
+            //                         margin: 0.5in 0.4in 0.1in 0.4in;
+            //                         size: A4;
+            //                     }
                                 
-                                body {
-                                    margin: 0;
-                                    padding: 0;
-                                    font-family: sans-serif;
-                                }
+            //                     body {
+            //                         margin: 0;
+            //                         padding: 0;
+            //                         font-family: sans-serif;
+            //                     }
                                 
-                                .page-header {
-                                    top: 0;
-                                    left: 0;
-                                    right: 0;
-                                    height: 300px;
-                                    background: white;
-                                    z-index: 1000;
-                                    padding: 10px;
-                                }
+            //                     .page-header {
+            //                         top: 0;
+            //                         left: 0;
+            //                         right: 0;
+            //                         height: 300px;
+            //                         background: white;
+            //                         z-index: 1000;
+            //                         padding: 10px;
+            //                     }
                                 
-                                .page-header-cloned {
-                                    position: static !important;
-                                    background: white;
-                                    padding: 1px;
-                                    height: 300px;
-                                    z-index: 1000;
-                                }
+            //                     .page-header-cloned {
+            //                         position: static !important;
+            //                         background: white;
+            //                         padding: 1px;
+            //                         height: 300px;
+            //                         z-index: 1000;
+            //                     }
                                 
-                                .page-footer {
-                                    position: fixed;
-                                    bottom: 0;
-                                    left: 0;
-                                    right: 0;
-                                    height: 260px;
-                                    background: white;
-                                    z-index: 1000;
-                                    padding: 10px;
-                                    margin-top: 10px;
-                                }
+            //                     .page-footer {
+            //                         position: fixed;
+            //                         bottom: 0;
+            //                         left: 0;
+            //                         right: 0;
+            //                         height: 260px;
+            //                         background: white;
+            //                         z-index: 1000;
+            //                         padding: 10px;
+            //                         margin-top: 10px;
+            //                     }
                                 
-                                .main-content {
-                                    padding-left: 0.1in;
-                                    padding-right: 0.1in;
-                                    page-break-inside: auto;
-                                    min-height: calc(100vh - 600px);
-                                }
+            //                     .main-content {
+            //                         padding-left: 0.1in;
+            //                         padding-right: 0.1in;
+            //                         page-break-inside: auto;
+            //                         min-height: calc(100vh - 600px);
+            //                     }
                                 
-                                .main-content > *:first-child {
-                                    margin-top: 0;
-                                    padding-top: 0;
-                                }
+            //                     .main-content > *:first-child {
+            //                         margin-top: 0;
+            //                         padding-top: 0;
+            //                     }
                                 
-                                .content-section {
-                                    page-break-inside: avoid;
-                                    break-inside: avoid;
-                                    margin-bottom: 5px;
-                                }
+            //                     .content-section {
+            //                         page-break-inside: avoid;
+            //                         break-inside: avoid;
+            //                         margin-bottom: 5px;
+            //                     }
                                 
-                                .group-section {
-                                    page-break-inside: avoid;
-                                    break-inside: avoid;
-                                    margin-bottom: 2px;
-                                }
+            //                     .group-section {
+            //                         page-break-inside: avoid;
+            //                         break-inside: avoid;
+            //                         margin-bottom: 2px;
+            //                     }
                                 
-                                .house-section {
-                                    page-break-inside: avoid;
-                                    break-inside: avoid;
-                                    margin-bottom: 3px;
-                                }
+            //                     .house-section {
+            //                         page-break-inside: avoid;
+            //                         break-inside: avoid;
+            //                         margin-bottom: 3px;
+            //                     }
                                 
-                                /* Page breaks now include cloned headers */
-                                .page-break {
-                                    page-break-before: always;
-                                    margin-top: 0;
-                                    padding-top: 20px;
-                                }
+            //                     /* Page breaks now include cloned headers */
+            //                     .page-break {
+            //                         page-break-before: always;
+            //                         margin-top: 0;
+            //                         padding-top: 20px;
+            //                     }
                                 
-                                /* Hide original fixed header on subsequent pages */
-                                .page-break .page-header:not(.page-header-cloned) {
-                                    display: none;
-                                }
+            //                     /* Hide original fixed header on subsequent pages */
+            //                     .page-break .page-header:not(.page-header-cloned) {
+            //                         display: none;
+            //                     }
                                 
-                                /* Optimize table spacing */
-                                .house-section table {
-                                    margin-bottom: 3px;
-                                }
+            //                     /* Optimize table spacing */
+            //                     .house-section table {
+            //                         margin-bottom: 3px;
+            //                     }
                                 
-                                .content-section table {
-                                    margin-bottom: 5px;
-                                }
+            //                     .content-section table {
+            //                         margin-bottom: 5px;
+            //                     }
                                 
-                                /* Reduce padding in table cells */
-                                .table th, .table td {
-                                    padding: 0.3rem;
-                                }
+            //                     /* Reduce padding in table cells */
+            //                     .table th, .table td {
+            //                         padding: 0.3rem;
+            //                     }
                                 
-                                /* Ensure groups don't overlap with footer */
-                                .group-section:last-child {
-                                    margin-bottom: 50px;
-                                }
+            //                     /* Ensure groups don't overlap with footer */
+            //                     .group-section:last-child {
+            //                         margin-bottom: 50px;
+            //                     }
                                 
-                                #print-button {
-                                    display: none !important;
-                                }
-                            }
+            //                     #print-button {
+            //                         display: none !important;
+            //                     }
+            //                 }
                             
-                            table {
-                                width: 100%;
-                                border-collapse: collapse;
-                            }
+            //                 table {
+            //                     width: 100%;
+            //                     border-collapse: collapse;
+            //                 }
                             
-                            .table th, .table td {
-                                padding: 0.70rem;
-                                vertical-align: top;
-                                border-top: 1px solid #dee2e6;
-                            }
+            //                 .table th, .table td {
+            //                     padding: 0.70rem;
+            //                     vertical-align: top;
+            //                     border-top: 1px solid #dee2e6;
+            //                 }
                             
-                            .table-bordered {
-                                border: 1px solid #000000;
-                            }
+            //                 .table-bordered {
+            //                     border: 1px solid #000000;
+            //                 }
                             
-                            .table-bordered th, .table-bordered td {
-                                border: 1px solid #000000;
-                                font-family: sans-serif;
-                            }
-                        </style>
-                        `;
+            //                 .table-bordered th, .table-bordered td {
+            //                     border: 1px solid #000000;
+            //                     font-family: sans-serif;
+            //                 }
+            //             </style>
+            //             `;
                         
-                        printWindow.document.write('<html><head><title>F-".$row['po_no']."_".substr($row['customer'], 0, 15)."_".$row['serial_no']."</title>' + enhancedCSS + '</head><body>');
-                        printWindow.document.write(currentHTML.replace(/<html[^>]*>.*?<body[^>]*>/is, '').replace(/<\/body>.*?<\/html>/is, ''));
-                        printWindow.document.write('</body></html>');
-                        printWindow.document.close();
+            //             printWindow.document.write('<html><head><title>F-".$row['po_no']."_".substr($row['customer'], 0, 15)."_".$row['serial_no']."</title>' + enhancedCSS + '</head><body>');
+            //             printWindow.document.write(currentHTML.replace(/<html[^>]*>.*?<body[^>]*>/is, '').replace(/<\/body>.*?<\/html>/is, ''));
+            //             printWindow.document.write('</body></html>');
+            //             printWindow.document.close();
                         
-                        // Smart page break calculator
-                        setTimeout(function() {
-                            function addSmartPageBreaks() {
-                                var doc = printWindow.document;
-                                var contentSection = doc.querySelector('.content-section');
-                                var groupSections = doc.querySelectorAll('.group-section');
+            //             // Smart page break calculator
+            //             setTimeout(function() {
+            //                 function addSmartPageBreaks() {
+            //                     var doc = printWindow.document;
+            //                     var contentSection = doc.querySelector('.content-section');
+            //                     var groupSections = doc.querySelectorAll('.group-section');
                                 
-                                if (!contentSection) return;
+            //                     if (!contentSection) return;
                                 
-                                // Calculate available space (A4 size minus header/footer)
-                                var pageHeight = 1056; // A4 height in pixels at 96 DPI
-                                var headerHeight = 340; // Include margins and borders
-                                var footerHeight = 280; // Include margins and borders
-                                var padding = 30; // Safety margin
-                                var availableHeight = pageHeight - headerHeight - footerHeight - padding;
+            //                     // Calculate available space (A4 size minus header/footer)
+            //                     var pageHeight = 1056; // A4 height in pixels at 96 DPI
+            //                     var headerHeight = 340; // Include margins and borders
+            //                     var footerHeight = 280; // Include margins and borders
+            //                     var padding = 30; // Safety margin
+            //                     var availableHeight = pageHeight - headerHeight - footerHeight - padding;
                                                                 
-                                // Start with content section height
-                                var currentPageHeight = contentSection.offsetHeight || 0;                                
-                                var totalPages = 1; // Start with page 1
+            //                     // Start with content section height
+            //                     var currentPageHeight = contentSection.offsetHeight || 0;                                
+            //                     var totalPages = 1; // Start with page 1
                                 
-                                // Process each group section to avoid splitting groups across pages
-                                for (var i = 0; i < groupSections.length; i++) {
-                                    var groupHeight = groupSections[i].offsetHeight;
-                                    var groupElement = groupSections[i];
+            //                     // Process each group section to avoid splitting groups across pages
+            //                     for (var i = 0; i < groupSections.length; i++) {
+            //                         var groupHeight = groupSections[i].offsetHeight;
+            //                         var groupElement = groupSections[i];
 
-                                    // If adding this group would exceed the page, start new page
-                                    if (currentPageHeight + groupHeight > availableHeight && i > 0) {
-                                        // Add page break class to the group
-                                        groupElement.classList.add('page-break');
-                                        currentPageHeight = groupHeight; // Reset for new page
-                                        totalPages++; // Increment page count
-                                    } else {
-                                        // Add to current page
-                                        currentPageHeight += groupHeight;
-                                    }
+            //                         // If adding this group would exceed the page, start new page
+            //                         if (currentPageHeight + groupHeight > availableHeight && i > 0) {
+            //                             // Add page break class to the group
+            //                             groupElement.classList.add('page-break');
+            //                             currentPageHeight = groupHeight; // Reset for new page
+            //                             totalPages++; // Increment page count
+            //                         } else {
+            //                             // Add to current page
+            //                             currentPageHeight += groupHeight;
+            //                         }
                                     
-                                    // Also check individual house sections within large groups
-                                    var houseSections = groupElement.querySelectorAll('.house-section');
-                                    if (houseSections.length > 0 && groupHeight > availableHeight * 0.8) {
-                                        // If group is very large, allow house-level breaks within it
-                                        var groupCurrentHeight = 0;
-                                        for (var j = 0; j < houseSections.length; j++) {
-                                            var houseHeight = houseSections[j].offsetHeight;
-                                            if (groupCurrentHeight + houseHeight > availableHeight * 0.8 && j > 0) {
-                                                houseSections[j].classList.add('page-break');
-                                                groupCurrentHeight = houseHeight;
-                                                totalPages++;
-                                            } else {
-                                                groupCurrentHeight += houseHeight;
-                                            }
-                                        }
-                                    }
-                                }
+            //                         // Also check individual house sections within large groups
+            //                         var houseSections = groupElement.querySelectorAll('.house-section');
+            //                         if (houseSections.length > 0 && groupHeight > availableHeight * 0.8) {
+            //                             // If group is very large, allow house-level breaks within it
+            //                             var groupCurrentHeight = 0;
+            //                             for (var j = 0; j < houseSections.length; j++) {
+            //                                 var houseHeight = houseSections[j].offsetHeight;
+            //                                 if (groupCurrentHeight + houseHeight > availableHeight * 0.8 && j > 0) {
+            //                                     houseSections[j].classList.add('page-break');
+            //                                     groupCurrentHeight = houseHeight;
+            //                                     totalPages++;
+            //                                 } else {
+            //                                     groupCurrentHeight += houseHeight;
+            //                                 }
+            //                             }
+            //                         }
+            //                     }
                                                                 
-                                // Update page numbers in headers and footers
-                                updatePageNumbers(doc, totalPages);
-                            }
+            //                     // Update page numbers in headers and footers
+            //                     updatePageNumbers(doc, totalPages);
+            //                 }
                             
-                            function updatePageNumbers(doc, totalPages) {
-                                // Update the first page number
-                                var firstPageNumber = doc.querySelector('.page-number');
-                                if (firstPageNumber) {
-                                    firstPageNumber.textContent = '1 of ' + totalPages;
-                                }
+            //                 function updatePageNumbers(doc, totalPages) {
+            //                     // Update the first page number
+            //                     var firstPageNumber = doc.querySelector('.page-number');
+            //                     if (firstPageNumber) {
+            //                         firstPageNumber.textContent = '1 of ' + totalPages;
+            //                     }
                                 
-                                // Clone headers for each page break with proper page numbers
-                                var pageBreaks = doc.querySelectorAll('.page-break');
-                                if (pageBreaks.length > 0) {
-                                    cloneHeadersForPages(doc, pageBreaks, totalPages);
-                                }
-                            }
+            //                     // Clone headers for each page break with proper page numbers
+            //                     var pageBreaks = doc.querySelectorAll('.page-break');
+            //                     if (pageBreaks.length > 0) {
+            //                         cloneHeadersForPages(doc, pageBreaks, totalPages);
+            //                     }
+            //                 }
                             
-                            function cloneHeadersForPages(doc, pageBreaks, totalPages) {
-                                var originalHeader = doc.querySelector('.page-header');
-                                if (!originalHeader) return;
+            //                 function cloneHeadersForPages(doc, pageBreaks, totalPages) {
+            //                     var originalHeader = doc.querySelector('.page-header');
+            //                     if (!originalHeader) return;
                                 
-                                // For each page break, clone the header and insert it
-                                for (var i = 0; i < pageBreaks.length; i++) {
-                                    var currentPageNum = i + 2; // Page 2, 3, 4, etc.
-                                    var pageBreakElement = pageBreaks[i];
+            //                     // For each page break, clone the header and insert it
+            //                     for (var i = 0; i < pageBreaks.length; i++) {
+            //                         var currentPageNum = i + 2; // Page 2, 3, 4, etc.
+            //                         var pageBreakElement = pageBreaks[i];
                                     
-                                    // Check if a cloned header already exists in this page break
-                                    var existingClonedHeader = pageBreakElement.querySelector('.page-header-cloned');
-                                    if (existingClonedHeader) {
-                                        // Remove existing cloned header to avoid duplicates
-                                        existingClonedHeader.remove();
-                                    }
+            //                         // Check if a cloned header already exists in this page break
+            //                         var existingClonedHeader = pageBreakElement.querySelector('.page-header-cloned');
+            //                         if (existingClonedHeader) {
+            //                             // Remove existing cloned header to avoid duplicates
+            //                             existingClonedHeader.remove();
+            //                         }
                                     
-                                    // Clone the original header completely
-                                    var clonedHeader = originalHeader.cloneNode(true);
+            //                         // Clone the original header completely
+            //                         var clonedHeader = originalHeader.cloneNode(true);
                                     
-                                    // Remove fixed positioning from the clone
-                                    clonedHeader.style.position = 'static';
-                                    clonedHeader.style.top = 'auto';
-                                    clonedHeader.style.left = 'auto';
-                                    clonedHeader.style.right = 'auto';
-                                    clonedHeader.style.zIndex = 'auto';
-                                    clonedHeader.style.marginTop = '0';
-                                    clonedHeader.style.marginBottom = '20px';
-                                    clonedHeader.style.visibility = 'visible';
+            //                         // Remove fixed positioning from the clone
+            //                         clonedHeader.style.position = 'static';
+            //                         clonedHeader.style.top = 'auto';
+            //                         clonedHeader.style.left = 'auto';
+            //                         clonedHeader.style.right = 'auto';
+            //                         clonedHeader.style.zIndex = 'auto';
+            //                         clonedHeader.style.marginTop = '0';
+            //                         clonedHeader.style.marginBottom = '20px';
+            //                         clonedHeader.style.visibility = 'visible';
                                     
-                                    // Ensure only one page number element exists in the cloned header
-                                    var allPageNumbers = clonedHeader.querySelectorAll('.page-number');
-                                    for (var j = 1; j < allPageNumbers.length; j++) {
-                                        allPageNumbers[j].remove(); // Remove duplicate page number elements
-                                    }
+            //                         // Ensure only one page number element exists in the cloned header
+            //                         var allPageNumbers = clonedHeader.querySelectorAll('.page-number');
+            //                         for (var j = 1; j < allPageNumbers.length; j++) {
+            //                             allPageNumbers[j].remove(); // Remove duplicate page number elements
+            //                         }
                                     
-                                    // Update the page number in the cloned header
-                                    var clonedPageNumber = clonedHeader.querySelector('.page-number');
-                                    if (clonedPageNumber) {
-                                        clonedPageNumber.textContent = currentPageNum + ' of ' + totalPages;
-                                    }
+            //                         // Update the page number in the cloned header
+            //                         var clonedPageNumber = clonedHeader.querySelector('.page-number');
+            //                         if (clonedPageNumber) {
+            //                             clonedPageNumber.textContent = currentPageNum + ' of ' + totalPages;
+            //                         }
                                     
-                                    // Add a class to identify cloned headers
-                                    clonedHeader.classList.add('page-header-cloned');
+            //                         // Add a class to identify cloned headers
+            //                         clonedHeader.classList.add('page-header-cloned');
                                     
-                                    // Insert the cloned header at the beginning of the page break section
-                                    pageBreakElement.insertBefore(clonedHeader, pageBreakElement.firstChild);
-                                }
-                            }
+            //                         // Insert the cloned header at the beginning of the page break section
+            //                         pageBreakElement.insertBefore(clonedHeader, pageBreakElement.firstChild);
+            //                     }
+            //                 }
                             
-                            // Apply the smart page breaks
-                            addSmartPageBreaks();
+            //                 // Apply the smart page breaks
+            //                 addSmartPageBreaks();
                             
-                            // Print after applying breaks
-                            setTimeout(function() {
-                                printWindow.print();
-                            }, 500);
-                        }, 500);
-                    }
-               </script>";
+            //                 // Print after applying breaks
+            //                 setTimeout(function() {
+            //                     printWindow.print();
+            //                 }, 500);
+            //             }, 500);
+            //         }
+            //    </script>";
             }
             else{
                 echo json_encode(
