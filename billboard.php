@@ -515,6 +515,10 @@ $(function () {
           window.open('<?=$actual_link?>/print.php?userID=' + userID + '&printType=' + printType, '_blank');
         } else if (reportType == 'Office' && isMulti == 'N') {
           window.open('<?=$actual_link?>/printportrait.php?userID=' + userID + '&printType=' + printType, '_blank');
+        } else if (reportType == 'Farm' && isMulti == "Y"){
+
+        } else if (reportType == 'Office' && isMulti == "Y") {
+          window.open("php/printportrait.php?ids="+userID+"&printType="+printType, '_blank');
         }
       }
     }
@@ -549,7 +553,24 @@ $(function () {
     });
 
     if (selectedIds.length > 0) {
-      window.open("php/printportrait.php?ids="+JSON.stringify(selectedIds));
+      $('#printModal').find('#userID').val(JSON.stringify(selectedIds));
+      $('#printModal').find('#isMulti').val('Y');
+      $('#printModal').find('#reportType').val('Office');
+      $('#printModal').modal('show');
+
+      $('#printForm').validate({
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+          error.addClass('invalid-feedback');
+          element.closest('.form-group').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+          $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+          $(element).removeClass('is-invalid');
+        }
+      });
     } 
     else {
       alert("Please select at least one DO to update.");
