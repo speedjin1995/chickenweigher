@@ -258,6 +258,8 @@ else{
             <div class="modal-body" >
               <div class="form-group">
                 <input type="hidden" name="userID" id="userID">
+                <input type="hidden" name="isMulti" id="isMulti">
+                <input type="hidden" name="reportType" id="reportType">
                 <label for="printType">Print Type</label>
                 <select class="form-control" id="printType" name="printType">
                   <option value="Grouped">Grouped</option>
@@ -358,7 +360,7 @@ $(function () {
           {
             data: 'id',
             render: function (data, type, row) {
-              return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="print('+data+');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'<?=$actual_link?>/printportrait.php?userID=' + data + '\');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
+              return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="print('+data+');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="portrait('+ data + ');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
             }
           }
         ],
@@ -410,7 +412,7 @@ $(function () {
       {
         data: 'id',
         render: function (data, type, row) {
-          return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="print('+data+');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'<?=$actual_link?>/printportrait.php?userID=' + data + '\');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
+          return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="print('+data+');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="portrait('+ data + ');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
         }
       }
     ],
@@ -488,7 +490,7 @@ $(function () {
         {
           data: 'id',
           render: function (data, type, row) {
-            return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="print('+data+');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="window.open(\'<?=$actual_link?>/printportrait.php?userID=' + data + '\');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
+            return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="print('+data+');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="portrait('+ data + ');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"></div><div class="col-3"></div></div>';
           }
         }
       ],
@@ -505,9 +507,15 @@ $(function () {
     submitHandler: function () {
       if($('#printModal').hasClass('show')){
         var userID = $('#printModal').find('#userID').val();
+        var isMulti = $('#printModal').find('#isMulti').val();
+        var reportType = $('#printModal').find('#reportType').val();
         var printType = $('#printModal').find('#printType').val();
 
-        window.open('<?=$actual_link?>/print.php?userID=' + userID + '&printType=' + printType, '_blank');
+        if (reportType == 'Farm' && isMulti == 'N') {
+          window.open('<?=$actual_link?>/print.php?userID=' + userID + '&printType=' + printType, '_blank');
+        } else if (reportType == 'Office' && isMulti == 'N') {
+          window.open('<?=$actual_link?>/printportrait.php?userID=' + userID + '&printType=' + printType, '_blank');
+        }
       }
     }
   });
@@ -771,7 +779,9 @@ function deactivate(id) {
 }
 
 function print(id) {
-  $('#printModal #userID').val(id);
+  $('#printModal').find('#userID').val(id);
+  $('#printModal').find('#isMulti').val('N');
+  $('#printModal').find('#reportType').val('Farm');
   $('#printModal').modal('show');
 
   $('#printForm').validate({
@@ -831,24 +841,43 @@ function print2(id) {
 }
 
 function portrait(id) {
-  $.post('php/printportrait.php', {userID: id, file: 'weight'}, function(data){
-    var obj = JSON.parse(data);
+  $('#printModal').find('#userID').val(id);
+  $('#printModal').find('#isMulti').val('N');
+  $('#printModal').find('#reportType').val('Office');
+  $('#printModal').modal('show');
 
-    if(obj.status === 'success'){
-      var printWindow = window.open('', '', 'height=400,width=800');
-      printWindow.document.write(obj.message);
-      printWindow.document.close();
-      setTimeout(function(){
-        printWindow.print();
-        printWindow.close();
-      }, 500);
-    }
-    else if(obj.status === 'failed'){
-      toastr["error"](obj.message, "Failed:");
-    }
-    else{
-      toastr["error"]("Something wrong when activate", "Failed:");
+  $('#printForm').validate({
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
     }
   });
+
+  // $.post('php/printportrait.php', {userID: id, file: 'weight'}, function(data){
+  //   var obj = JSON.parse(data);
+
+  //   if(obj.status === 'success'){
+  //     var printWindow = window.open('', '', 'height=400,width=800');
+  //     printWindow.document.write(obj.message);
+  //     printWindow.document.close();
+  //     setTimeout(function(){
+  //       printWindow.print();
+  //       printWindow.close();
+  //     }, 500);
+  //   }
+  //   else if(obj.status === 'failed'){
+  //     toastr["error"](obj.message, "Failed:");
+  //   }
+  //   else{
+  //     toastr["error"]("Something wrong when activate", "Failed:");
+  //   }
+  // });
 }
 </script>
