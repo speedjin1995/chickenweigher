@@ -145,7 +145,8 @@ function rearrangeList($weightDetails) {
 }
 
 
-if(isset($_GET['ids'])){
+if(isset($_GET['ids'], $_GET['printType'])) {
+    $printType = $_GET['printType'];
     $idsParam = $_GET['ids'];
     $idsArray = json_decode($idsParam, true);
     $fileName = '';
@@ -259,534 +260,1115 @@ if(isset($_GET['ids'])){
         </style>
     </head>
     <body>';
-    for($counter=0; $counter<count($idsArray); $counter++){
-        $id = $idsArray[$counter];
 
-        if ($select_stmt = $db->prepare("select weighing.*, farms.name FROM weighing, farms WHERE weighing.farm_id = farms.id AND weighing.id=?")) {
-            $select_stmt->bind_param('s', $id);
+    if ($printType == 'Grouped'){
+        for($counter=0; $counter<count($idsArray); $counter++){
+            $id = $idsArray[$counter];
 
-            if ($select_stmt->execute()) {
-                $result = $select_stmt->get_result();
+            if ($select_stmt = $db->prepare("select weighing.*, farms.name FROM weighing, farms WHERE weighing.farm_id = farms.id AND weighing.id=?")) {
+                $select_stmt->bind_param('s', $id);
 
-                if ($row = $result->fetch_assoc()) { 
-                    $fileName .= "F-".$row['po_no']."_".substr($row['customer'], 0, 15)."_".$row['serial_no'];
-                    //Re-initialise the values
-                    $mapOfWeights = array();
-                    $mapOfHouses = array();
+                if ($select_stmt->execute()) {
+                    $result = $select_stmt->get_result();
 
-                    $totalGross = 0.0;
-                    $totalCrate = 0.0;
-                    $totalReduce = 0.0;
-                    $totalNet = 0.0;
+                    if ($row = $result->fetch_assoc()) { 
+                        $fileName .= "F-".$row['po_no']."_".substr($row['customer'], 0, 15)."_".$row['serial_no'];
+                        //Re-initialise the values
+                        $mapOfWeights = array();
+                        $mapOfHouses = array();
 
-                    $totalSGross = 0.0;
-                    $totalSCrate = 0.0;
-                    $totalSReduce = 0.0;
-                    $totalSNet = 0.0;
+                        $totalGross = 0.0;
+                        $totalCrate = 0.0;
+                        $totalReduce = 0.0;
+                        $totalNet = 0.0;
 
-                    $totalAGross = 0.0;
-                    $totalACrate = 0.0;
-                    $totalAReduce = 0.0;
-                    $totalANet = 0.0;
+                        $totalSGross = 0.0;
+                        $totalSCrate = 0.0;
+                        $totalSReduce = 0.0;
+                        $totalSNet = 0.0;
 
-                    $totalCrates = 0;
-                    $totalBirds = 0;
-                    $totalMaleBirds = 0;
-                    $totalSBirds = 0;
-                    $totalABirds = 0;
-                    $totalSCages = 0;
-                    $totalACages = 0;
-                    $totalMaleCages = 0;
-                    $totalFemaleBirds = 0;
-                    $totalFemaleCages = 0;
-                    $totalMixedBirds = 0;
-                    $totalMixedCages = 0;
+                        $totalAGross = 0.0;
+                        $totalACrate = 0.0;
+                        $totalAReduce = 0.0;
+                        $totalANet = 0.0;
 
-                    // Newly assigned
-                    $assigned_seconds = strtotime ($row['start_time']);
-                    $completed_seconds = strtotime ($row['end_time']);
-                    $duration = $completed_seconds - $assigned_seconds;
+                        $totalCrates = 0;
+                        $totalBirds = 0;
+                        $totalMaleBirds = 0;
+                        $totalSBirds = 0;
+                        $totalABirds = 0;
+                        $totalSCages = 0;
+                        $totalACages = 0;
+                        $totalMaleCages = 0;
+                        $totalFemaleBirds = 0;
+                        $totalFemaleCages = 0;
+                        $totalMixedBirds = 0;
+                        $totalMixedCages = 0;
 
-                    // Convert duration to minutes and seconds
-                    $minutes = floor($duration / 60);
-                    $seconds = $duration % 60;
-                    
-                    // Format as "xxx mins and xxx secs"
-                    $time = sprintf('%d mins and %d secs', $minutes, $seconds);
-                    $weightData = json_decode($row['weight_data'], true);
-                    $totalWeight = totalWeight($weightData);
-                    rearrangeList($weightData);
-                    $weightTime = json_decode($row['weight_time'], true);
-                    $cage_data = json_decode($row['cage_data'], true);
-                    $userName = "Pri Name";
+                        // Newly assigned
+                        $assigned_seconds = strtotime ($row['start_time']);
+                        $completed_seconds = strtotime ($row['end_time']);
+                        $duration = $completed_seconds - $assigned_seconds;
 
-                    if($row['weighted_by'] != null){
-                        if ($select_stmt2 = $db->prepare("select * FROM users WHERE id=?")) {
-                            $uid = json_decode($row['weighted_by'], true)[0];
-                            $select_stmt2->bind_param('s', $uid);
-        
-                            if ($select_stmt2->execute()) {
-                                $result2 = $select_stmt2->get_result();
-        
-                                if ($row2= $result2->fetch_assoc()) { 
-                                    $userName = $row2['name'];
+                        // Convert duration to minutes and seconds
+                        $minutes = floor($duration / 60);
+                        $seconds = $duration % 60;
+                        
+                        // Format as "xxx mins and xxx secs"
+                        $time = sprintf('%d mins and %d secs', $minutes, $seconds);
+                        $weightData = json_decode($row['weight_data'], true);
+                        $totalWeight = totalWeight($weightData);
+                        rearrangeList($weightData);
+                        $weightTime = json_decode($row['weight_time'], true);
+                        $cage_data = json_decode($row['cage_data'], true);
+                        $userName = "Pri Name";
+
+                        if($row['weighted_by'] != null){
+                            if ($select_stmt2 = $db->prepare("select * FROM users WHERE id=?")) {
+                                $uid = json_decode($row['weighted_by'], true)[0];
+                                $select_stmt2->bind_param('s', $uid);
+            
+                                if ($select_stmt2->execute()) {
+                                    $result2 = $select_stmt2->get_result();
+            
+                                    if ($row2= $result2->fetch_assoc()) { 
+                                        $userName = $row2['name'];
+                                    }
                                 }
                             }
                         }
-                    }
 
-            $message .= 
-                '<section class="record">
-                    <div class="page-header" id="record-'.$counter.'">
-                        <table class="table">
-                            <tbody>
-                                <tr>
-                                    <td style="width: 100%;border-top:0px;text-align:center;"><img src="https://ccb.syncweigh.com/assets/header.png" width="100%" height="auto" /></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    
-                        <table class="table">
-                            <tbody>
-                                <tr>
-                                    <td colspan="2" style="width: 60%;border-top:0px;padding: 0 0.7rem;">';
+                $message .= 
+                    '<section class="record">
+                        <div class="page-header" id="record-'.$counter.'">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td style="width: 100%;border-top:0px;text-align:center;"><img src="https://ccb.syncweigh.com/assets/header.png" width="100%" height="auto" /></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="2" style="width: 60%;border-top:0px;padding: 0 0.7rem;">';
 
-                                    if(strpos($row['serial_no'], 'S') !== false){
-                                        $message .= '<p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Customer &nbsp;&nbsp;&nbsp;: </span>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['customer'].'</span>
-                                        </p>';
-                                    }
-                                    else{
-                                        $message .= '<p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Supplier : </span>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['supplier'].'</span>
-                                        </p>';
-                                    }
-                                        
-                                    $message .= '</td>
-                                    <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">DO No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;color: red;">'.$row['po_no'].'</span>
-                                        </p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Lorry No. &nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                            <span style="font-size: 12px;font-family: sans-serif;">'.$row['lorry_no'].'</span>
-                                        </p>
-                                    </td>
-                                    <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Farm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                            <span style="font-size: 12px;font-family: sans-serif;">'.$row['name'].'</span>
-                                        </p>
-                                    </td>
-                                    <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                            <span style="font-size: 12px;font-family: sans-serif;">'.$row['start_time'].'</span>
-                                        </p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Driver &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                            <span style="font-size: 12px;font-family: sans-serif;">'.$row['driver_name'].'</span>
-                                        </p>
-                                    </td>
-                                    <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Farmer &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                            <span style="font-size: 12px;font-family: sans-serif;"></span>
-                                        </p>
-                                    </td>
-                                    <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Issued By &nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                            <span style="font-size: 12px;font-family: sans-serif;">'.$userName.'</span>
-                                        </p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Attendant 1 : </span>
-                                            <span style="font-size: 12px;font-family: sans-serif;"></span>
-                                        </p>
-                                    </td>
-                                    <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Total Count&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                            <span style="font-size: 12px;font-family: sans-serif;">'.$totalCrates.'</span>
-                                        </p>
-                                    </td>
-                                    <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">First Record : </span>
-                                            <span style="font-size: 12px;font-family: sans-serif;">'.$row['start_time'].'</span>
-                                        </p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Attendant 2 : </span>
-                                            <span style="font-size: 12px;font-family: sans-serif;"></span>
-                                        </p>
-                                    </td>
-                                    <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Crate Wt (kg) : </span>
-                                            <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format($row['average_cage'], 2).'</span>
-                                        </p>
-                                    </td>
-                                    <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Last Record : </span>
-                                            <span style="font-size: 12px;font-family: sans-serif;">'.$row['end_time'].'</span>
-                                        </p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Attendant 3 : </span>
-                                            <span style="font-size: 12px;font-family: sans-serif;"></span>
-                                        </p>
-                                    </td>
-                                    <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg) &nbsp;&nbsp;: </span>
-                                            <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format($totalNet, 2).'</span>
-                                        </p>
-                                    </td>
-                                    <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Duration &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                            <span style="font-size: 12px;font-family: sans-serif;">'.$time.'</span>
-                                        </p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2" style="width: 60%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>&nbsp;</p>
-                                    </td>
-                                    <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>&nbsp;</p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2" style="width: 60%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Remark &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['remark'].'</span>
-                                        </p>
-                                    </td>
-                                    <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Page No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;" class="page-number" id="page-number-' . $counter . '">1</span>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;"> of </span>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;" class="total-pages" id="total-pages-' . $counter . '">1</span>
-                                        </p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="page-footer">
-                        <hr>
-                        <table class="table">
-                            <tbody>
-                                <tr>
-                                    <td style="width: 50%;border-top:0px;">
-                                        <p style="font-size: 12px;font-family: sans-serif;"><b>SUMMARY - TOTAL</b></p>
-                                        <table class="table" style="width: 95%">
-                                            <tbody>
-                                                <tr>
-                                                    <th style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;"></th>
-                                                    <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">S</th>
-                                                    <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">A</th>
-                                                    <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Total</th>
-                                                </tr>
-                                                <tr>
-                                                    <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalSCages.'</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalACages.'</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalCrates.'</td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Birds</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalSBirds.'</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalABirds.'</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalBirds.'</td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Gross Wt (kg)</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSGross, 2, '.', '').'</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalAGross, 2, '.', '').'</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalGross, 2, '.', '').'</td>
-                                                </tr>';
-                                                $message .= '<tr>
-                                                    <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates Wt (kg)</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSCrate, 2, '.', '').'</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalACrate, 2, '.', '').'</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalCrate, 2, '.', '').'</td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Avg kg/Bird</td>';
-                                                    
-                                                    if($totalSCages <= 0){
-                                                        $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
-                                                    }
-                                                    else{
-                                                        $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSNet/$totalSBirds, 2, '.', '').'</td>';
-                                                    }
-                                                    
-                                                    if($totalACages <= 0){
-                                                        $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
-                                                    }
-                                                    else{
-                                                        $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalANet/$totalABirds, 2, '.', '').'</td>';
-                                                    }
-                                                    
-                                                    if($totalBirds <= 0){
-                                                        $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
-                                                    }
-                                                    else{
-                                                        $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalNet/$totalBirds, 2, '.', '').'</td>';
-                                                    }
-                                                $message.= '</tr>
-                                                <tr>
-                                                    <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg)</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSGross - $totalSCrate, 2, '.', '').'</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalAGross - $totalACrate, 2, '.', '').'</td>
-                                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalGross - $totalCrate, 2, '.', '').'</td>
-                                                </tr>
-                                            </tbody>
-                                        </table><br>
-
-                                        <table class="table">
-                                            <tbody>
-                                                <tr>
-                                                    <th style="width: 20%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;"></th>
-                                                    <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Male</th>
-                                                    <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Female</th>
-                                                    <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Mixed</th>
-                                                    <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Total</th>
-                                                </tr>
-                                                <tr>
-                                                    <td style="width: 25%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates</td>
-                                                    <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMaleCages.'</td>
-                                                    <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalFemaleCages.'</td>
-                                                    <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMixedCages.'</td>
-                                                    <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalCrates.'</td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="width: 25%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Birds</td>
-                                                    <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMaleBirds.'</td>
-                                                    <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalFemaleBirds.'</td>
-                                                    <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMixedBirds.'</td>
-                                                    <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalBirds.'</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>';
-                                        $message .= '</td>
-                                    <td style="width: 50%;border-top:0px;">
-                                        <p style="font-size: 12px;font-family: sans-serif;"><b>SUMMARY - BY HOUSE</b></p>
-                                        <table class="table" style="width: 95%">
-                                            <tbody>
-                                                <tr>
-                                                    <th style="width: 28%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;">H</th>
-                                                    <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Crates</th>
-                                                    <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Birds</th>
-                                                    <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Nett(kg)</th>
-                                                    <th style="width: 22%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Average</th>
-                                                </tr>';
-
-                                                for($j=0; $j<count($mapOfHouses); $j++){
-                                                    $group = $mapOfHouses[$j]['houseNumber'];
-                                                    $crateIn = 0;
-                                                    $birdsIn = 0;
-                                                    $grossIn = 0.0;
-                                                    $taresIn = 0.0;
-                                                    $nettsIn = 0.0;
-                                                    $average = 0.0;
-
-                                                    foreach ($mapOfHouses[$j]['weightList'] as $element){
-                                                        $crateIn += (int)$element['numberOfCages'];
-                                                        $birdsIn += (int)$element['numberOfBirds'];
-                                                        $grossIn += (float)$element['grossWeight'];
-                                                        $taresIn += (float)$element['tareWeight'];
-                                                    }
-
-                                                    $nettsIn = $grossIn - $taresIn;
-                                                    $average = $nettsIn / $birdsIn;
-                                                    $message .= '<tr>
-                                                        <td style="width: 28%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;text-align: center;">'.$group.'</td>
-                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$crateIn.'</td>
-                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$birdsIn.'</td>
-                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$nettsIn.'</td>
-                                                        <td style="width: 22%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($average, 2, '.', '').'</td>
-                                                    </tr>';
-                                                }
+                                        if(strpos($row['serial_no'], 'S') !== false){
+                                            $message .= '<p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Customer &nbsp;&nbsp;&nbsp;: </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['customer'].'</span>
+                                            </p>';
+                                        }
+                                        else{
+                                            $message .= '<p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Supplier : </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['supplier'].'</span>
+                                            </p>';
+                                        }
                                             
-                                                $message .= '</tbody>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                                        $message .= '</td>
+                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">DO No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;color: red;">'.$row['po_no'].'</span>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Lorry No. &nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['lorry_no'].'</span>
+                                            </p>
+                                        </td>
+                                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Farm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['name'].'</span>
+                                            </p>
+                                        </td>
+                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['start_time'].'</span>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Driver &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['driver_name'].'</span>
+                                            </p>
+                                        </td>
+                                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Farmer &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;"></span>
+                                            </p>
+                                        </td>
+                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Issued By &nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;">'.$userName.'</span>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Attendant 1 : </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;"></span>
+                                            </p>
+                                        </td>
+                                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Total Count&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;">'.$totalCrates.'</span>
+                                            </p>
+                                        </td>
+                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">First Record : </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['start_time'].'</span>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Attendant 2 : </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;"></span>
+                                            </p>
+                                        </td>
+                                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Crate Wt (kg) : </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format($row['average_cage'], 2).'</span>
+                                            </p>
+                                        </td>
+                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Last Record : </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['end_time'].'</span>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Attendant 3 : </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;"></span>
+                                            </p>
+                                        </td>
+                                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg) &nbsp;&nbsp;: </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format($totalNet, 2).'</span>
+                                            </p>
+                                        </td>
+                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Duration &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;">'.$time.'</span>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="width: 60%;border-top:0px;padding: 0 0.7rem;">
+                                            <p>&nbsp;</p>
+                                        </td>
+                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                            <p>&nbsp;</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="width: 60%;border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Remark &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['remark'].'</span>
+                                            </p>
+                                        </td>
+                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Page No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;" class="page-number" id="page-number-' . $counter . '">1</span>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;"> of </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;" class="total-pages" id="total-pages-' . $counter . '">1</span>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="page-footer">
+                            <hr>
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td style="width: 50%;border-top:0px;">
+                                            <p style="font-size: 12px;font-family: sans-serif;"><b>SUMMARY - TOTAL</b></p>
+                                            <table class="table" style="width: 95%">
+                                                <tbody>
+                                                    <tr>
+                                                        <th style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;"></th>
+                                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">S</th>
+                                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">A</th>
+                                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Total</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates</td>
+                                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalSCages.'</td>
+                                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalACages.'</td>
+                                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalCrates.'</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Birds</td>
+                                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalSBirds.'</td>
+                                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalABirds.'</td>
+                                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalBirds.'</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Gross Wt (kg)</td>
+                                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSGross, 2, '.', '').'</td>
+                                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalAGross, 2, '.', '').'</td>
+                                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalGross, 2, '.', '').'</td>
+                                                    </tr>';
+                                                    $message .= '<tr>
+                                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates Wt (kg)</td>
+                                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSCrate, 2, '.', '').'</td>
+                                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalACrate, 2, '.', '').'</td>
+                                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalCrate, 2, '.', '').'</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Avg kg/Bird</td>';
+                                                        
+                                                        if($totalSCages <= 0){
+                                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
+                                                        }
+                                                        else{
+                                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSNet/$totalSBirds, 2, '.', '').'</td>';
+                                                        }
+                                                        
+                                                        if($totalACages <= 0){
+                                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
+                                                        }
+                                                        else{
+                                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalANet/$totalABirds, 2, '.', '').'</td>';
+                                                        }
+                                                        
+                                                        if($totalBirds <= 0){
+                                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
+                                                        }
+                                                        else{
+                                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalNet/$totalBirds, 2, '.', '').'</td>';
+                                                        }
+                                                    $message.= '</tr>
+                                                    <tr>
+                                                        <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg)</td>
+                                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSGross - $totalSCrate, 2, '.', '').'</td>
+                                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalAGross - $totalACrate, 2, '.', '').'</td>
+                                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalGross - $totalCrate, 2, '.', '').'</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table><br>
 
-                    <div class="page-content">
-                        <table class="table">
-                            <tbody>
-                                <tr style="border-top: 1px solid #000000;border-bottom: 1px solid #000000;font-family: sans-serif;">
-                                    <td style="width: 20%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Crate No.  </span>
-                                        </p>
-                                    </td>
-                                    <td colspan="10" style="width: 80%;border-top:0px;padding: 0 0.7rem;">
-                                        <p>
-                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Weight (kg) / Sample Crate </span>
-                                        </p>
-                                    </td>
-                                </tr>';
-                                
-                                $countCage = 1;
-                                $indexCount2 = 11;
-                                $indexStringCage = '<tr><td style="border-top:0px;padding: 0 0.7rem;">
-                                    <p>
-                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">1</span>
-                                    </p>
-                                </td>';
-                                
-                                foreach ($cage_data as $cage) {
-                                    if ($countCage < 10) {
-                                        $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;">
+                                            <table class="table">
+                                                <tbody>
+                                                    <tr>
+                                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;"></th>
+                                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Male</th>
+                                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Female</th>
+                                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Mixed</th>
+                                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Total</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates</td>
+                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMaleCages.'</td>
+                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalFemaleCages.'</td>
+                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMixedCages.'</td>
+                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalCrates.'</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Birds</td>
+                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMaleBirds.'</td>
+                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalFemaleBirds.'</td>
+                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMixedBirds.'</td>
+                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalBirds.'</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>';
+                                            $message .= '</td>
+                                        <td style="width: 50%;border-top:0px;">
+                                            <p style="font-size: 12px;font-family: sans-serif;"><b>SUMMARY - BY HOUSE</b></p>
+                                            <table class="table" style="width: 95%">
+                                                <tbody>
+                                                    <tr>
+                                                        <th style="width: 28%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;">H</th>
+                                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Crates</th>
+                                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Birds</th>
+                                                        <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Nett(kg)</th>
+                                                        <th style="width: 22%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Average</th>
+                                                    </tr>';
+
+                                                    for($j=0; $j<count($mapOfHouses); $j++){
+                                                        $group = $mapOfHouses[$j]['houseNumber'];
+                                                        $crateIn = 0;
+                                                        $birdsIn = 0;
+                                                        $grossIn = 0.0;
+                                                        $taresIn = 0.0;
+                                                        $nettsIn = 0.0;
+                                                        $average = 0.0;
+
+                                                        foreach ($mapOfHouses[$j]['weightList'] as $element){
+                                                            $crateIn += (int)$element['numberOfCages'];
+                                                            $birdsIn += (int)$element['numberOfBirds'];
+                                                            $grossIn += (float)$element['grossWeight'];
+                                                            $taresIn += (float)$element['tareWeight'];
+                                                        }
+
+                                                        $nettsIn = $grossIn - $taresIn;
+                                                        $average = $nettsIn / $birdsIn;
+                                                        $message .= '<tr>
+                                                            <td style="width: 28%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;text-align: center;">'.$group.'</td>
+                                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$crateIn.'</td>
+                                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$birdsIn.'</td>
+                                                            <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$nettsIn.'</td>
+                                                            <td style="width: 22%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($average, 2, '.', '').'</td>
+                                                        </tr>';
+                                                    }
+                                                
+                                                    $message .= '</tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="page-content">
+                            <table class="table">
+                                <tbody>
+                                    <tr style="border-top: 1px solid #000000;border-bottom: 1px solid #000000;font-family: sans-serif;">
+                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;">
                                             <p>
-                                                <span style="font-size: 12px;font-family: sans-serif;">' . str_replace('kg', '', $cage['data']) .  '/' . $cage['number'] . '</span>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Crate No.  </span>
                                             </p>
-                                        </td>';
-                                        $countCage++;
-                                    }
-                                    else {
-                                        $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;">
+                                        </td>
+                                        <td colspan="10" style="width: 80%;border-top:0px;padding: 0 0.7rem;">
                                             <p>
-                                                <span style="font-size: 12px;font-family: sans-serif;">' . str_replace('kg', '', $cage['data']) . '/' . $cage['number'] . '</span>
-                                            </p>
-                                        </td></tr>'; // Move this line outside of the else block
-                                        $countCage = 1;
-                                    }
-                                }
-                
-                                if ($countCage > 0) {
-                                    for ($k = 0; $k <= (10 - $countCage); $k++) {
-                                        $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;"><p><span style="font-size: 12px;font-family: sans-serif;"></span></p></td>';
-                                    }
-                                    $indexStringCage .= '</tr>';
-                                }
-                
-                                $message .= $indexStringCage;
-                            $message .= '</tbody>
-                        </table><br>';
-                        
-                        if (!empty($mapOfWeights)) {
-                            foreach ($mapOfWeights as $group) {
-                                $message .= '<p style="margin: 0px;"><u style="color: blue;">Group No. ' . $group['groupNumber'] . '</u></p>';
-                        
-                                if (isset($group['houses']) && is_array($group['houses'])) {
-                                    foreach ($group['houses'] as $house) {
-                                        $message .= '<p style="margin: 0px;">House ' . $house['house'] . '</p>';
-                                        $message .= '<table class="table">';
-                                        $message .= '<tbody>';
-                                        $message .= '<tr  style="border-top: 1px solid #000000;border-bottom: 1px solid #000000;font-family: sans-serif;">';
-                                        $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;"><p>
-                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Grade ' . $house['weightList'][0]['grade'] . '</span>
-                                            </p></td>';
-                                        $message .= '<td colspan="10" style="width: 80%;border-top:0px;padding: 0 0.7rem;">
-                                            <p>
-                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Weight (kg) / Bird (Nos)</span>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Weight (kg) / Sample Crate </span>
                                             </p>
                                         </td>
                                     </tr>';
-                        
-                                        $count = 0;
-                                        $newRow = false;
-                                        $indexCount2 = 11;
-                                        $oldWeight = "";
-                                        $indexString = '<tr><td style="border-top:0px;padding: 0 0.7rem;">
-                                            <p>
-                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">1</span>
-                                            </p>
-                                        </td>';
-                                        
-                                        foreach ($house['weightList'] as $element) {
-                                            if($newRow){
-                                                $indexString .= '<tr><td style="border-top:0px;padding: 0 0.7rem;">
-                                                    <p>
-                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">' . $indexCount2 . '</span>
-                                                    </p>
-                                                </td>';
-                                                $indexCount2 += 10;
-                                                $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
-                                                    <p>
-                                                        <span style="font-size: 12px;font-family: sans-serif;">' . $oldWeight . '</span>
-                                                    </p>
-                                                </td>';
-                                                $count++;
-                                            }
+                                    
+                                    $countCage = 1;
+                                    $indexCount2 = 11;
+                                    $indexStringCage = '<tr><td style="border-top:0px;padding: 0 0.7rem;">
+                                        <p>
+                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">1</span>
+                                        </p>
+                                    </td>';
+                                    
+                                    foreach ($cage_data as $cage) {
+                                        if ($countCage < 10) {
+                                            $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;">
+                                                <p>
+                                                    <span style="font-size: 12px;font-family: sans-serif;">' . str_replace('kg', '', $cage['data']) .  '/' . $cage['number'] . '</span>
+                                                </p>
+                                            </td>';
+                                            $countCage++;
+                                        }
+                                        else {
+                                            $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;">
+                                                <p>
+                                                    <span style="font-size: 12px;font-family: sans-serif;">' . str_replace('kg', '', $cage['data']) . '/' . $cage['number'] . '</span>
+                                                </p>
+                                            </td></tr>'; // Move this line outside of the else block
+                                            $countCage = 1;
+                                        }
+                                    }
+                    
+                                    if ($countCage > 0) {
+                                        for ($k = 0; $k <= (10 - $countCage); $k++) {
+                                            $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;"><p><span style="font-size: 12px;font-family: sans-serif;"></span></p></td>';
+                                        }
+                                        $indexStringCage .= '</tr>';
+                                    }
+                    
+                                    $message .= $indexStringCage;
+                                $message .= '</tbody>
+                            </table><br>';
+                            
+                            if (!empty($mapOfWeights)) {
+                                foreach ($mapOfWeights as $group) {
+                                    $message .= '<p style="margin: 0px;"><u style="color: blue;">Group No. ' . $group['groupNumber'] . '</u></p>';
+                            
+                                    if (isset($group['houses']) && is_array($group['houses'])) {
+                                        foreach ($group['houses'] as $house) {
+                                            $message .= '<p style="margin: 0px;">House ' . $house['house'] . '</p>';
+                                            $message .= '<table class="table">';
+                                            $message .= '<tbody>';
+                                            $message .= '<tr  style="border-top: 1px solid #000000;border-bottom: 1px solid #000000;font-family: sans-serif;">';
+                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;"><p>
+                                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Grade ' . $house['weightList'][0]['grade'] . '</span>
+                                                </p></td>';
+                                            $message .= '<td colspan="10" style="width: 80%;border-top:0px;padding: 0 0.7rem;">
+                                                <p>
+                                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Weight (kg) / Bird (Nos)</span>
+                                                </p>
+                                            </td>
+                                        </tr>';
+                            
+                                            $count = 0;
+                                            $newRow = false;
+                                            $indexCount2 = 11;
+                                            $oldWeight = "";
+                                            $indexString = '<tr><td style="border-top:0px;padding: 0 0.7rem;">
+                                                <p>
+                                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">1</span>
+                                                </p>
+                                            </td>';
                                             
-                                            if ($count < 10) {
-                                                $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
-                                                    <p>
-                                                        <span style="font-size: 12px;font-family: sans-serif;">' . $element['grossWeight'] . '/' . $element['numberOfBirds'] . '</span>
-                                                    </p>
-                                                </td>';
-                                                $count++;
-                                                $newRow = false;
+                                            foreach ($house['weightList'] as $element) {
+                                                if($newRow){
+                                                    $indexString .= '<tr><td style="border-top:0px;padding: 0 0.7rem;">
+                                                        <p>
+                                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">' . $indexCount2 . '</span>
+                                                        </p>
+                                                    </td>';
+                                                    $indexCount2 += 10;
+                                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
+                                                        <p>
+                                                            <span style="font-size: 12px;font-family: sans-serif;">' . $oldWeight . '</span>
+                                                        </p>
+                                                    </td>';
+                                                    $count++;
+                                                }
+                                                
+                                                if ($count < 10) {
+                                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
+                                                        <p>
+                                                            <span style="font-size: 12px;font-family: sans-serif;">' . $element['grossWeight'] . '/' . $element['numberOfBirds'] . '</span>
+                                                        </p>
+                                                    </td>';
+                                                    $count++;
+                                                    $newRow = false;
+                                                }
+                                                else {
+                                                    $indexString .= '</tr>'; // Move this line outside of the else block
+                                                    $count = 0;
+                                                    $newRow = true;
+                                                    $oldWeight = $element['grossWeight'] . '/' . $element['numberOfBirds'];
+                                                }
                                             }
-                                            else {
-                                                $indexString .= '</tr>'; // Move this line outside of the else block
-                                                $count = 0;
-                                                $newRow = true;
-                                                $oldWeight = $element['grossWeight'] . '/' . $element['numberOfBirds'];
+                            
+                                            if ($count > 0) {
+                                                for ($k = 0; $k < (10 - $count); $k++) {
+                                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;"><p><span style="font-size: 12px;font-family: sans-serif;"></span></p></td>';
+                                                }
+                                                $indexString .= '</tr>';
                                             }
+                            
+                                            $message .= $indexString;
+                                            $message .= '</tbody></table><br>';
                                         }
+                                    }
+                            
+                                    //$message .= '</div><br>';
+                                }
+                            }
                         
-                                        if ($count > 0) {
-                                            for ($k = 0; $k < (10 - $count); $k++) {
-                                                $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;"><p><span style="font-size: 12px;font-family: sans-serif;"></span></p></td>';
-                                            }
-                                            $indexString .= '</tr>';
-                                        }
+                        $message .= 
+                        '</div>
+                    </section>
+                ';
+
+                    }
+                }
+            }
+        }
+    }elseif ($printType == 'Ungrouped') {
+        // Ungrouped: Create separate pages for each group within each record
+        for($counter=0; $counter<count($idsArray); $counter++){
+            $id = $idsArray[$counter];
+
+            if ($select_stmt = $db->prepare("select weighing.*, farms.name FROM weighing, farms WHERE weighing.farm_id = farms.id AND weighing.id=?")) {
+                $select_stmt->bind_param('s', $id);
+
+                if ($select_stmt->execute()) {
+                    $result = $select_stmt->get_result();
+
+                    if ($row = $result->fetch_assoc()) { 
+                        $fileName .= "U-".$row['po_no']."_".substr($row['customer'], 0, 15)."_".$row['serial_no'];
                         
-                                        $message .= $indexString;
-                                        $message .= '</tbody></table><br>';
+                        // Re-initialize the values for this record
+                        $mapOfWeights = array();
+                        $mapOfHouses = array();
+
+                        $totalGross = 0.0;
+                        $totalCrate = 0.0;
+                        $totalReduce = 0.0;
+                        $totalNet = 0.0;
+
+                        $totalSGross = 0.0;
+                        $totalSCrate = 0.0;
+                        $totalSReduce = 0.0;
+                        $totalSNet = 0.0;
+
+                        $totalAGross = 0.0;
+                        $totalACrate = 0.0;
+                        $totalAReduce = 0.0;
+                        $totalANet = 0.0;
+
+                        $totalCrates = 0;
+                        $totalBirds = 0;
+                        $totalMaleBirds = 0;
+                        $totalSBirds = 0;
+                        $totalABirds = 0;
+                        $totalSCages = 0;
+                        $totalACages = 0;
+                        $totalMaleCages = 0;
+                        $totalFemaleBirds = 0;
+                        $totalFemaleCages = 0;
+                        $totalMixedBirds = 0;
+                        $totalMixedCages = 0;
+
+                        // Calculate duration
+                        $assigned_seconds = strtotime ($row['start_time']);
+                        $completed_seconds = strtotime ($row['end_time']);
+                        $duration = $completed_seconds - $assigned_seconds;
+                        $minutes = floor($duration / 60);
+                        $seconds = $duration % 60;
+                        $time = sprintf('%d mins and %d secs', $minutes, $seconds);
+                        
+                        $weightData = json_decode($row['weight_data'], true);
+                        $totalWeight = totalWeight($weightData);
+                        rearrangeList($weightData);
+                        $weightTime = json_decode($row['weight_time'], true);
+                        $cage_data = json_decode($row['cage_data'], true);
+                        $userName = "Pri Name";
+
+                        if($row['weighted_by'] != null){
+                            if ($select_stmt2 = $db->prepare("select * FROM users WHERE id=?")) {
+                                $uid = json_decode($row['weighted_by'], true)[0];
+                                $select_stmt2->bind_param('s', $uid);
+            
+                                if ($select_stmt2->execute()) {
+                                    $result2 = $select_stmt2->get_result();
+            
+                                    if ($row2= $result2->fetch_assoc()) { 
+                                        $userName = $row2['name'];
                                     }
                                 }
-                        
-                                //$message .= '</div><br>';
                             }
                         }
-                    
-                    $message .= 
-                    '</div>
-                </section>
-            ';
 
+                        // Generate separate pages for each group
+                        for($groupIndex = 0; $groupIndex < count($mapOfWeights); $groupIndex++){
+                            $group = $mapOfWeights[$groupIndex];
+                            $groupNumber = $group['groupNumber'];
+                            
+                            // Calculate group-specific totals
+                            $groupTotalCrates = 0;
+                            $groupTotalBirds = 0;
+                            $groupTotalGross = 0.0;
+                            $groupTotalCrate = 0.0;
+                            $groupTotalNet = 0.0;
+                            $groupTotalMaleBirds = 0;
+                            $groupTotalFemaleBirds = 0;
+                            $groupTotalMixedBirds = 0;
+                            $groupTotalMaleCages = 0;
+                            $groupTotalFemaleCages = 0;
+                            $groupTotalMixedCages = 0;
+                            $groupTotalSBirds = 0;
+                            $groupTotalABirds = 0;
+                            $groupTotalSCages = 0;
+                            $groupTotalACages = 0;
+                            $groupTotalSGross = 0.0;
+                            $groupTotalAGross = 0.0;
+                            $groupTotalSCrate = 0.0;
+                            $groupTotalACrate = 0.0;
+
+                            // Calculate totals for this specific group
+                            if (isset($group['houses']) && is_array($group['houses'])) {
+                                foreach ($group['houses'] as $house) {
+                                    foreach ($house['weightList'] as $element) {
+                                        $groupTotalCrates += intval($element['numberOfCages']);
+                                        $groupTotalBirds += intval($element['numberOfBirds']);
+                                        $groupTotalGross += floatval($element['grossWeight']);
+                                        $groupTotalCrate += floatval($element['tareWeight']);
+                                        
+                                        if ($element['sex'] == 'Male') {
+                                            $groupTotalMaleBirds += intval($element['numberOfBirds']);
+                                            $groupTotalMaleCages += intval($element['numberOfCages']);
+                                        } elseif ($element['sex'] == 'Female') {
+                                            $groupTotalFemaleBirds += intval($element['numberOfBirds']);
+                                            $groupTotalFemaleCages += intval($element['numberOfCages']);
+                                        } elseif ($element['sex'] == 'Mixed') {
+                                            $groupTotalMixedBirds += intval($element['numberOfBirds']);
+                                            $groupTotalMixedCages += intval($element['numberOfCages']);
+                                        }
+                                        
+                                        if ($element['grade'] == 'S') {
+                                            $groupTotalSBirds += intval($element['numberOfBirds']);
+                                            $groupTotalSCages += intval($element['numberOfCages']);
+                                            $groupTotalSGross += floatval($element['grossWeight']);
+                                            $groupTotalSCrate += floatval($element['tareWeight']);
+                                        } elseif ($element['grade'] == 'A') {
+                                            $groupTotalABirds += intval($element['numberOfBirds']);
+                                            $groupTotalACages += intval($element['numberOfCages']);
+                                            $groupTotalAGross += floatval($element['grossWeight']);
+                                            $groupTotalACrate += floatval($element['tareWeight']);
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            $groupTotalNet = $groupTotalGross - $groupTotalCrate;
+
+                            $message .= '<section class="record">
+                                <div class="page-header" id="record-'.$counter.'-group-'.$groupIndex.'">
+                                    <table class="table">
+                                        <tbody>
+                                            <tr>
+                                                <td style="width: 100%;border-top:0px;text-align:center;"><img src="https://ccb.syncweigh.com/assets/header.png" width="100%" height="auto" /></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                
+                                    <table class="table">
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="2" style="width: 60%;border-top:0px;padding: 0 0.7rem;">';
+
+                                                if(strpos($row['serial_no'], 'S') !== false){
+                                                    $message .= '<p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Customer &nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['customer'].'</span>
+                                                    </p>';
+                                                }
+                                                else{
+                                                    $message .= '<p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Supplier : </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['supplier'].'</span>
+                                                    </p>';
+                                                }
+                                                    
+                                                $message .= '</td>
+                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">DO No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;color: red;">'.$row['po_no'].'</span>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Lorry No. &nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;">'.$row['lorry_no'].'</span>
+                                                    </p>
+                                                </td>
+                                                <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Farm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;">'.$row['name'].'</span>
+                                                    </p>
+                                                </td>
+                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;">'.$row['start_time'].'</span>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Driver &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;">'.$row['driver_name'].'</span>
+                                                    </p>
+                                                </td>
+                                                <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Farmer &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;"></span>
+                                                    </p>
+                                                </td>
+                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Issued By &nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;">'.$userName.'</span>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Group No. &nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;color: blue;font-weight: bold;">'.$groupNumber.'</span>
+                                                    </p>
+                                                </td>
+                                                <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Group Count&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;">'.$groupTotalCrates.'</span>
+                                                    </p>
+                                                </td>
+                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">First Record : </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;">'.$row['start_time'].'</span>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Attendant 2 : </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;"></span>
+                                                    </p>
+                                                </td>
+                                                <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Crate Wt (kg) : </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format($row['average_cage'], 2).'</span>
+                                                    </p>
+                                                </td>
+                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Last Record : </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;">'.$row['end_time'].'</span>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Attendant 3 : </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;"></span>
+                                                    </p>
+                                                </td>
+                                                <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Group Nett(kg): </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format($groupTotalNet, 2).'</span>
+                                                    </p>
+                                                </td>
+                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Duration &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;">'.$time.'</span>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" style="width: 60%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Remark &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['remark'].'</span>
+                                                    </p>
+                                                </td>
+                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Page No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;" class="page-number" id="page-number-' . $counter . '-' . $groupIndex . '">1</span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;"> of </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;" class="total-pages" id="total-pages-' . $counter . '-' . $groupIndex . '">1</span>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div class="page-footer">
+                                    <hr>
+                                    <table class="table">
+                                        <tbody>
+                                            <tr>
+                                                <td style="width: 50%;border-top:0px;">
+                                                    <p style="font-size: 12px;font-family: sans-serif;"><b>GROUP '.$groupNumber.' SUMMARY</b></p>
+                                                    <table class="table" style="width: 95%">
+                                                        <tbody>
+                                                            <tr>
+                                                                <th style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;"></th>
+                                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">S</th>
+                                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">A</th>
+                                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Total</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates</td>
+                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalSCages.'</td>
+                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalACages.'</td>
+                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalCrates.'</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Birds</td>
+                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalSBirds.'</td>
+                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalABirds.'</td>
+                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalBirds.'</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Gross Wt (kg)</td>
+                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupTotalSGross, 2, '.', '').'</td>
+                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupTotalAGross, 2, '.', '').'</td>
+                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupTotalGross, 2, '.', '').'</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates Wt (kg)</td>
+                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupTotalSCrate, 2, '.', '').'</td>
+                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupTotalACrate, 2, '.', '').'</td>
+                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupTotalCrate, 2, '.', '').'</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Avg kg/Bird</td>';
+                                                                
+                                                                if($groupTotalSBirds <= 0){
+                                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
+                                                                }
+                                                                else{
+                                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format(($groupTotalSGross - $groupTotalSCrate)/$groupTotalSBirds, 2, '.', '').'</td>';
+                                                                }
+                                                                
+                                                                if($groupTotalABirds <= 0){
+                                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
+                                                                }
+                                                                else{
+                                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format(($groupTotalAGross - $groupTotalACrate)/$groupTotalABirds, 2, '.', '').'</td>';
+                                                                }
+                                                                
+                                                                if($groupTotalBirds <= 0){
+                                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
+                                                                }
+                                                                else{
+                                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupTotalNet/$groupTotalBirds, 2, '.', '').'</td>';
+                                                                }
+                                                            $message.= '</tr>
+                                                            <tr>
+                                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg)</td>
+                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupTotalSGross - $groupTotalSCrate, 2, '.', '').'</td>
+                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupTotalAGross - $groupTotalACrate, 2, '.', '').'</td>
+                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupTotalGross - $groupTotalCrate, 2, '.', '').'</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table><br>
+
+                                                    <table class="table">
+                                                        <tbody>
+                                                            <tr>
+                                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;"></th>
+                                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Male</th>
+                                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Female</th>
+                                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Mixed</th>
+                                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Total</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates</td>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalMaleCages.'</td>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalFemaleCages.'</td>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center.">'.$groupTotalMixedCages.'</td>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalCrates.'</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Birds</td>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalMaleBirds.'</td>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalFemaleBirds.'</td>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalMixedBirds.'</td>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalBirds.'</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                                <td style="width: 50%;border-top:0px;">
+                                                    <p style="font-size: 12px;font-family: sans-serif;"><b>GROUP '.$groupNumber.' - BY HOUSE</b></p>
+                                                    <table class="table" style="width: 95%">
+                                                        <tbody>
+                                                            <tr>
+                                                                <th style="width: 28%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;">H</th>
+                                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Crates</th>
+                                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Birds</th>
+                                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Nett(kg)</th>
+                                                                <th style="width: 22%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Average</th>
+                                                            </tr>';
+
+                                                            // Display houses only for this group
+                                                            if (isset($group['houses']) && is_array($group['houses'])) {
+                                                                foreach ($group['houses'] as $house) {
+                                                                    $houseNumber = $house['house'];
+                                                                    $houseCrates = 0;
+                                                                    $houseBirds = 0;
+                                                                    $houseGross = 0.0;
+                                                                    $houseTares = 0.0;
+                                                                    $houseNet = 0.0;
+                                                                    $houseAverage = 0.0;
+
+                                                                    foreach ($house['weightList'] as $element){
+                                                                        $houseCrates += (int)$element['numberOfCages'];
+                                                                        $houseBirds += (int)$element['numberOfBirds'];
+                                                                        $houseGross += (float)$element['grossWeight'];
+                                                                        $houseTares += (float)$element['tareWeight'];
+                                                                    }
+
+                                                                    $houseNet = $houseGross - $houseTares;
+                                                                    $houseAverage = $houseBirds > 0 ? $houseNet / $houseBirds : 0;
+                                                                    
+                                                                    $message .= '<tr>
+                                                                        <td style="width: 28%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;text-align: center;">'.$houseNumber.'</td>
+                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$houseCrates.'</td>
+                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$houseBirds.'</td>
+                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($houseNet, 2, '.', '').'</td>
+                                                                        <td style="width: 22%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($houseAverage, 2, '.', '').'</td>
+                                                                    </tr>';
+                                                                }
+                                                            }
+                                                        
+                                                        $message .= '</tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="page-content">
+                                    <table class="table">
+                                        <tbody>
+                                            <tr style="border-top: 1px solid #000000;border-bottom: 1px solid #000000;font-family: sans-serif;">
+                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Crate No.  </span>
+                                                    </p>
+                                                </td>
+                                                <td colspan="10" style="width: 80%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Weight (kg) / Sample Crate </span>
+                                                    </p>
+                                                </td>
+                                            </tr>';
+                                            
+                                            // Display cage data (same for all groups in this record)
+                                            $countCage = 1;
+                                            $indexStringCage = '<tr><td style="border-top:0px;padding: 0 0.7rem;">
+                                                <p>
+                                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">1</span>
+                                                </p>
+                                            </td>';
+                                            
+                                            foreach ($cage_data as $cage) {
+                                                if ($countCage < 10) {
+                                                    $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;">
+                                                        <p>
+                                                            <span style="font-size: 12px;font-family: sans-serif;">' . str_replace('kg', '', $cage['data']) .  '/' . $cage['number'] . '</span>
+                                                        </p>
+                                                    </td>';
+                                                    $countCage++;
+                                                }
+                                                else {
+                                                    $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;">
+                                                        <p>
+                                                            <span style="font-size: 12px;font-family: sans-serif;">' . str_replace('kg', '', $cage['data']) . '/' . $cage['number'] . '</span>
+                                                        </p>
+                                                    </td></tr>';
+                                                    $countCage = 1;
+                                                }
+                                            }
+                            
+                                            if ($countCage > 0) {
+                                                for ($k = 0; $k <= (10 - $countCage); $k++) {
+                                                    $indexStringCage .= '<td style="border-top:0px;padding: 0 0.7rem;"><p><span style="font-size: 12px;font-family: sans-serif;"></span></p></td>';
+                                                }
+                                                $indexStringCage .= '</tr>';
+                                            }
+                            
+                                            $message .= $indexStringCage;
+                                        $message .= '</tbody>
+                                    </table><br>';
+                                    
+                                    // Display only the current group data
+                                    $message .= '<p style="margin: 0px;"><u style="color: blue;">Group No. ' . $group['groupNumber'] . '</u></p>';
+                            
+                                    if (isset($group['houses']) && is_array($group['houses'])) {
+                                        foreach ($group['houses'] as $house) {
+                                            $message .= '<p style="margin: 0px;">House ' . $house['house'] . '</p>';
+                                            $message .= '<table class="table">';
+                                            $message .= '<tbody>';
+                                            $message .= '<tr  style="border-top: 1px solid #000000;border-bottom: 1px solid #000000;font-family: sans-serif;">';
+                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;"><p>
+                                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Grade ' . $house['weightList'][0]['grade'] . '</span>
+                                                </p></td>';
+                                            $message .= '<td colspan="10" style="width: 80%;border-top:0px;padding: 0 0.7rem;">
+                                                <p>
+                                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Weight (kg) / Bird (Nos)</span>
+                                                </p>
+                                            </td>
+                                        </tr>';
+                            
+                                            $count = 0;
+                                            $newRow = false;
+                                            $indexCount2 = 11;
+                                            $oldWeight = "";
+                                            $indexString = '<tr><td style="border-top:0px;padding: 0 0.7rem;">
+                                                <p>
+                                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">1</span>
+                                                </p>
+                                            </td>';
+                                            
+                                            foreach ($house['weightList'] as $element) {
+                                                if($newRow){
+                                                    $indexString .= '<tr><td style="border-top:0px;padding: 0 0.7rem;">
+                                                        <p>
+                                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">' . $indexCount2 . '</span>
+                                                        </p>
+                                                    </td>';
+                                                    $indexCount2 += 10;
+                                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
+                                                        <p>
+                                                            <span style="font-size: 12px;font-family: sans-serif;">' . $oldWeight . '</span>
+                                                        </p>
+                                                    </td>';
+                                                    $count++;
+                                                }
+                                                
+                                                if ($count < 10) {
+                                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;">
+                                                        <p>
+                                                            <span style="font-size: 12px;font-family: sans-serif;">' . $element['grossWeight'] . '/' . $element['numberOfBirds'] . '</span>
+                                                        </p>
+                                                    </td>';
+                                                    $count++;
+                                                    $newRow = false;
+                                                }
+                                                else {
+                                                    $indexString .= '</tr>';
+                                                    $count = 0;
+                                                    $newRow = true;
+                                                    $oldWeight = $element['grossWeight'] . '/' . $element['numberOfBirds'];
+                                                }
+                                            }
+                            
+                                            if ($count > 0) {
+                                                for ($k = 0; $k < (10 - $count); $k++) {
+                                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;"><p><span style="font-size: 12px;font-family: sans-serif;"></span></p></td>';
+                                                }
+                                                $indexString .= '</tr>';
+                                            }
+                            
+                                            $message .= $indexString;
+                                            $message .= '</tbody></table><br>';
+                                        }
+                                    }
+                                $message .= '</div>
+                            </section>';
+                        }
+                    }
                 }
             }
         }
     }
-
+    
     $message .= '
     </body>
     <script src="../plugins/jquery/jquery.min.js"></script>
