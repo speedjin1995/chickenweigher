@@ -19,8 +19,7 @@ else{
     $role = $row['role_code'];
   }
 
-  $packages = $db->query("SELECT * FROM farms WHERE deleted = '0'");
-  $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'");
+  $customers = $db2->query("SELECT * FROM companies WHERE deleted = '0' AND parent = '11' ORDER BY name");
 }
 ?>
 
@@ -64,23 +63,11 @@ else{
 
               <div class="col-4">
                 <div class="form-group">
-                  <label><?=$languageArray['farm_code'][$language] ?></label>
-                  <select class="form-control select2" id="farmFilter" name="farmFilter" style="width: 100%;">
-                    <option selected="selected">-</option>
-                    <?php while($rowStatus=mysqli_fetch_assoc($packages)){ ?>
-                      <option value="<?=$rowStatus['id'] ?>"><?=$rowStatus['name'] ?></option>
-                    <?php } ?>
-                  </select>
-                </div>
-              </div>
-
-              <div class="col-4">
-                <div class="form-group">
-                  <label><?=$languageArray['customer_code'][$language] ?></label>
+                  <label><?=$languageArray['company_code'][$language] ?></label>
                   <select class="form-control select2" style="width: 100%;" id="customerFilter" name="customerFilter" style="display: none;">
                     <option selected="selected">-</option>
                     <?php while($rowCustomer=mysqli_fetch_assoc($customers)){ ?>
-                      <option value="<?=$rowCustomer['customer_name'] ?>"><?=$rowCustomer['customer_name'] ?></option>
+                      <option value="<?=$rowCustomer['id'] ?>"><?=$rowCustomer['name'] ?></option>
                     <?php } ?>
                   </select>
                 </div>
@@ -167,8 +154,8 @@ else{
               <thead>
                 <tr>
                   <th>Serial No</th>
+                  <th>Company</th>
                   <th>Customer</th>
-                  <th>Farm</th>
                   <th>Number of <br>Cages</th>
                   <th>Number of <br>Birds</th>
                   <th>Average Birds <br>Weight</th>
@@ -259,8 +246,8 @@ $(function () {
                     return '<a href="<?=$actual_link?>/chickenweigher/printportrait.php?userID=' + userId + '" target="_blank">' + data + '</a>';
                 }
             },
+            { data: 'compname' },
             { data: 'customer' },
-            { data: 'farm_id' },
             { data: 'total_cages' },
             { data: 'total_birds' },
             { data: 'average_bird' }
@@ -328,8 +315,8 @@ $(function () {
             return '<a href="<?=$actual_link?>/chickenweigher/printportrait.php?userID=' + userId + '" target="_blank">' + data + '</a>';
         }
       },
+      { data: 'compname' },
       { data: 'customer' },
-      { data: 'farm_id' },
       { data: 'total_cages' },
       { data: 'total_birds' },
       { data: 'average_bird' }
@@ -407,8 +394,8 @@ $(function () {
                 return '<a href="<?=$actual_link?>/chickenweigher/printportrait.php?userID=' + userId + '" target="_blank">' + data + '</a>';
             }
         },
+        { data: 'compname' },
         { data: 'customer' },
-        { data: 'farm_id' },
         { data: 'total_cages' },
         { data: 'total_birds' },
         { data: 'average_bird' }

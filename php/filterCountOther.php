@@ -28,7 +28,7 @@ if($_POST['farm'] != null && $_POST['farm'] != '' && $_POST['farm'] != '-'){
 }
 
 if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){
-	$searchQuery .= " and customer = '".$_POST['customer']."'";
+	$searchQuery .= " and company = '".$_POST['customer']."'";
 }
 
 if($searchValue != ''){
@@ -47,7 +47,7 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select weighing.* from weighing, companies WHERE weighing.company = companies.id AND weighing.deleted = '0' AND weighing.status='Complete' AND companies.parent = '$id'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select weighing.*, companies.name as compname from weighing, companies WHERE weighing.company = companies.id AND weighing.deleted = '0' AND weighing.status='Complete' AND companies.parent = '$id'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db2, $empQuery);
 $data = array();
 $counter = 1;
@@ -88,6 +88,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "status"=>$row['status'],
     "serial_no"=>$row['serial_no'],
     "po_no"=>$row['po_no'],
+    "compname" => $row['compname'],
     "group_no"=>$row['group_no'],
     "customer"=>$row['customer'],
     "supplier"=>$row['supplier'],
