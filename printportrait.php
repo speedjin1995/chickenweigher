@@ -1176,8 +1176,8 @@ if(isset($_GET['userID'], $_GET['printType'])){
 
                     echo $message;
                     echo '
-            <script src="../plugins/jquery/jquery.min.js"></script>
-            <script src="../plugins/jquery-validation/jquery.validate.min.js"></script>
+            <script src="plugins/jquery/jquery.min.js"></script>
+            <script src="plugins/jquery-validation/jquery.validate.min.js"></script>
 
             <script>
                 $(document).ready(function () {
