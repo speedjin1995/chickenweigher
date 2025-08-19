@@ -941,7 +941,7 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                     <table class="table">
                                         <tbody>
                                             <tr>
-                                                <td colspan="2" style="width: 60%;border-top:0px;padding: 0 0.7rem;">';
+                                                <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">';
 
                                                 if(strpos($row['serial_no'], 'S') !== false){
                                                     $message .= '<p>
@@ -957,23 +957,29 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                                 }
                                                     
                                                 $message .= '</td>
+                                                <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">DO No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;color: red;">'.$row['po_no'].'</span>
+                                                    </p>
+                                                </td>
                                                 <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
                                                     <p>
-                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">DO No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;color: red;">'.$row['po_no'].'</span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Lorry No. &nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;">'.$row['lorry_no'].'</span>
                                                     </p>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                                                     <p>
-                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Lorry No. &nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                                        <span style="font-size: 12px;font-family: sans-serif;">'.$row['lorry_no'].'</span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Driver &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;">'.$row['driver_name'].'</span>
                                                     </p>
                                                 </td>
                                                 <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                                                     <p>
-                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Farm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Farm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
                                                         <span style="font-size: 12px;font-family: sans-serif;">'.$row['name'].'</span>
                                                     </p>
                                                 </td>
@@ -987,14 +993,14 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                             <tr>
                                                 <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                                                     <p>
-                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Driver &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                                        <span style="font-size: 12px;font-family: sans-serif;">'.$row['driver_name'].'</span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Farmer &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;"></span>
                                                     </p>
                                                 </td>
                                                 <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                                                     <p>
-                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Farmer &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                                        <span style="font-size: 12px;font-family: sans-serif;"></span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Group No. &nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;color: blue;font-weight: bold;">'.$groupNumber.' of ' .count($mapOfWeights).'</span>
                                                     </p>
                                                 </td>
                                                 <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -1007,13 +1013,13 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                             <tr>
                                                 <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                                                     <p>
-                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Group No. &nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                                        <span style="font-size: 12px;font-family: sans-serif;color: blue;font-weight: bold;">'.$groupNumber.'</span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Attendant 1 : </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;"></span>
                                                     </p>
                                                 </td>
                                                 <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                                                     <p>
-                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Group Count&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Group Count : </span>
                                                         <span style="font-size: 12px;font-family: sans-serif;">'.$groupTotalCrates.'</span>
                                                     </p>
                                                 </td>
@@ -1053,7 +1059,7 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                                 </td>
                                                 <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                                                     <p>
-                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Group Nett(kg): </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg) &nbsp;&nbsp;: </span>
                                                         <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format($groupTotalNet, 2).'</span>
                                                     </p>
                                                 </td>
@@ -1074,9 +1080,7 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                                 <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
                                                     <p>
                                                         <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Page No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;" class="page-number" id="page-number-' . $counter . '-' . $groupIndex . '">1</span>
-                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;"> of </span>
-                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;" class="total-pages" id="total-pages-' . $counter . '-' . $groupIndex . '">1</span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$groupNumber.' of ' .count($mapOfWeights).'</span>
                                                     </p>
                                                 </td>
                                             </tr>
