@@ -865,7 +865,7 @@ if(isset($_GET['userID'], $_GET['printType'])){
                     $groupFemaleBirds = 0;
                     $groupMixedBirds = 0;
                     $groupMapOfBirdsToCages = array();
-                    $groupArray3 = array();
+                    $groupArray3 = array(); 
                     
                     foreach ($groupWeightData as $element) {
                         $groupTotalGross += floatval($element['grossWeight']);
@@ -959,7 +959,7 @@ if(isset($_GET['userID'], $_GET['printType'])){
                                         <td style="width: 50%;border-top:0px;padding: 0 0.7rem;">
                                             <p>
                                                 <span style="font-size: 14px;font-family: sans-serif;font-weight: bold;">Group No : </span>
-                                                <span style="font-size: 14px;font-family: sans-serif;color: blue;font-weight: bold;">'.$mapOfWeights[$j]['groupNumber'].'</span>
+                                                <span style="font-size: 14px;font-family: sans-serif;color: blue;font-weight: bold;">'.$mapOfWeights[$j]['groupNumber'].' of '.count($mapOfWeights).'</span>
                                             </p>
                                         </td>
                                         <td style="width: 50%;border-top:0px;padding: 0 0.7rem;">
@@ -1176,8 +1176,8 @@ if(isset($_GET['userID'], $_GET['printType'])){
 
                     echo $message;
                     echo '
-            <script src="../plugins/jquery/jquery.min.js"></script>
-            <script src="../plugins/jquery-validation/jquery.validate.min.js"></script>
+            <script src="plugins/jquery/jquery.min.js"></script>
+            <script src="plugins/jquery-validation/jquery.validate.min.js"></script>
 
             <script>
                 $(document).ready(function () {
