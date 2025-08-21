@@ -375,8 +375,8 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                         }
                                         else{
                                             $message .= '<p>
-                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Supplier : </span>
-                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['supplier'].'</span>
+                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Supplier &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['supplier'].'</span>
                                             </p>';
                                         }
                                             
