@@ -143,6 +143,7 @@ if(isset($_GET['userID'], $_GET['printType'])){
                 $result = $select_stmt->get_result();
 
                 if ($row = $result->fetch_assoc()) { 
+                    $fileName = $row['po_no']."_".substr($row['customer'], 0, 15)."_".$row['serial_no'];
                     $assigned_seconds = strtotime ( $row['start_time'] );
                     $completed_seconds = strtotime ( $row['end_time'] );
                     $duration = $completed_seconds - $assigned_seconds;
