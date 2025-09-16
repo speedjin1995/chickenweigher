@@ -129,7 +129,7 @@ if(isset($_GET['userID'], $_GET['printType'])){
     $printType = $_GET['printType'];
 
     if ($printType == 'Grouped') {
-        if ($select_stmt = $db2->prepare("select weighing.*, farms.name FROM weighing, farms WHERE weighing.farm_id = farms.id AND weighing.id=?")) {
+        if ($select_stmt = $db2->prepare("select * FROM weighing WHERE id = ?")) {
             $select_stmt->bind_param('s', $id);
 
             if (! $select_stmt->execute()) {
@@ -171,6 +171,23 @@ if(isset($_GET['userID'], $_GET['printType'])){
                                     $userName = $row2['name'];
                                 }
                             }
+                        }
+                    }
+                    
+                    $farmerName = '';
+                    if($row['farm_id'] != null){
+                        if ($farm_stmt = $db2->prepare("select * FROM farms WHERE id=?")) {
+                            $farm_stmt->bind_param('s', $row['farm_id']);
+
+                            if ($farm_stmt->execute()) {
+                                $farmResult = $farm_stmt->get_result();
+
+                                if ($farm_row= $farmResult->fetch_assoc()) { 
+                                    $farmerName = $farm_row['name'];
+                                }
+                            }
+
+                            $farm_stmt->close();
                         }
                     }
 
@@ -336,7 +353,7 @@ if(isset($_GET['userID'], $_GET['printType'])){
                                                 <td style="width: 50%;border-top:0px;padding: 0 0.7rem;">
                                                     <p>
                                                         <span style="font-size: 14px;font-family: sans-serif;font-weight: bold;">Farm : </span>
-                                                        <span style="font-size: 14px;font-family: sans-serif;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$row['name'].'</span>
+                                                        <span style="font-size: 14px;font-family: sans-serif;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$farmerName.'</span>
                                                     </p>
                                                 </td>
                                                 <td style="width: 50%;border-top:0px;padding: 0 0.7rem;">
@@ -689,7 +706,7 @@ if(isset($_GET['userID'], $_GET['printType'])){
         $select_stmt->close();
         $db2->close();
     } elseif ($printType == 'Ungrouped'){
-        if ($select_stmt = $db2->prepare("select weighing.*, farms.name FROM weighing, farms WHERE weighing.farm_id = farms.id AND weighing.id=?")) {
+        if ($select_stmt = $db2->prepare("select * FROM weighing WHERE id=?")) {
             $select_stmt->bind_param('s', $id);
 
             if (! $select_stmt->execute()) {
@@ -730,6 +747,23 @@ if(isset($_GET['userID'], $_GET['printType'])){
                                     $userName = $row2['name'];
                                 }
                             }
+                        }
+                    }
+                    
+                    $farmerName = '';
+                    if($row['farm_id'] != null){
+                        if ($farm_stmt = $db2->prepare("select * FROM farms WHERE id=?")) {
+                            $farm_stmt->bind_param('s', $row['farm_id']);
+
+                            if ($farm_stmt->execute()) {
+                                $farmResult = $farm_stmt->get_result();
+
+                                if ($farm_row= $farmResult->fetch_assoc()) { 
+                                    $farmerName = $farm_row['name'];
+                                }
+                            }
+
+                            $farm_stmt->close();
                         }
                     }
 
@@ -971,7 +1005,7 @@ if(isset($_GET['userID'], $_GET['printType'])){
                                                     <td style="width: 50%;border-top:0px;padding: 0 0.7rem;">
                                                         <p>
                                                             <span style="font-size: 14px;font-family: sans-serif;font-weight: bold;">Farm : </span>
-                                                            <span style="font-size: 14px;font-family: sans-serif;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$row['name'].'</span>
+                                                            <span style="font-size: 14px;font-family: sans-serif;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$farmerName.'</span>
                                                         </p>
                                                     </td>
                                                     <td style="width: 50%;border-top:0px;padding: 0 0.7rem;">
@@ -1141,6 +1175,7 @@ if(isset($_GET['userID'], $_GET['printType'])){
                                         $rows = 1;
                                         $rowCount = 0;
                                         $rowTotal = 0;
+                                        $allTotal = 0;
                                         $groupAllTotal = 0;
                                         $indexString = '<tr>';
                                     
