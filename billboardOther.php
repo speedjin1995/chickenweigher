@@ -260,6 +260,23 @@ $(function () {
     allowClear: true
   });
 
+  //Date picker
+  $('#fromDatePicker').datetimepicker({
+      icons: { time: 'far fa-clock' },
+      format: 'DD/MM/YYYY',
+      defaultDate: sevenDaysAgo
+  });
+
+  $('#toDatePicker').datetimepicker({
+      icons: { time: 'far fa-clock' },
+      format: 'DD/MM/YYYY',
+      defaultDate: new Date
+  });
+
+  var fromDateValue = $('#fromDate').val();
+  var toDateValue = $('#toDate').val();
+  var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
+
   var table = $("#weightTable").DataTable({
     "responsive": true,
     "autoWidth": false,
@@ -273,10 +290,10 @@ $(function () {
       'type': 'POST',
       'url':'php/filterBillboardOther.php',
       'data': {
-        fromDate: started,
-        toDate: ended,
+        fromDate: fromDateValue,
+        toDate: toDateValue,
         farm: '',
-        customer: ''
+        customer: customerNoFilter
       } 
     },
     'columns': [
@@ -320,19 +337,6 @@ $(function () {
     }
   });
 
-  //Date picker
-  $('#fromDatePicker').datetimepicker({
-      icons: { time: 'far fa-clock' },
-      format: 'DD/MM/YYYY',
-      defaultDate: sevenDaysAgo
-  });
-
-  $('#toDatePicker').datetimepicker({
-      icons: { time: 'far fa-clock' },
-      format: 'DD/MM/YYYY',
-      defaultDate: new Date
-  });
-
   $.validator.setDefaults({
     submitHandler: function () {
       if($('#printModal').hasClass('show')){
@@ -342,13 +346,13 @@ $(function () {
         var printType = $('#printModal').find('#printType').val();
 
         if (reportType == 'Farm' && isMulti == 'N') {
-          window.open('<?=$actual_link?>/print.php?userID=' + userID + '&printType=' + printType, '_blank');
+          window.open('https://dglink.com.my/chickenweigher/print.php?userID=' + userID + '&printType=' + printType, '_blank');
         } else if (reportType == 'Office' && isMulti == 'N') {
-          window.open('<?=$actual_link?>/printportrait.php?userID=' + userID + '&printType=' + printType, '_blank');
+          window.open('https://dglink.com.my/ccb/printportrait2.php?userID=' + userID + '&printType=' + printType, '_blank');
         } else if (reportType == 'Farm' && isMulti == "Y"){
-          window.open("<?=$actual_link?>/php/print.php?ids="+userID+"&printType="+printType, '_blank');
+          window.open("https://dglink.com.my/chickenweigher/php/print.php?ids="+userID+"&printType="+printType, '_blank');
         } else if (reportType == 'Office' && isMulti == "Y") {
-          window.open("<?=$actual_link?>/php/printportrait.php?ids="+userID+"&printType="+printType, '_blank');
+          window.open("https://dglink.com.my/ccb/php/printportrait2.php?ids="+userID+"&printType="+printType, '_blank');
         }
       }
     }
@@ -426,7 +430,7 @@ $(function () {
     var statusFilter = $('#statusFilter').val() ? $('#statusFilter').val() : '-';
     var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '-';
     
-    window.open("<?=$actual_link ?>/chickenweigher/php/export.php?fromDate="+fromDateValue+"&toDate="+toDateValue+
+    window.open("https://dglink.com.my/chickenweigher/php/export.php?fromDate="+fromDateValue+"&toDate="+toDateValue+
     "&farm="+statusFilter+"&customer="+customerNoFilter+"&parent=11");
 
   });
