@@ -430,7 +430,7 @@ $(function () {
     var statusFilter = $('#statusFilter').val() ? $('#statusFilter').val() : '-';
     var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '-';
     
-    window.open("<?=$actual_link ?>/chickenweigher/php/export.php?fromDate="+fromDateValue+"&toDate="+toDateValue+
+    window.open("https://dglink.com.my/chickenweigher/php/export.php?fromDate="+fromDateValue+"&toDate="+toDateValue+
     "&farm="+statusFilter+"&customer="+customerNoFilter+"&parent=11");
 
   });
