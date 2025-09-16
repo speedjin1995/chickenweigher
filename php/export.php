@@ -27,21 +27,29 @@ $searchQuery = " ";
 if($_GET['fromDate'] != null && $_GET['fromDate'] != ''){
     $fromDate = DateTime::createFromFormat('d/m/Y', $_GET['fromDate']);
     $fromDateTime = date_format($fromDate,"Y-m-d 00:00:00");
-    $searchQuery = " and created_datetime >= '".$fromDateTime."'";
+    $searchQuery = " and end_time >= '".$fromDateTime."'";
 }
 
 if($_GET['toDate'] != null && $_GET['toDate'] != ''){
     $toDate = DateTime::createFromFormat('d/m/Y', $_GET['toDate']);
     $toDateTime = date_format($toDate,"Y-m-d 23:59:59");
-    $searchQuery .= " and created_datetime <= '".$toDateTime."'";
+    $searchQuery .= " and end_time <= '".$toDateTime."'";
 }
 
 if($_GET['farm'] != null && $_GET['farm'] != '' && $_GET['farm'] != '-'){
     $searchQuery .= " and farm_id = '".$_GET['farm']."'";
 }
 
+if($_GET['vehicle'] != null && $_GET['vehicle'] != '' && $_GET['vehicle'] != '-'){
+    $searchQuery .= " and lorry_no = '".$_GET['vehicle']."'";
+}
+
 if($_GET['customer'] != null && $_GET['customer'] != '' && $_GET['customer'] != '-'){
-    $searchQuery .= " and customer = '".$_GET['customer']."'";
+    if ($_GET['reportType'] == 'BillboardOther') {
+        $searchQuery .= " and company = '".$_GET['customer']."'";
+    } else {
+        $searchQuery .= " and customer = '".$_GET['customer']."'";
+    }
 }
 
 $farms = array();
@@ -64,7 +72,11 @@ if(($row = $result->fetch_assoc()) !== null){
 }
 
 // Fetch records from database
-$query = $db->query("select * FROM weighing WHERE deleted = '0' AND start_time IS NOT NULL AND end_time IS NOT NULL".$searchQuery."");
+if ($_GET['reportType'] == 'BillboardOther'){
+    $query = $db2->query("select weighing.*, companies.name as compname from weighing join companies on weighing.company = companies.id WHERE weighing.deleted = '0' AND weighing.status='Complete' AND companies.parent=11 ".$searchQuery);
+}else{
+    $query = $db->query("select weighing.*, farms.name from weighing, farms WHERE weighing.farm_id = farms.id AND weighing.deleted = '0' AND weighing.status='Complete' AND farms.category IN ('CCB', 'Contract')".$searchQuery);
+}
 
 echo $query->num_rows;
 if($query->num_rows > 0){ 

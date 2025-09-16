@@ -9,8 +9,7 @@ else{
   $user = $_SESSION['userID'];
   $language = $_SESSION['language'];
   $_SESSION['page']='otherBillboard';
-  $actual_link = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]";
-  $actual_link .= '/chickenweigher';
+  $actual_link = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]/ccb/";
   $stmt = $db->prepare("SELECT * from users where id = ?");
 	$stmt->bind_param('s', $user);
 	$stmt->execute();
@@ -260,6 +259,10 @@ $(function () {
     allowClear: true
   });
 
+  var fromDateValue = $('#fromDate').val();
+  var toDateValue = $('#toDate').val();
+  var customerFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
+
   var table = $("#weightTable").DataTable({
     "responsive": true,
     "autoWidth": false,
@@ -273,10 +276,10 @@ $(function () {
       'type': 'POST',
       'url':'php/filterBillboardOther.php',
       'data': {
-        fromDate: started,
-        toDate: ended,
+        fromDate: fromDateValue,
+        toDate: toDateValue,
         farm: '',
-        customer: ''
+        customer: customerFilter
       } 
     },
     'columns': [
@@ -357,10 +360,9 @@ $(function () {
   $('#filterSearch').on('click', function(){
     $('#spinnerLoading').show();
 
-    var fromDateValue = $('#fromDate').val().replace(", ", " ");
-    var toDateValue = $('#toDate').val().replace(", ", " ");
-    var statusFilter = $('#farmFilter').val() ? $('#farmFilter').val() : '';
-    var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
+    var fromDateValue = $('#fromDate').val();
+    var toDateValue = $('#toDate').val();
+    var customerFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
 
     //Destroy the old Datatable
     $("#weightTable").DataTable().clear().destroy();
@@ -381,8 +383,8 @@ $(function () {
         'data': {
           fromDate: fromDateValue,
           toDate: toDateValue,
-          farm: statusFilter,
-          customer: customerNoFilter,
+          farm: '',
+          customer: customerFilter,
         }
       },
       'columns': [
@@ -426,8 +428,8 @@ $(function () {
     var statusFilter = $('#statusFilter').val() ? $('#statusFilter').val() : '-';
     var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '-';
     
-    window.open("<?=$actual_link ?>/chickenweigher/php/export.php?fromDate="+fromDateValue+"&toDate="+toDateValue+
-    "&farm="+statusFilter+"&customer="+customerNoFilter+"&parent=11");
+    window.open("<?=$actual_link ?>/php/export.php?fromDate="+fromDateValue+"&toDate="+toDateValue+
+    "&farm="+statusFilter+"&customer="+customerNoFilter+"&vehicle=&reportType=BillboardOther");
 
   });
 

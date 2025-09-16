@@ -528,19 +528,21 @@ $(function () {
     var fromDateValue = started;
     var toDateValue = ended;
     var statusFilter = $('#farmFilter').val() ? $('#farmFilter').val() : '';
+    var vehicleFilter = $('#vehFilter').val() ? $('#vehFilter').val() : '';
     var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
     
     window.open("php/export.php?fromDate="+fromDateValue+"&toDate="+toDateValue+
-    "&farm="+statusFilter+"&customer="+customerNoFilter);
+    "&farm="+statusFilter+"&customer="+customerNoFilter+"&vehicle="+vehicleFilter+"&reportType=Billboard");
   });
   
   $('#excelHouseSearch').on('click', function(){
     var fromDateValue = started;
     var toDateValue = ended;
     var statusFilter = $('#farmFilter').val() ? $('#farmFilter').val() : '';
+    var vehicleFilter = $('#vehFilter').val() ? $('#vehFilter').val() : '';
     var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
     
-    window.open("php/exportHouse.php?fromDate="+fromDateValue+"&toDate="+toDateValue+ "&farm="+statusFilter+"&customer="+customerNoFilter);
+    window.open("php/exportHouse.php?fromDate="+fromDateValue+"&toDate="+toDateValue+ "&farm="+statusFilter+"&customer="+customerNoFilter+"&vehicle="+vehicleFilter);
   });
 
   $('#officeSearch').on('click', function(){
