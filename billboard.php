@@ -512,13 +512,13 @@ $(function () {
         var printType = $('#printModal').find('#printType').val();
 
         if (reportType == 'Farm' && isMulti == 'N') {
-          window.open('https://dglink.com.my/chickenweigher/print.php?userID=' + userID + '&printType=' + printType, '_blank');
+          window.open('<?=$actual_link?>/print.php?userID=' + userID + '&printType=' + printType, '_blank');
         } else if (reportType == 'Office' && isMulti == 'N') {
-          window.open('https://dglink.com.my/ccb/printportrait.php?userID=' + userID + '&printType=' + printType, '_blank');
+          window.open('<?=$actual_link?>/printportrait.php?userID=' + userID + '&printType=' + printType, '_blank');
         } else if (reportType == 'Farm' && isMulti == "Y"){
-          window.open("https://dglink.com.my/chickenweigher/php/print.php?ids="+userID+"&printType="+printType, '_blank');
+          window.open("php/print.php?ids="+userID+"&printType="+printType, '_blank');
         } else if (reportType == 'Office' && isMulti == "Y") {
-          window.open("https://dglink.com.my/ccb/php/printportrait.php?ids="+userID+"&printType="+printType, '_blank');
+          window.open("php/printportrait.php?ids="+userID+"&printType="+printType, '_blank');
         }
       }
     }
