@@ -512,13 +512,13 @@ $(function () {
         var printType = $('#printModal').find('#printType').val();
 
         if (reportType == 'Farm' && isMulti == 'N') {
-          window.open('<?=$actual_link?>/print.php?userID=' + userID + '&printType=' + printType, '_blank');
+          window.open('https://dglink.com.my/chickenweigher/print.php?userID=' + userID + '&printType=' + printType, '_blank');
         } else if (reportType == 'Office' && isMulti == 'N') {
-          window.open('<?=$actual_link?>/printportrait.php?userID=' + userID + '&printType=' + printType, '_blank');
+          window.open('https://dglink.com.my/ccb/printportrait.php?userID=' + userID + '&printType=' + printType, '_blank');
         } else if (reportType == 'Farm' && isMulti == "Y"){
-          window.open("php/print.php?ids="+userID+"&printType="+printType, '_blank');
+          window.open("https://dglink.com.my/chickenweigher/php/print.php?ids="+userID+"&printType="+printType, '_blank');
         } else if (reportType == 'Office' && isMulti == "Y") {
-          window.open("php/printportrait.php?ids="+userID+"&printType="+printType, '_blank');
+          window.open("https://dglink.com.my/ccb/php/printportrait.php?ids="+userID+"&printType="+printType, '_blank');
         }
       }
     }
@@ -528,21 +528,19 @@ $(function () {
     var fromDateValue = started;
     var toDateValue = ended;
     var statusFilter = $('#farmFilter').val() ? $('#farmFilter').val() : '';
-    var vehicleFilter = $('#vehFilter').val() ? $('#vehFilter').val() : '';
     var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
     
     window.open("php/export.php?fromDate="+fromDateValue+"&toDate="+toDateValue+
-    "&farm="+statusFilter+"&customer="+customerNoFilter+"&vehicle="+vehicleFilter+"&reportType=Billboard");
+    "&farm="+statusFilter+"&customer="+customerNoFilter);
   });
   
   $('#excelHouseSearch').on('click', function(){
     var fromDateValue = started;
     var toDateValue = ended;
     var statusFilter = $('#farmFilter').val() ? $('#farmFilter').val() : '';
-    var vehicleFilter = $('#vehFilter').val() ? $('#vehFilter').val() : '';
     var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
     
-    window.open("php/exportHouse.php?fromDate="+fromDateValue+"&toDate="+toDateValue+ "&farm="+statusFilter+"&customer="+customerNoFilter+"&vehicle="+vehicleFilter);
+    window.open("php/exportHouse.php?fromDate="+fromDateValue+"&toDate="+toDateValue+ "&farm="+statusFilter+"&customer="+customerNoFilter);
   });
 
   $('#officeSearch').on('click', function(){
