@@ -241,7 +241,7 @@ if(isset($_GET['userID'], $_GET['printType'])){
                 @page {
                     margin-left: .3in;
                     margin-right: .3in;
-                    margin-top: 3in;
+                    margin-top: 3.5in;
                     margin-bottom: 3in;
 
                     @top-center {
@@ -1008,7 +1008,7 @@ if(isset($_GET['userID'], $_GET['printType'])){
                 @page {
                     margin-left: .3in;
                     margin-right: .3in;
-                    margin-top: 3in;
+                    margin-top: 3.5in;
                     margin-bottom: 3in;
 
                     @top-center {
