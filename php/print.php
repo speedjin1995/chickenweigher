@@ -171,7 +171,7 @@ if(isset($_GET['ids'], $_GET['printType'])) {
             @page {
                 margin-left: .3in;
                 margin-right: .3in;
-                margin-top: 3in;
+                margin-top: 3.5in;
                 margin-bottom: 3in;
 
                 @top-center {
