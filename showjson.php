@@ -36,15 +36,15 @@ foreach ($decoded_data as $item) {
             $parts = explode('/', $joined_text);
             $weightdetails[] = array(
                 "grossWeight" => $parts[0],
-                "tareWeight" => "16.28", 
+                "tareWeight" => "16.44", 
                 "reduceWeight" => "0.0", 
-                "netWeight" => (string)((float)$parts[0] - 16.28), 
-                "birdsPerCages" => "10", 
-                "numberOfBirds" => "20", 
+                "netWeight" => (string)((float)$parts[0] - 16.44), 
+                "birdsPerCages" => "9", 
+                "numberOfBirds" => "18", 
                 "numberOfCages" => "2", 
                 "grade" => "S", 
                 "sex" => "Mixed", 
-                "houseNumber" => "2", 
+                "houseNumber" => "8", 
                 "groupNumber" => "1", 
                 "remark" => ""
             );

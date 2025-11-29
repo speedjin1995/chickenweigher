@@ -241,7 +241,7 @@ if(isset($_GET['userID'], $_GET['printType'])){
                 @page {
                     margin-left: .3in;
                     margin-right: .3in;
-                    margin-top: 3in;
+                    margin-top: 3.5in;
                     margin-bottom: 3in;
 
                     @top-center {
@@ -390,7 +390,7 @@ if(isset($_GET['userID'], $_GET['printType'])){
                     <table class="table">
                         <tbody>
                             <tr>
-                                <td style="width: 100%;border-top:0px;text-align:center;"><img src="https://ccb.syncweigh.com/assets/header.png" width="100%" height="auto" /></td>
+                                <td style="width: 100%;border-top:0px;text-align:center;"><img src="https://dglink.com.my/ccb/assets/header.png" width="100%" height="auto" /></td>
                             </tr>
                         </tbody>
                     </table>
@@ -1008,7 +1008,7 @@ if(isset($_GET['userID'], $_GET['printType'])){
                 @page {
                     margin-left: .3in;
                     margin-right: .3in;
-                    margin-top: 3in;
+                    margin-top: 3.5in;
                     margin-bottom: 3in;
 
                     @top-center {
@@ -1216,7 +1216,7 @@ if(isset($_GET['userID'], $_GET['printType'])){
                     <table class="table">
                         <tbody>
                             <tr>
-                                <td style="width: 100%;border-top:0px;text-align:center;"><img src="https://ccb.syncweigh.com/assets/header.png" width="100%" height="auto" /></td>
+                                <td style="width: 100%;border-top:0px;text-align:center;"><img src="https://dglink.com.my/ccb/assets/header.png" width="100%" height="auto" /></td>
                             </tr>
                         </tbody>
                     </table>

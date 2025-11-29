@@ -279,7 +279,7 @@ if(isset($_GET['ids'], $_GET['printType'])){
                             <table class="table">
                                 <tbody>
                                     <tr>
-                                        <td style="width: 100%;border-top:0px;text-align:center;"><img src="https://ccb.syncweigh.com/assets/header.png" width="100%" height="auto" /></td>
+                                        <td style="width: 100%;border-top:0px;text-align:center;"><img src="https://dglink.com.my/ccb/assets/header.png" width="100%" height="auto" /></td>
                                     </tr>
                                 </tbody>
                             </table><br>
@@ -854,7 +854,7 @@ if(isset($_GET['ids'], $_GET['printType'])){
                                     <table class="table">
                                         <tbody>
                                             <tr>
-                                                <td style="width: 100%;border-top:0px;text-align:center;"><img src="https://ccb.syncweigh.com/assets/header.png" width="100%" height="auto" /></td>
+                                                <td style="width: 100%;border-top:0px;text-align:center;"><img src="https://dglink.com.my/ccb/assets/header.png" width="100%" height="auto" /></td>
                                             </tr>
                                         </tbody>
                                     </table><br>

@@ -124,9 +124,13 @@ function rearrangeList($weightDetails) {
 }
 
 
-if(isset($_GET['userID'], $_GET['printType'])){
+if(isset($_GET['userID'])){
     $id = $_GET['userID'];
-    $printType = $_GET['printType'];
+    $printType = 'Grouped';
+
+    if(isset($_GET['printType']) && $_GET['printType'] != null && $_GET['printType'] != ''){
+        $printType = $_GET['printType'];
+    }
 
     if ($printType == 'Grouped') {
         if ($select_stmt = $db->prepare("select weighing.*, farms.name FROM weighing, farms WHERE weighing.farm_id = farms.id AND weighing.id=?")) {
