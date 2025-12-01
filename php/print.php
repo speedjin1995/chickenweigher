@@ -455,7 +455,7 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                         $message .= '</td>
                                         <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
                                             <p>
-                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">DO No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">CCBSB No. &nbsp;: </span>
                                                 <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;color: red;">'.$row['po_no'].'</span>
                                             </p>
                                         </td>
@@ -509,8 +509,8 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                         </td>
                                         <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                                             <p>
-                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Total Count&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                                <span style="font-size: 12px;font-family: sans-serif;">'.$totalCrates.'</span>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Driver 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;">'.$row['driver_name2'].'</span>
                                             </p>
                                         </td>
                                         <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -529,8 +529,8 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                         </td>
                                         <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                                             <p>
-                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Crate Wt (kg) : </span>
-                                                <span style="font-size: 12px;font-family: sans-serif;">'.($totalCrates > 0 ? (string)number_format($totalCrate / $totalCrates, 2) : '0.00').'</span>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Total Count&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;">'.$totalCrates.'</span>
                                             </p>
                                         </td>
                                         <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -549,8 +549,8 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                         </td>
                                         <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                                             <p>
-                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg) &nbsp;&nbsp;: </span>
-                                                <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format(($totalGross - $totalCrate), 2).'</span>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Crate Wt (kg) : </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;">'.($totalCrates > 0 ? (string)number_format($totalCrate / $totalCrates, 2) : '0.00').'</span>
                                             </p>
                                         </td>
                                         <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -561,10 +561,16 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="2" style="width: 60%;border-top:0px;padding: 0 0.7rem;">
+                                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                                             <p>
                                                 <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Remark &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
                                                 <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['remark'].'</span>
+                                            </p>
+                                        </td>
+                                        <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                            <p>
+                                                <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg) &nbsp;&nbsp;: </span>
+                                                <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format(($totalGross - $totalCrate), 2).'</span>
                                             </p>
                                         </td>
                                         <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -794,7 +800,7 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                                             foreach ($mapOfBirdsToCages as $bc) {
                                                                 $message .= '
                                                                     <tr>
-                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$bc['numberOfBirds'].'</td>
+                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;">'.$bc['numberOfBirds'].'</td>
                                                                         <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$bc['count'].'</td>
                                                                         <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.((int)$bc['count'] * (int)$bc['numberOfBirds']).'</td>
                                                                     </tr>
@@ -807,7 +813,7 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                                             // Total row for birds/cages
                                                             $message .= '
                                                                     <tr>
-                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;"><b>Total</b></td>
+                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;"><b>Total</b></td>
                                                                         <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalCages.'</td>
                                                                         <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalBirdsInCages.'</td>
                                                                     </tr>
@@ -1125,9 +1131,15 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                                 }
                                                     
                                                 $message .= '</td>
+                                                <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Group No. &nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;color: blue;font-weight: bold;">'.$groupNumber.' of '.count($mapOfWeights).'</span>
+                                                    </p>
+                                                </td>
                                                 <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
                                                     <p>
-                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">DO No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">CCBSB No. &nbsp;: </span>
                                                         <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;color: red;">'.$row['po_no'].'</span>
                                                     </p>
                                                 </td>
@@ -1181,8 +1193,8 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                                 </td>
                                                 <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                                                     <p>
-                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Group Count : </span>
-                                                        <span style="font-size: 12px;font-family: sans-serif;">'.$groupCrates.'</span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Driver 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;">'.$row['driver_name2'].'</span>
                                                     </p>
                                                 </td>
                                                 <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -1201,8 +1213,8 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                                 </td>
                                                 <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                                                     <p>
-                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Crate Wt (kg) : </span>
-                                                        <span style="font-size: 12px;font-family: sans-serif;">'.($totalCrates > 0 ? (string)number_format($totalCrate / $totalCrates, 2) : '0.00').'</span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Group Count : </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;">'.$groupCrates.'</span>
                                                     </p>
                                                 </td>
                                                 <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -1221,8 +1233,8 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                                 </td>
                                                 <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                                                     <p>
-                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg) &nbsp;&nbsp;: </span>
-                                                        <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format($groupNet, 2).'</span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Crate Wt (kg) : </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;">'.($totalCrates > 0 ? (string)number_format($totalCrate / $totalCrates, 2) : '0.00').'</span>
                                                     </p>
                                                 </td>
                                                 <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -1233,10 +1245,16 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td colspan="2" style="width: 60%;border-top:0px;padding: 0 0.7rem;">
+                                                <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                                                     <p>
                                                         <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Remark &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
                                                         <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['remark'].'</span>
+                                                    </p>
+                                                </td>
+                                                <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                                    <p>
+                                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg) &nbsp;&nbsp;: </span>
+                                                        <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format($groupNet, 2).'</span>
                                                     </p>
                                                 </td>
                                                 <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -1466,7 +1484,7 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                                                     foreach ($groupMapOfBirdsToCages as $bc) {
                                                                         $message .= '
                                                                             <tr>
-                                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$bc['numberOfBirds'].'</td>
+                                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;">'.$bc['numberOfBirds'].'</td>
                                                                                 <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$bc['count'].'</td>
                                                                                 <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.((int)$bc['count'] * (int)$bc['numberOfBirds']).'</td>
                                                                             </tr>
@@ -1479,7 +1497,7 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                                                     // Total row for birds/cages
                                                                     $message .= '
                                                                             <tr>
-                                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;"><b>Total</b></td>
+                                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;"><b>Total</b></td>
                                                                                 <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalCages.'</td>
                                                                                 <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalBirdsInCages.'</td>
                                                                             </tr>
