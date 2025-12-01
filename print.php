@@ -375,6 +375,28 @@ if(isset($_GET['userID'], $_GET['printType'])){
                     position: relative;
                     width: 66.666667%;
                 }
+
+                /* Force consistent column widths for weight tables */
+                .table tr td:first-child {
+                    width: 10% !important;
+                    text-align: left !important;
+                }
+
+                .table tr td[colspan="10"] {
+                    width: 90% !important;
+                }
+
+                /* Ensure uniform 10-column grid layout */
+                .table tr td {
+                    width: 9% !important;
+                    min-width: 9%;
+                    box-sizing: border-box;
+                }
+
+                .table tr td:first-child {
+                    width: 10% !important;
+                    min-width: 10%;
+                }
             </style>
         </head>
         <body>
@@ -813,7 +835,7 @@ if(isset($_GET['userID'], $_GET['printType'])){
                                     
                                     foreach ($house['weightList'] as $element) {
                                         if ($count < 10) {
-                                            $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;">
+                                            $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%; text-align: end;">
                                                 <p>
                                                     <span style="font-size: 12px;font-family: sans-serif;">' . $element['grossWeight'] . '/' . $element['numberOfBirds'] . '</span>
                                                 </p>
@@ -832,7 +854,7 @@ if(isset($_GET['userID'], $_GET['printType'])){
                                                 </p>
                                             </td>';
                                             $indexCount2 += 10;
-                                            $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;">
+                                            $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%; text-align: end;">
                                                 <p>
                                                     <span style="font-size: 12px;font-family: sans-serif;">' . $oldWeight . '</span>
                                                 </p>
@@ -1114,6 +1136,28 @@ if(isset($_GET['userID'], $_GET['printType'])){
                 .col-md-8 {
                     position: relative;
                     width: 66.666667%;
+                }
+
+                /* Force consistent column widths for weight tables */
+                .table tr td:first-child {
+                    width: 10% !important;
+                    text-align: left !important;
+                }
+
+                .table tr td[colspan="10"] {
+                    width: 90% !important;
+                }
+
+                /* Ensure uniform 10-column grid layout */
+                .table tr td {
+                    width: 9% !important;
+                    min-width: 9%;
+                    box-sizing: border-box;
+                }
+
+                .table tr td:first-child {
+                    width: 10% !important;
+                    min-width: 10%;
                 }
             </style>
         </head>
@@ -1642,7 +1686,7 @@ if(isset($_GET['userID'], $_GET['printType'])){
                     
                     foreach ($house['weightList'] as $element) {
                         if ($count < 10) {
-                            $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;">
+                            $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%; text-align: end;">
                                 <p>
                                     <span style="font-size: 12px;font-family: sans-serif;">' . $element['grossWeight'] . '/' . $element['numberOfBirds'] . '</span>
                                 </p>
@@ -1655,7 +1699,7 @@ if(isset($_GET['userID'], $_GET['printType'])){
                             $count = 0;
                             $newRow = true;
                             $oldWeight = $element['grossWeight'] . '/' . $element['numberOfBirds'];
-                            $indexString .= '<tr><td style="border-top:0px;padding: 0 0.7rem;width: 20%;">
+                            $indexString .= '<tr><td style="border-top:0px;padding: 0 0.7rem;width: 20%; text-align: end;">
                                 <p>
                                     <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">' . $indexCount2 . '</span>
                                 </p>
