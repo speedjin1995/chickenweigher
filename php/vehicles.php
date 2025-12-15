@@ -11,9 +11,14 @@ if(!isset($_SESSION['userID'])){
 if(isset($_POST['vehicleNumber'], $_POST['driver'])){
     $vehicleNumber = filter_input(INPUT_POST, 'vehicleNumber', FILTER_SANITIZE_STRING);
     $driver = filter_input(INPUT_POST, 'driver', FILTER_SANITIZE_STRING);
+    $driver2 = null;
     $attendance1 = null;
     $attendance2 = null;
     $customers = null;
+
+    if($_POST['driver2'] != null && $_POST['driver2'] != ''){
+        $driver2 = filter_input(INPUT_POST, 'driver2', FILTER_SANITIZE_STRING);
+    }
 
     if($_POST['attendance1'] != null && $_POST['attendance1'] != ''){
         $attendance1 = filter_input(INPUT_POST, 'attendance1', FILTER_SANITIZE_STRING);
@@ -29,8 +34,8 @@ if(isset($_POST['vehicleNumber'], $_POST['driver'])){
     
 
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE vehicles SET veh_number=?, driver=?, attandence_1=?, attandence_2=?, customers=? WHERE id=?")) {
-            $update_stmt->bind_param('ssssss', $vehicleNumber, $driver, $attendance1, $attendance2, $customers, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE vehicles SET veh_number=?, driver=?, driver2=?, attandence_1=?, attandence_2=?, customers=? WHERE id=?")) {
+            $update_stmt->bind_param('sssssss', $vehicleNumber, $driver, $driver2, $attendance1, $attendance2, $customers, $_POST['id']);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -55,8 +60,8 @@ if(isset($_POST['vehicleNumber'], $_POST['driver'])){
         }
     }
     else{
-        if ($insert_stmt = $db->prepare("INSERT INTO vehicles (veh_number, driver, attandence_1, attandence_2, customers) VALUES (?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('sssss', $vehicleNumber, $driver, $attendance1, $attendance2, $customers);
+        if ($insert_stmt = $db->prepare("INSERT INTO vehicles (veh_number, driver, driver2, attandence_1, attandence_2, customers) VALUES (?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('ssssss', $vehicleNumber, $driver, $driver2, $attendance1, $attendance2, $customers);
             
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {
