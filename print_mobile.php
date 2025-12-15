@@ -379,6 +379,25 @@ if(isset($_GET['userID'])){
                     position: relative;
                     width: 66.666667%;
                 }
+                
+                /* Force consistent column widths for weight tables */
+                .table tr td:first-child {
+                    width: 10% !important;
+                    text-align: left !important;
+                }
+                .table tr td[colspan="10"] {
+                    width: 90% !important;
+                }
+                /* Ensure uniform 10-column grid layout */
+                .table tr td {
+                    width: 9% !important;
+                    min-width: 9%;
+                    box-sizing: border-box;
+                }
+                .table tr td:first-child {
+                    width: 10% !important;
+                    min-width: 10%;
+                }
             </style>
         </head>
         <body>
@@ -420,7 +439,7 @@ if(isset($_GET['userID'])){
                                 $message .= '</td>
                                 <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
                                     <p>
-                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">DO No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">CCBSB No. &nbsp;&nbsp;: </span>
                                         <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;color: red;">'.$row['po_no'].'</span>
                                     </p>
                                 </td>
@@ -474,8 +493,8 @@ if(isset($_GET['userID'])){
                                 </td>
                                 <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                                     <p>
-                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Total Count&nbsp;&nbsp;&nbsp;&nbsp;: </span>
-                                        <span style="font-size: 12px;font-family: sans-serif;">'.$totalCrates.'</span>
+                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Driver 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                        <span style="font-size: 12px;font-family: sans-serif;">'.$row['driver_name2'].'</span>
                                     </p>
                                 </td>
                                 <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -494,8 +513,8 @@ if(isset($_GET['userID'])){
                                 </td>
                                 <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                                     <p>
-                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Crate Wt (kg) : </span>
-                                        <span style="font-size: 12px;font-family: sans-serif;">'.($totalCrates > 0 ? (string)number_format(($totalCrate / $totalCrates), 2) : '0.00').'</span>
+                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Total Count&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                        <span style="font-size: 12px;font-family: sans-serif;">'.$totalCrates.'</span>
                                     </p>
                                 </td>
                                 <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -514,8 +533,8 @@ if(isset($_GET['userID'])){
                                 </td>
                                 <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                                     <p>
-                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg) &nbsp;&nbsp;: </span>
-                                        <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format(($totalGross - $totalCrate), 2).'</span>
+                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Crate Wt (kg) : </span>
+                                        <span style="font-size: 12px;font-family: sans-serif;">'.($totalCrates > 0 ? (string)number_format(($totalCrate / $totalCrates), 2) : '0.00').'</span>
                                     </p>
                                 </td>
                                 <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -526,10 +545,16 @@ if(isset($_GET['userID'])){
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="2" style="width: 60%;border-top:0px;padding: 0 0.7rem;">
+                                <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
                                     <p>
                                         <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Remark &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </span>
                                         <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">'.$row['remark'].'</span>
+                                    </p>
+                                </td>
+                                <td style="width: 30%;border-top:0px;padding: 0 0.7rem;">
+                                    <p>
+                                        <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg) &nbsp;&nbsp;: </span>
+                                        <span style="font-size: 12px;font-family: sans-serif;">'.(string)number_format(($totalGross - $totalCrate), 2).'</span>
                                     </p>
                                 </td>
                                 <td style="width: 40%;border-top:0px;padding: 0 0.7rem;">
@@ -752,9 +777,9 @@ if(isset($_GET['userID'])){
                                                     foreach ($mapOfBirdsToCages as $bc) {
                                                         $message .= '
                                                             <tr>
-                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$bc['numberOfBirds'].'</td>
-                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$bc['count'].'</td>
-                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.((int)$bc['count'] * (int)$bc['numberOfBirds']).'</td>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;">'.$bc['numberOfBirds'].'</td>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;">'.$bc['count'].'</td>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;">'.((int)$bc['count'] * (int)$bc['numberOfBirds']).'</td>
                                                             </tr>
                                                         ';
                                                         $totalBirdsInCages += ((int)$bc['count'] * (int)$bc['numberOfBirds']);
@@ -765,9 +790,9 @@ if(isset($_GET['userID'])){
                                                     // Total row for birds/cages
                                                     $message .= '
                                                             <tr>
-                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;"><b>Total</b></td>
-                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalCages.'</td>
-                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalBirdsInCages.'</td>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;"><b>Total</b></td>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;">'.$totalCages.'</td>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;">'.$totalBirdsInCages.'</td>
                                                             </tr>
                                                         ';
                                                 }
@@ -1538,9 +1563,9 @@ if(isset($_GET['userID'])){
                                                     foreach ($groupMapOfBirdsToCages as $bc) {
                                                         $message .= '
                                                             <tr>
-                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$bc['numberOfBirds'].'</td>
-                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$bc['count'].'</td>
-                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.((int)$bc['count'] * (int)$bc['numberOfBirds']).'</td>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;">'.$bc['numberOfBirds'].'</td>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;">'.$bc['count'].'</td>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;">'.((int)$bc['count'] * (int)$bc['numberOfBirds']).'</td>
                                                             </tr>
                                                         ';
                                                         $groupTotalBirdsInCages += ((int)$bc['count'] * (int)$bc['numberOfBirds']);
@@ -1551,9 +1576,9 @@ if(isset($_GET['userID'])){
                                                     // Total row for birds/cages
                                                     $message .= '
                                                             <tr>
-                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;"><b>Total</b></td>
-                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalCages.'</td>
-                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalBirdsInCages.'</td>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;"><b>Total</b></td>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;">'.$groupTotalCages.'</td>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;">'.$groupTotalBirdsInCages.'</td>
                                                             </tr>
                                                         ';
                                                 }
