@@ -314,13 +314,12 @@ if(isset($_GET['userID'])){
                                     <table class="table">
                                         <tbody>
                                             <tr>
-                                                <td style="width: 50%;border-top:0px;padding: 0 0.7rem;">
+                                                <td style="width: 50%;border-top:0px;padding: 0 0.7rem;" colspan="2">
                                                     <p>
                                                         <span style="font-size: 14px;font-family: sans-serif;font-weight: bold;">Customer : </span>
                                                         <span style="font-size: 14px;font-family: sans-serif;font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;'.$row['customer'].'</span>
                                                     </p>
                                                 </td>
-                                                <td style="width: 50%;border-top:0px;padding: 0 0.7rem;"></td>
                                             </tr>
                                             <tr>
                                                 <td style="width: 50%;border-top:0px;padding: 0 0.7rem;">
