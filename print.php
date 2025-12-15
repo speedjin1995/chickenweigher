@@ -803,6 +803,9 @@ if(isset($_GET['userID'], $_GET['printType'])){
                             </tr>
                         </tbody>
                     </table>
+                    <div style="position: absolute; bottom: 10px; right: 10px; font-size: 12px; font-family: sans-serif;">
+                        Indicator Id: ' . $row['indicator_id'] . '
+                    </div>
                 </div>
                 
                 <div class="page-content">';
@@ -1670,6 +1673,9 @@ if(isset($_GET['userID'], $_GET['printType'])){
                             </tr>
                         </tbody>
                     </table>
+                    <div style="position: absolute; bottom: 10px; right: 10px; font-size: 12px; font-family: sans-serif;">
+                        Indicator Id: ' . $row['indicator_id'] . '
+                    </div>
                 </div>';
 
             // Content

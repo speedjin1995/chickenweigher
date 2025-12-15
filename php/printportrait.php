@@ -581,6 +581,9 @@ if(isset($_GET['ids'], $_GET['printType'])){
                                 </tr>
                             </tbody>
                         </table>
+                        <div style="position: absolute; bottom: 10px; right: 30px; font-size: 12px; font-family: sans-serif;">
+                            Indicator Id: ' . $row['indicator_id'] . '
+                        </div>
                     </div>';
                         //<p style="page-break-after: always;">&nbsp;</p>';
                     }
@@ -1043,6 +1046,9 @@ if(isset($_GET['ids'], $_GET['printType'])){
                                             </tr>
                                         </tbody>
                                     </table>
+                                    <div style="position: absolute; bottom: 10px; right: 10px; font-size: 12px; font-family: sans-serif;">
+                                        Indicator Id: ' . $row['indicator_id'] . '
+                                    </div>
                                 </div>
                                 ';
 
