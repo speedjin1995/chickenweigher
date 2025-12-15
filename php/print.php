@@ -822,6 +822,9 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                                     
                                                         $message .= '</tbody>
                                                 </table>
+                                                <div style="position: absolute; bottom: 10px; right: 10px; font-size: 12px; font-family: sans-serif;">
+                                                    Indicator Id: ' . $row['indicator_id'] . '
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
@@ -1505,7 +1508,10 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                                                 }
                                                             
                                                                 $message .= '</tbody>
-                                                        </table>     
+                                                        </table> 
+                                                        <div style="position: absolute; bottom: 10px; right: 10px; font-size: 12px; font-family: sans-serif;">
+                                                            Indicator Id: ' . $row['indicator_id'] . '
+                                                        </div>
                                                     </div>       
                                                 </td>
                                             </tr>
