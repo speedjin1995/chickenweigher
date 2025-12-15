@@ -41,7 +41,8 @@ if(isset($_POST['userID'])){
                 $message['booking_date'] = $row['booking_date'];
                 $message['minimum_weight'] = $row['minimum_weight'];
                 $message['max_crate'] = $row['max_crate'];
-                $message['group_no'] = $row['group_no'];
+                $message['min_crate'] = $row['min_crate'];
+                $message['maximum_weight'] = $row['maximum_weight'];
 
                 if($row['weighted_by'] != null){
                     $message['weighted_by'] = json_decode($row['weighted_by'], true);

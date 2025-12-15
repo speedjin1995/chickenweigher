@@ -908,7 +908,7 @@ function edit(id) {
     
     if(obj.status === 'success'){
       var momentDate = moment(obj.message.booking_date, 'YYYY-MM-DD HH:mm:ss');
-      var formattedDate = momentDate.format('DD/MM/YYYY hh:mm:ss A');
+      var formattedDate = momentDate.format('DD/MM/YYYY');
 
       $('#extendModal').find('#id').val(obj.message.id);
       $('#extendModal').find('#poNo').val(obj.message.po_no);
@@ -924,6 +924,7 @@ function edit(id) {
       $('#extendModal').find('#maxWeight').val(obj.message.maximum_weight);
       $('#extendModal').find('#bookingDate').val(formattedDate);
       $('#extendModal').find('#maxCrate').val(obj.message.max_crate);
+      $('#extendModal').find('#minCrate').val(obj.message.min_crate);
       $('#extendModal').find("select[name='assignTo[]']").val(obj.message.weighted_by).trigger('change');
       $('#extendModal').find('#remark').val(obj.message.remark);
       $('#extendModal').find('#modalTitle').text("Edit Order");

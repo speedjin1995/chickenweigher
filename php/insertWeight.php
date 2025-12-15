@@ -129,10 +129,10 @@ if(isset($_POST['bookingDate'], $_POST['customerNo'], $_POST['product'], $_POST[
 
 	if($_POST['id'] != null && $_POST['id'] != ''){
 		$id = $_POST['id'];
-		if ($update_stmt = $db->prepare("UPDATE weighing SET group_no=?, customer=?, supplier=?, product=?, driver_name=?, lorry_no=?, farm_id=?, 
+		if ($update_stmt = $db->prepare("UPDATE weighing SET group_no=?, customer=?, supplier=?, product=?, driver_name=?, driver_name2=?, lorry_no=?, farm_id=?, 
 		average_cage=?, average_bird=?, minimum_weight=?, maximum_weight=?, grade=?, gender=?, house_no=?, remark=?, weighted_by=?, min_crate=?, 
 		max_crate=?, po_no=?, booking_date=? WHERE id=?")){
-			$update_stmt->bind_param('sssssssssssssssssssss', $group, $customerName, $supplierName, $product, $driver, $vehicleNo, $farm, $aveCage,
+			$update_stmt->bind_param('ssssssssssssssssssssss', $group, $customerName, $supplierName, $product, $driver, $driver2, $vehicleNo, $farm, $aveCage,
 			$aveBird, $minWeight, $maxWeight, $grade, $gender, $houseNo, $remark, $assignTo, $minCrate, $maxCrate, $poNo, $formattedDate, $id);
 		
 			// Execute the prepared query.
@@ -166,7 +166,7 @@ if(isset($_POST['bookingDate'], $_POST['customerNo'], $_POST['product'], $_POST[
 		}
 	}
 	else{
-		if ($insert_stmt = $db->prepare("INSERT INTO weighing (serial_no, group_no, customer, supplier, product, driver_name, driver_name, lorry_no, 
+		if ($insert_stmt = $db->prepare("INSERT INTO weighing (serial_no, group_no, customer, supplier, product, driver_name, driver_name2, lorry_no, 
 		farm_id, average_cage, average_bird, minimum_weight, maximum_weight, grade, gender, house_no, remark, weighted_by, status, 
 		min_crate, max_crate, po_no, created_by, booking_date, created_datetime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){
 		    $data = null;
