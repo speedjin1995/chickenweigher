@@ -53,7 +53,7 @@ if(isset($_GET['id']) &&$_GET['id'] != null && $_GET['id'] != ''){
         // ================================
         // ✅ SECTION 1 — HEADER (MATCH IMAGE)
         // ================================
-        $excelData .= "SERIAL_NO\tDO_NO\tISSUED_BY\tDATE_TIME\tCUSTOMER\tLORRY_NO\tAVG_CRATE_WEIGHT\tDRIVER\tDRIVER2\tATTENDANT_1\tATTENDANT_2\tFARM\tREMARK\n";
+        $excelData .= "SERIAL_NO\tDO_NO\tISSUED_BY\tDATE_TIME\tCUSTOMER\tLORRY_NO\tAVG_CRATE_WEIGHT\tDRIVER\tDRIVER2\tATTENDANT_1\tATTENDANT_2\tFARM\tREMARK\tINDICATOR ID\n";
     
         $headerRow = [
             $row['serial_no'],
@@ -68,7 +68,8 @@ if(isset($_GET['id']) &&$_GET['id'] != null && $_GET['id'] != ''){
             $row['follower1'],
             $row['follower2'],
             $farm,
-            $row['remark']
+            $row['remark'],
+            $row['indicator_id']
         ];
     
         array_walk($headerRow, 'filterData');

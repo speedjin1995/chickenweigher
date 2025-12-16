@@ -15,7 +15,7 @@ $fileName = "Weight-data_" . date('Y-m-d') . ".xls";
  
 // Column names 
 $fields = array('SERIAL NO', 'ORDER NO', 'BOOKING DATE TIME', 'CUSTOMER', 'PRODUCT NO', 'VEHICLE NO', 'DRIVER NAME', 'FARM', 'WEIGHTED BY', 'START WEIGHT DATE', 'END WEIGHT DATE', 
-                'AVG CAGE WEIGHT', 'GROSS WEIGHT', 'CAGE WEIGHT', 'NET WEIGHT', 'NUMBER OF BIRDS', 'NUMBER OF CAGES', 'GRADE', 'GENDER', 'HOUSE NUMBER', 'GROUP NUMBER', 'WEIGHT TIME', 'REMARKS'); 
+                'AVG CAGE WEIGHT', 'GROSS WEIGHT', 'CAGE WEIGHT', 'NET WEIGHT', 'NUMBER OF BIRDS', 'NUMBER OF CAGES', 'GRADE', 'GENDER', 'HOUSE NUMBER', 'GROUP NUMBER', 'WEIGHT TIME', 'REMARKS', 'INDICATOR ID'); 
 
 
 // Display column names as first row 
@@ -139,7 +139,7 @@ if($query->num_rows > 0){
             $time = sprintf('%d mins %d secs', $minutes, $seconds);
             
             $lineData = array($row['serial_no'], $row['po_no'], $row['booking_date'], $row['customer'], $row['product'], $row['lorry_no'], $row['driver_name'], $farm,
-            $weighted_by, $row['start_time'], $row['end_time'], number_format($row['average_cage'], 2), $groupList[$j]['totalGross'], $groupList[$j]['totalTare'], $totalNet, $groupList[$j]['totalBird'], $groupList[$j]['totalCage'], $groupList[$j]['grade'], $groupList[$j]['sex'], $groupList[$j]['houseNumber'], $groupList[$j]['groupNo'], $time, $row['remark']);
+            $weighted_by, $row['start_time'], $row['end_time'], number_format($row['average_cage'], 2), $groupList[$j]['totalGross'], $groupList[$j]['totalTare'], $totalNet, $groupList[$j]['totalBird'], $groupList[$j]['totalCage'], $groupList[$j]['grade'], $groupList[$j]['sex'], $groupList[$j]['houseNumber'], $groupList[$j]['groupNo'], $time, $row['remark'], $row['indicator_id']);
         
             
             array_walk($lineData, 'filterData'); 
