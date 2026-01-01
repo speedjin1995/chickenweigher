@@ -14,17 +14,96 @@ if ($limit < 1) $limit = 20;
 
 $offset = ($page - 1) * $limit;
 
-// ✅ Prepare main query with pagination
-$stmt = $db->prepare("
-    SELECT * 
-    FROM weighing 
-    WHERE deleted = '0' 
-      AND status = 'Complete' 
-    ORDER BY booking_date DESC 
-    LIMIT ?, ?
-");
+// ==============================
+// Filters
+// ==============================
+$po_no    = $_GET['po_no'] ?? '';
+$vehicle  = $_GET['vehicle'] ?? '';
+$customer = $_GET['customer'] ?? '';
+$farm     = $_GET['farm'] ?? '';
+$start    = $_GET['start'] ?? '';
+$end      = $_GET['end'] ?? '';
 
-$stmt->bind_param('ii', $offset, $limit);
+// ==============================
+// Build WHERE conditions
+// ==============================
+$where = [];
+$params = [];
+$types = "";
+
+// Mandatory conditions
+$where[] = "deleted = '0'";
+$where[] = "status = 'Complete'";
+
+// Optional filters
+if ($po_no != '') {
+    $where[] = "po_no LIKE ?";
+    $params[] = "%$po_no%";
+    $types .= "s";
+}
+
+if ($vehicle != '') {
+    $where[] = "lorry_no LIKE ?";
+    $params[] = "%$vehicle%";
+    $types .= "s";
+}
+
+if ($customer != '') {
+    $where[] = "customer LIKE ?";
+    $params[] = "%$customer%";
+    $types .= "s";
+}
+
+if ($farm != '') {
+    $where[] = "farm_id IN (SELECT id FROM farms WHERE name LIKE ?)";
+    $params[] = "%$farm%";
+    $types .= "s";
+}
+
+if ($start !== '' && $end !== '') {
+    // Convert millis → UTC DateTime
+    $startUTC = new DateTime("@".($start/1000));
+    $endUTC   = new DateTime("@".($end/1000));
+
+    // Convert UTC → KL timezone
+    $tz = new DateTimeZone("Asia/Kuala_Lumpur");
+    $startUTC->setTimezone($tz);
+    $endUTC->setTimezone($tz);
+
+    // Extract KL calendar dates
+    $startDay = $startUTC->format("Y-m-d");
+    $endDay   = $endUTC->format("Y-m-d");
+
+    // Build full-day KL range
+    $startDate = $startDay . " 00:00:00";
+    $endDate   = $endDay   . " 23:59:59";
+    
+    // booking_date stored as DATETIME
+    $where[] = "booking_date BETWEEN ? AND ?";
+    $params[] = $startDate;
+    $params[] = $endDate;
+    $types .= "ss";
+}
+
+$whereSql = "WHERE " . implode(" AND ", $where);
+
+// ==============================
+// Main Query
+// ==============================
+$sql = "
+    SELECT *
+    FROM weighing
+    $whereSql
+    ORDER BY booking_date DESC
+    LIMIT ?, ?
+";
+
+$stmt = $db->prepare($sql);
+$params[] = $offset;
+$params[] = $limit;
+$types .= "ii";
+
+$stmt->bind_param($types, ...$params);
 $stmt->execute();
 $result = $stmt->get_result();
 
