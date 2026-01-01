@@ -761,7 +761,7 @@ if(isset($_GET['userID'], $_GET['printType'])){
                                             
                                                 $message .= '</tbody>
                                         </table>
-                                        <table class="table" style="width: 70%; margin-top: 80%; margin-left: 30px;">
+                                        <table class="table" style="position: absolute; bottom: 10px; right: 90px; width: 200px;">
                                             <tbody>
                                                 <tr>
                                                     <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Birds/Cage</th>
@@ -1631,7 +1631,7 @@ if(isset($_GET['userID'], $_GET['printType'])){
                                                 $message .= '</tbody>
                                         </table>
 
-                                        <table class="table" style="width: 70%; margin-top: 80%; margin-left: 35px">
+                                        <table class="table" style="position: absolute; bottom: 10px; right: 90px; width: 200px;">
                                             <tbody>
                                                 <tr>
                                                     <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Birds/Cage</th>
