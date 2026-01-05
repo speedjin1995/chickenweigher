@@ -1,109 +1,137 @@
 <?php
 require_once 'db_connect.php';
 
+/* ============================================
+   Read input
+============================================ */
 $post = json_decode(file_get_contents('php://input'), true);
+$staffId = $post['userId'] ?? '';
 
-$staffId = $post['userId'];
-$now = date("Y-m-d 00:00:00");
-$end = date("Y-m-d 23:59:59");
-$values = array();
-$checking = array();
-$stmt2 = $db->prepare("SELECT * from users where id= ?");
-$stmt2->bind_param('s', $staffId);
-$stmt2->execute();
-$stmt2 = $stmt2->get_result();
-
-if(($row2 = $stmt2->fetch_assoc()) !== null){
-    if($row2['farms'] != null){
-        $values = json_decode($row2['farms'], true);
-    }  
+/* ============================================
+   Load user allowed farms
+============================================ */
+$values = [];
+if ($staffId !== '') {
+    $u = $db->prepare("SELECT farms FROM users WHERE id=?");
+    $u->bind_param("s", $staffId);
+    $u->execute();
+    $ur = $u->get_result();
+    if ($row = $ur->fetch_assoc()) {
+        if (!empty($row['farms'])) {
+            $values = json_decode($row['farms'], true);
+        }
+    }
+    $u->close();
 }
 
-// ✅ Get pagination parameters (with safe defaults)
-$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
-$limit = isset($_GET['limit']) ? intval($_GET['limit']) : 20;
-
-if ($page < 1) $page = 1;
-if ($limit < 1) $limit = 20;
-
+/* ============================================
+   Pagination
+============================================ */
+$page  = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$limit = isset($_GET['limit']) ? max(1, intval($_GET['limit'])) : 20;
 $offset = ($page - 1) * $limit;
 
-// ==============================
-// Filters
-// ==============================
+/* ============================================
+   Filters
+============================================ */
 $po_no    = $_GET['po_no'] ?? '';
 $vehicle  = $_GET['vehicle'] ?? '';
 $customer = $_GET['customer'] ?? '';
 $farm     = $_GET['farm'] ?? '';
-$start    = $_GET['start'] ?? '';
-$end      = $_GET['end'] ?? '';
+$startMs  = $_GET['start'] ?? '';
+$endMs    = $_GET['end'] ?? '';
 
-// ==============================
-// Build WHERE conditions
-// ==============================
+/* ============================================
+   Convert millis → KL calendar days
+============================================ */
+$startDate = '';
+$endDate = '';
+
+if ($startMs !== '' && $endMs !== '') {
+    $tz = new DateTimeZone("Asia/Kuala_Lumpur");
+
+    $s = new DateTime("@".($startMs/1000));
+    $e = new DateTime("@".($endMs/1000));
+
+    $s->setTimezone($tz);
+    $e->setTimezone($tz);
+
+    $startDate = $s->format("Y-m-d") . " 00:00:00";
+    $endDate   = $e->format("Y-m-d") . " 23:59:59";
+}
+
+/* ============================================
+   Build WHERE
+============================================ */
 $where = [];
 $params = [];
 $types = "";
 
-// Mandatory conditions
-$where[] = "deleted = '0'";
-$where[] = "status = 'Complete'";
+// base
+$where[] = "deleted='0'";
+$where[] = "status='Complete'";
 
-// Optional filters
-if ($po_no != '') {
+// filters
+if ($po_no !== '') {
     $where[] = "po_no LIKE ?";
     $params[] = "%$po_no%";
     $types .= "s";
 }
 
-if ($vehicle != '') {
+if ($vehicle !== '') {
     $where[] = "lorry_no LIKE ?";
     $params[] = "%$vehicle%";
     $types .= "s";
 }
 
-if ($customer != '') {
+if ($customer !== '') {
     $where[] = "customer LIKE ?";
     $params[] = "%$customer%";
     $types .= "s";
 }
 
-if ($farm != '') {
+if ($farm !== '') {
     $where[] = "farm_id IN (SELECT id FROM farms WHERE name LIKE ?)";
     $params[] = "%$farm%";
     $types .= "s";
 }
 
-if ($start !== '' && $end !== '') {
-    // Convert millis → UTC DateTime
-    $startUTC = new DateTime("@".($start/1000));
-    $endUTC   = new DateTime("@".($end/1000));
-
-    // Convert UTC → KL timezone
-    $tz = new DateTimeZone("Asia/Kuala_Lumpur");
-    $startUTC->setTimezone($tz);
-    $endUTC->setTimezone($tz);
-
-    // Extract KL calendar dates
-    $startDay = $startUTC->format("Y-m-d");
-    $endDay   = $endUTC->format("Y-m-d");
-
-    // Build full-day KL range
-    $startDate = $startDay . " 00:00:00";
-    $endDate   = $endDay   . " 23:59:59";
-    
-    // booking_date stored as DATETIME
+if ($startDate !== '' && $endDate !== '') {
     $where[] = "booking_date BETWEEN ? AND ?";
     $params[] = $startDate;
     $params[] = $endDate;
     $types .= "ss";
 }
 
+/* ============================================
+   Staff access control (SQL level)
+============================================ */
+$farmPlaceholders = '';
+if (!empty($values)) {
+    $farmPlaceholders = implode(',', array_fill(0, count($values), '?'));
+}
+
+$staffSql = "(JSON_CONTAINS(weighted_by, ?)";
+
+$params[] = json_encode((string)$staffId);
+$types .= "s";
+
+if (!empty($farmPlaceholders)) {
+    $staffSql .= " OR farm_id IN ($farmPlaceholders)";
+    foreach ($values as $f) {
+        $params[] = $f;
+        $types .= "s";
+    }
+}
+$staffSql .= ")";
+
+$where[] = $staffSql;
+
+/* ============================================
+   Final SQL
+============================================ */
 $whereSql = "WHERE " . implode(" AND ", $where);
 
-// ==============================
-// Main Query
-// ==============================
 $sql = "
     SELECT *
     FROM weighing
@@ -112,132 +140,50 @@ $sql = "
     LIMIT ?, ?
 ";
 
-$stmt = $db->prepare($sql);
 $params[] = $offset;
 $params[] = $limit;
 $types .= "ii";
 
+/* ============================================
+   Execute
+============================================ */
+$stmt = $db->prepare($sql);
 $stmt->bind_param($types, ...$params);
 $stmt->execute();
 $result = $stmt->get_result();
-$message = array();
 
-while($row = $result->fetch_assoc()){
-    $farmId=$row['farm_id'];
-    $farmName='';
-    
-    if ($update_stmt = $db->prepare("SELECT * FROM farms WHERE id=?")) {
-        $update_stmt->bind_param('s', $farmId);
-        
-        if ($update_stmt->execute()) {
-            $result3 = $update_stmt->get_result();
-            
-            if ($row3 = $result3->fetch_assoc()) {
-                $farmName=$row3['name'];
-            }
+/* ============================================
+   Build response
+============================================ */
+$message = [];
+
+while ($row = $result->fetch_assoc()) {
+    $farmName = '';
+
+    if ($f = $db->prepare("SELECT name FROM farms WHERE id=?")) {
+        $f->bind_param("s", $row['farm_id']);
+        $f->execute();
+        $fr = $f->get_result();
+        if ($r = $fr->fetch_assoc()) {
+            $farmName = $r['name'];
         }
+        $f->close();
     }
-    
-    $update_stmt->close();
-    
-    if(!in_array($row['id'], $checking)){
-        if($row['weighted_by'] != null){
-            $temp = json_decode($row['weighted_by'], true);
-    
-            if(in_array($staffId, $temp)){
-                $message[] = array( 
-                    'id'=>$row['id'],
-                    'serial_no'=>$row['serial_no'],
-                    'booking_date'=>$row['booking_date'],
-                    'weighted_by'=>$row['weighted_by'],
-                    'po_no'=>$row['po_no'],
-                    'group_no'=>$row['group_no'],
-                    'customer'=>$row['customer'],
-                    'supplier'=>$row['supplier'],
-                    'product'=>$row['product'],
-                    'driver_name'=>$row['driver_name'],
-                    'driver_ic'=>$row['driver_ic'],
-                    'driver_name2'=>$row['driver_name2'],
-                    'driver_ic2'=>$row['driver_ic2'],
-                    'lorry_no'=>$row['lorry_no'],
-                    'farm_id'=>$row['farm_id'],
-                    'farm_name'=>$farmName,
-                    'average_cage'=>$row['average_cage'],
-                    'average_bird'=>$row['average_bird'],
-                    'minimum_weight'=>$row['minimum_weight'],
-                    'maximum_weight'=>$row['maximum_weight'],
-                    'total_cages_weight'=>$row['total_cages_weight'],
-                    'number_of_cages'=>$row['number_of_cages'],
-                    'total_cage'=>$row['total_cage'],
-                    'min_crate'=>$row['min_crate'],
-                    'max_crate'=>$row['max_crate'],
-                    'weight_data'=>$row['weight_data'],
-                    'cage_data'=>$row['cage_data'],
-                    'created_datetime'=>$row['created_datetime'],
-                    'start_time'=>$row['start_time'],
-                    'end_time'=>$row['end_time'],
-                    'grade'=>$row['grade'],
-                    'gender'=>$row['gender'],
-                    'house_no'=>$row['house_no'],
-                    'remark'=>$row['remark']
-                );
-                
-                array_push($checking, $row['id']);
-            }
-        }
-    }
-    
-    if(!in_array($row['id'], $checking)){
-        if(in_array($row['farm_id'], $values)){
-            $message[] = array( 
-                'id'=>$row['id'],
-                'serial_no'=>$row['serial_no'],
-                'booking_date'=>$row['booking_date'],
-                'po_no'=>$row['po_no'],
-                'group_no'=>$row['group_no'],
-                'customer'=>$row['customer'],
-                'supplier'=>$row['supplier'],
-                'product'=>$row['product'],
-                'driver_name'=>$row['driver_name'],
-                'driver_ic'=>$row['driver_ic'],
-                'driver_name2'=>$row['driver_name2'],
-                'driver_ic2'=>$row['driver_ic2'],
-                'lorry_no'=>$row['lorry_no'],
-                'farm_id'=>$row['farm_id'],
-                'farm_name'=>$farmName,
-                'average_cage'=>$row['average_cage'],
-                'average_bird'=>$row['average_bird'],
-                'minimum_weight'=>$row['minimum_weight'],
-                'maximum_weight'=>$row['maximum_weight'],
-                'total_cages_weight'=>$row['total_cages_weight'],
-                'number_of_cages'=>$row['number_of_cages'],
-                'total_cage'=>$row['total_cage'],
-                'min_crate'=>$row['min_crate'],
-                'max_crate'=>$row['max_crate'],
-                'weight_data'=>$row['weight_data'],
-                'cage_data'=>$row['cage_data'],
-                'created_datetime'=>$row['created_datetime'],
-                'start_time'=>$row['start_time'],
-                'end_time'=>$row['end_time'],
-                'grade'=>$row['grade'],
-                'gender'=>$row['gender'],
-                'house_no'=>$row['house_no'],
-                'remark'=>$row['remark']
-            );
-            
-            array_push($checking, $row['id']);
-        }
-    }
+
+    $row['farm_name'] = $farmName;
+    $message[] = $row;
 }
 
 $stmt->close();
-$stmt2->close();
 $db->close();
 
-echo json_encode(
-    array(
-        "status"=> "success", 
-        "message"=> $message
-    )
-);
-?>
+/* ============================================
+   Output
+============================================ */
+echo json_encode([
+    "status" => "success",
+    "message" => $message,
+    "page" => $page,
+    "limit" => $limit,
+    "count" => count($message)
+]);
