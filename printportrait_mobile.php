@@ -1103,7 +1103,7 @@ if(isset($_GET['userID'])){
                                         }
                                     
                                         $message .= $indexString;
-                                        $message .= '</tbody><tfoot><th colspan="20" style="text-align: right;">Total</th><th>'.number_format($allTotal, 2, '.', '').'</th></tfoot></table>
+                                        $message .= '</tbody><tfoot><th colspan="20" style="text-align: right;">Total</th><th>'.number_format($groupAllTotal, 2, '.', '').'</th></tfoot></table>
                                     </div>
                                 </section>
                                 ';
