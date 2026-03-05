@@ -527,20 +527,21 @@ $(function () {
   $('#excelSearch').on('click', function(){
     var fromDateValue = started;
     var toDateValue = ended;
+    var vehicleFilter = $('#vehFilter').val() ? $('#vehFilter').val() : '';
     var statusFilter = $('#farmFilter').val() ? $('#farmFilter').val() : '';
     var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
     
-    window.open("php/export.php?fromDate="+fromDateValue+"&toDate="+toDateValue+
-    "&farm="+statusFilter+"&customer="+customerNoFilter);
+    window.open("php/export.php?fromDate="+fromDateValue+"&toDate="+toDateValue+"&vehicle="+vehicleFilter+"&farm="+statusFilter+"&customer="+customerNoFilter);
   });
   
   $('#excelHouseSearch').on('click', function(){
     var fromDateValue = started;
     var toDateValue = ended;
+    var vehicleFilter = $('#vehFilter').val() ? $('#vehFilter').val() : '';
     var statusFilter = $('#farmFilter').val() ? $('#farmFilter').val() : '';
     var customerNoFilter = $('#customerFilter').val() ? $('#customerFilter').val() : '';
     
-    window.open("php/exportHouse.php?fromDate="+fromDateValue+"&toDate="+toDateValue+ "&farm="+statusFilter+"&customer="+customerNoFilter);
+    window.open("php/exportHouse.php?fromDate="+fromDateValue+"&toDate="+toDateValue+"&vehicle="+vehicleFilter+"&farm="+statusFilter+"&customer="+customerNoFilter);
   });
 
   $('#officeSearch').on('click', function(){
