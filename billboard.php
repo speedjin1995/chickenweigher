@@ -235,7 +235,7 @@ else{
                   <!--th>Driver Name</th-->
                   <th>Farm</th>
                   <th>Completed <br>Date Time</th>
-                  <th></th>
+                  <th width="15%">Action</th>
                 </tr>
               </thead>
             </table>
@@ -271,6 +271,60 @@ else{
             <div class="modal-footer justify-content-between bg-gray-dark color-palette">
               <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
               <button type="submit" class="btn btn-primary" id="saveButton">Save</button>
+            </div>
+          </form>
+        </div> <!-- /.modal-content -->
+      </div> <!-- /.modal-dialog -->
+    </div> <!-- /.modal -->
+    
+    <div class="modal fade" id="remarkModal">
+      <div class="modal-dialog modal-xl" style="max-width: 90%;">
+        <div class="modal-content">
+          <form role="form" id="remarkForm">
+            <div class="modal-header bg-gray-dark color-palette">
+              <h4 class="modal-title">Remark</h4>
+              <button type="button" class="close bg-gray-dark color-palette" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+            <div class="modal-body" >
+              <div class="form-group">
+                <input type="hidden" name="id" id="id">
+                <label for="remark">Remark</label>
+                <textarea class="form-control" rows="3" id="remark" name="remark" placeholder="Enter ..."></textarea>
+              </div>
+              <div class="form-group">
+                <div class="table-responsive">
+                  <table class="table table-bordered table-striped table-sm">
+                    <thead class="bg-light">
+                      <tr>
+                        <th>Weight No</th>
+                        <th>Date/Time</th>
+                        <th>Gross</th>
+                        <th>Crate</th>
+                        <th>Net</th>
+                        <th>Unit</th>
+                        <th>No of <br> Crates</th>
+                        <th>Bird/Cage</th>
+                        <th>Birds</th>
+                        <th>Gender</th>
+                        <th>Grade</th>
+                        <th>House <br> No</th>
+                        <th>Group <br>No</th>
+                        <th>Ave <br>Weight</th>
+                        <th>Remark</th>
+                      </tr>
+                    </thead>
+                    <tbody id="remarkTable"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary" id="saveRemarkButton">Save</button>
             </div>
           </form>
         </div> <!-- /.modal-content -->
@@ -360,7 +414,7 @@ $(function () {
           {
             data: 'id',
             render: function (data, type, row) {
-              return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="print('+data+');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="portrait('+ data + ');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"><button type="button" id="excel' + data + '" onclick="excel('+ data + ');" class="btn btn-success btn-sm"><i class="fas fa-file-excel"></i></button></div><div class="col-3"></div></div>';
+              return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="print('+data+');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="portrait('+ data + ');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"><button type="button" id="excel' + data + '" onclick="excel('+ data + ');" class="btn btn-success btn-sm"><i class="fas fa-file-excel"></i></button></div><div class="col-3"><button type="button" id="remark' + data + '" onclick="remark('+ data + ');" class="btn btn-warning btn-sm"><i class="fas fa-comment"></i></button></div></div>';
             }
           }
         ],
@@ -412,7 +466,7 @@ $(function () {
       {
         data: 'id',
         render: function (data, type, row) {
-          return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="print('+data+');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="portrait('+ data + ');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"><button type="button" id="excel' + data + '" onclick="excel('+ data + ');" class="btn btn-success btn-sm"><i class="fas fa-file-excel"></i></button></div><div class="col-3"></div></div>';
+          return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="print('+data+');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="portrait('+ data + ');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"><button type="button" id="excel' + data + '" onclick="excel('+ data + ');" class="btn btn-success btn-sm"><i class="fas fa-file-excel"></i></button></div><div class="col-3"><button type="button" id="remark' + data + '" onclick="remark('+ data + ');" class="btn btn-warning btn-sm"><i class="fas fa-comment"></i></button></div></div>';
         }
       }
     ],
@@ -490,7 +544,7 @@ $(function () {
         {
           data: 'id',
           render: function (data, type, row) {
-            return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="print('+data+');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="portrait('+ data + ');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"><button type="button" id="excel' + data + '" onclick="excel('+ data + ');" class="btn btn-success btn-sm"><i class="fas fa-file-excel"></i></button></div><div class="col-3"></div></div>';
+            return '<div class="row"><div class="col-3"><button type="button" id="print' + data + '" onclick="print('+data+');" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="print2' + data + '" onclick="portrait('+ data + ');" class="btn btn-success btn-sm"><i class="fas fa-receipt"></i></button></div><div class="col-3"><button type="button" id="excel' + data + '" onclick="excel('+ data + ');" class="btn btn-success btn-sm"><i class="fas fa-file-excel"></i></button></div><div class="col-3"><button type="button" id="remark' + data + '" onclick="remark('+ data + ');" class="btn btn-warning btn-sm"><i class="fas fa-comment"></i></button></div></div>';
           }
         }
       ],
@@ -520,6 +574,23 @@ $(function () {
         } else if (reportType == 'Office' && isMulti == "Y") {
           window.open("php/printportrait.php?ids="+userID+"&printType="+printType, '_blank');
         }
+      }
+      else if ($('#remarkModal').hasClass('show')) {
+        $.post('php/updateWeight.php', $('#remarkForm').serialize(), function(data){
+          var obj = JSON.parse(data);
+
+          if(obj.status === 'success'){
+            toastr["success"](obj.message, "Success:");
+            $('#remarkModal').modal('hide');
+            $('#weightTable').DataTable().ajax.reload();
+          }
+          else if(obj.status === 'failed'){
+            toastr["error"](obj.message, "Failed:");
+          }
+          else{
+            toastr["error"]("Something wrong when activate", "Failed:");
+          }
+        });
       }
     }
   });
@@ -876,6 +947,64 @@ function print2(id) {
     else{
       toastr["error"]("Something wrong when activate", "Failed:");
     }
+  });
+}
+
+function remark(id) {
+  $('#spinnerLoading').show();
+  $.post('php/getWeights.php', {userID: id}, function(data){
+    var obj = JSON.parse(data);
+    
+    if(obj.status === 'success'){
+      $('#remarkModal').find('#id').val(obj.message.id);
+      $('#remarkModal').find('#remark').val(obj.message.remark);
+
+      if (obj.message.weight_data && obj.message.weight_data.length > 0) {
+        var tableHtml = '';
+        obj.message.weight_data.forEach(function(w, index) {
+          tableHtml += '<tr>';
+          tableHtml += '<td>' + (index + 1) + '</td>';
+          tableHtml += '<td>' + w.dateTime + '</td>';
+          tableHtml += '<td>' + w.grossWeight + '</td>';
+          tableHtml += '<td>' + w.tareWeight + '</td>';
+          tableHtml += '<td>' + w.netWeight + '</td>';
+          tableHtml += '<td>kg</td>';
+          tableHtml += '<td>' + w.numberOfCages + '</td>';
+          tableHtml += '<td>' + w.birdsPerCages + '</td>';
+          tableHtml += '<td>' + w.numberOfBirds + '</td>';
+          tableHtml += '<td>' + w.sex.toUpperCase() + '</td>';
+          tableHtml += '<td>' + w.grade + '</td>';
+          tableHtml += '<td>' + w.houseNumber + '</td>';
+          tableHtml += '<td>' + w.groupNumber + '</td>';
+          tableHtml += '<td>' + w.aveWeight + '</td>';
+          tableHtml += '<td><input type="text" class="form-control form-control-sm" name="remark' + index + '" value="' + (w.remark || '') + '"></td>';
+          tableHtml += '</tr>';
+        });
+        $('#remarkTable').html(tableHtml);
+      }
+
+      $('#remarkModal').modal('show');
+      $('#remarkForm').validate({
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+          error.addClass('invalid-feedback');
+          element.closest('.form-group').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+          $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+          $(element).removeClass('is-invalid');
+        }
+      });
+    }
+    else if(obj.status === 'failed'){
+      toastr["error"](obj.message, "Failed:");
+    }
+    else{
+      toastr["error"]("Something wrong when pull data", "Failed:");
+    }
+    $('#spinnerLoading').hide();
   });
 }
 
