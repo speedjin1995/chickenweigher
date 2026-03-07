@@ -116,14 +116,22 @@ function rearrangeList($weightDetails) {
             if(!in_array($element['birdsPerCages'], $array4)){
                 $mapOfBirdsToCages[] = array( 
                     'numberOfBirds' => $element['birdsPerCages'],
-                    'count' => 0
+                    'maleCount' => 0,
+                    'femaleCount' => 0,
+                    'mixedCount' => 0
                 );
 
                 array_push($array4, $element['birdsPerCages']);
             } 
-            
+
             $keyB = array_search($element['birdsPerCages'], $array4); 
-            $mapOfBirdsToCages[$keyB]['count'] += (int)$element['numberOfCages'];
+            if ($element['sex'] == 'Male') {
+                $mapOfBirdsToCages[$keyB]['maleCount'] += (int)$element['numberOfCages'];
+            } elseif ($element['sex'] == 'Female') {
+                $mapOfBirdsToCages[$keyB]['femaleCount'] += (int)$element['numberOfCages'];
+            } elseif ($element['sex'] == 'Mixed') {
+                $mapOfBirdsToCages[$keyB]['mixedCount'] += (int)$element['numberOfCages'];
+            }
 
             if ($element['sex'] == 'Male') {
                 $totalMaleBirds += intval($element['numberOfBirds']);
@@ -738,7 +746,7 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                             $message .= '</td>
                                         <td style="width: 50%;border-top:0px;">
                                             <p style="font-size: 12px;font-family: sans-serif;"><b>SUMMARY - BY HOUSE</b></p>
-                                            <div style="width:50%; padding-left: 100px;">
+                                            <div style="width:50%;">
                                                 <table class="table" style="width: 50%">
                                                     <tbody>
                                                         <tr>
@@ -779,52 +787,65 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                                         $message .= '</tbody>
                                                 </table>';
 
-                                                if (count($mapOfHouses) > 3){
-                                                    $birdPerCageMargin = "45%";
-                                                }else{
-                                                    $birdPerCageMargin = "80%";
-                                                }
                                                 $message.= '
-                                                <table class="table" style="width: 70%; margin-top: '.$birdPerCageMargin.'; margin-left: 35px">
+                                                <table class="table" style="position: absolute; bottom: 10px; right: 50px; width: 200px;">
                                                     <tbody>
                                                         <tr>
                                                             <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Birds/Cage</th>
-                                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Cages</th>
+                                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Male</th>
+                                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Female</th>
+                                                            <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Mixed</th>
                                                             <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Birds</th>
                                                         </tr>';
 
                                                         if (count($mapOfBirdsToCages) > 0) {
-                                                            $totalBirdsInCages = 0;
-                                                            $totalCages = 0;
+                                                            // $totalBirdsInCages = 0;
+                                                            // $totalCages = 0;
+                                                            $totalMale = 0;
+                                                            $totalFemale = 0;
+                                                            $totalMixed = 0;
 
                                                             foreach ($mapOfBirdsToCages as $bc) {
+                                                                $totalBirds = ($bc['maleCount'] + $bc['femaleCount'] + $bc['mixedCount']) * (int)$bc['numberOfBirds'];
+                                                                
                                                                 $message .= '
                                                                     <tr>
-                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;">'.$bc['numberOfBirds'].'</td>
-                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$bc['count'].'</td>
-                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.((int)$bc['count'] * (int)$bc['numberOfBirds']).'</td>
+                                                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;">'.$bc['numberOfBirds'].'</td>
+                                                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$bc['maleCount'].'</td>
+                                                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$bc['femaleCount'].'</td>
+                                                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$bc['mixedCount'].'</td>
+                                                                        <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalBirds.'</td>
                                                                     </tr>
                                                                 ';
-                                                                $totalBirdsInCages += ((int)$bc['count'] * (int)$bc['numberOfBirds']);
-                                                                $totalCages += (int)$bc['count'];
-
+                                                                // $totalBirdsInCages += $totalBirds;
+                                                                // $totalCages += ($bc['maleCount'] + $bc['femaleCount'] + $bc['mixedCount']);
+                                                                $totalMale += $bc['maleCount'];
+                                                                $totalFemale += $bc['femaleCount'];
+                                                                $totalMixed += $bc['mixedCount'];
                                                             }
 
                                                             // Total row for birds/cages
                                                             $message .= '
                                                                     <tr>
                                                                         <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;"><b>Total</b></td>
-                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalCages.'</td>
-                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalBirdsInCages.'</td>
+                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMale.'</td>
+                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalFemale.'</td>
+                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalMixed.'</td>
+                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;"></td>
                                                                     </tr>
                                                                 ';
                                                         }
                                                     
                                                         $message .= '</tbody>
-                                                </table>
-                                                <div style="position: absolute; bottom: 10px; right: 10px; font-size: 12px; font-family: sans-serif;">
-                                                    Indicator Id: ' . $row['indicator_id'] . '
-                                                </div>
+                                                </table>';
+
+                                                if (!empty($row['indicator_id'])) {
+                                                    $message .= '<div style="position: absolute; bottom: 10px; right: 10px; font-size: 12px; font-family: sans-serif;">
+                                                        Indicator Id: ' . $row['indicator_id'] . '
+                                                    </div>';
+                                                }
+
+                                        $message .= '
                                             </div>
                                         </td>
                                     </tr>
@@ -1071,39 +1092,32 @@ if(isset($_GET['ids'], $_GET['printType'])) {
 
                                 // Calculate group-specific birds per cage mapping
                                 if($element['birdsPerCages'] != null){
-                                    if(!in_array($element['birdsPerCages'], $groupArray3)){
-                                        $groupMapOfBirdsToCages[] = array( 
-                                            'numberOfBirds' => $element['birdsPerCages'],
-                                            'count' => 0
-                                        );
-                                        array_push($groupArray3, $element['birdsPerCages']);
-                                    }
+                                    $birdsPerCageValue = $element['birdsPerCages'];
+                                } else {
+                                    $birdsPerCageValue = (string)((int)$element['numberOfBirds'] / (int)$element['numberOfCages']);
                                 }
-                                else{
-                                    $birdsPerCages = (string)((int)$element['numberOfBirds'] / (int)$element['numberOfCages']);
-                                    
-                                    if(!in_array($birdsPerCages, $groupArray3)){
-                                        $groupMapOfBirdsToCages[] = array( 
-                                            'numberOfBirds' => $birdsPerCages,
-                                            'count' => 0
-                                        );
-                                        array_push($groupArray3, $birdsPerCages);
-                                    }
+
+                                if(!in_array($birdsPerCageValue, $groupArray3)){
+                                    $groupMapOfBirdsToCages[] = array( 
+                                        'numberOfBirds' => $birdsPerCageValue,
+                                        'maleCount' => 0,
+                                        'femaleCount' => 0,
+                                        'mixedCount' => 0
+                                    );
+                                    array_push($groupArray3, $birdsPerCageValue);
                                 }
-                                
-                                if($element['birdsPerCages'] != null){
-                                    $keyB = array_search($element['birdsPerCages'], $groupArray3);
+
+                                $keyB = array_search($birdsPerCageValue, $groupArray3);
+                                if ($element['sex'] == 'Male') {
+                                    $groupMapOfBirdsToCages[$keyB]['maleCount'] += (int)$element['numberOfCages'];
+                                } elseif ($element['sex'] == 'Female') {
+                                    $groupMapOfBirdsToCages[$keyB]['femaleCount'] += (int)$element['numberOfCages'];
+                                } elseif ($element['sex'] == 'Mixed') {
+                                    $groupMapOfBirdsToCages[$keyB]['mixedCount'] += (int)$element['numberOfCages'];
                                 }
-                                else{
-                                    $birdsPerCages = (string)((int)$element['numberOfBirds'] / (int)$element['numberOfCages']);
-                                    $keyB = array_search($birdsPerCages, $groupArray3);
-                                }
-                                
-                                $groupMapOfBirdsToCages[$keyB]['count'] += (int)$element['numberOfCages'];
                             }
                             
                             $groupNet = $groupGross - $groupTare;
-
 
                             $message .= '<section class="record">
                                 <div class="page-header" id="record-'.$counter.'-group-'.$groupIndex.'">
@@ -1391,37 +1405,36 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                                             </tr>
                                                         </tbody>
                                                     </table><br>
-
-                                                        <table class="table">
-                                                            <tbody>
-                                                                <tr>
-                                                                    <th style="width: 20%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;"></th>
-                                                                    <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Male</th>
-                                                                    <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Female</th>
-                                                                    <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Mixed</th>
-                                                                    <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Total</th>
+                                                    <table class="table">
+                                                        <tbody>
+                                                            <tr>
+                                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;"></th>
+                                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Male</th>
+                                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Female</th>
+                                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Mixed</th>
+                                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Total</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates</td>
+                                                                    <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupMaleCages.'</td>
+                                                                    <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupFemaleCages.'</td>
+                                                                    <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupMixedCages.'</td>
+                                                                    <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupCrates.'</td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td style="width: 25%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates</td>
-                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupMaleCages.'</td>
-                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupFemaleCages.'</td>
-                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupMixedCages.'</td>
-                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupCrates.'</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Birds</td>
-                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupMaleBirds.'</td>
-                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupFemaleBirds.'</td>
-                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupMixedBirds.'</td>
-                                                                        <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupBirds.'</td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>';
+                                                                    <td style="width: 25%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Birds</td>
+                                                                    <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupMaleBirds.'</td>
+                                                                    <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupFemaleBirds.'</td>
+                                                                    <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupMixedBirds.'</td>
+                                                                    <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupBirds.'</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>';
                                                 $message .= '</td>
                                                 <td style="width: 50%;border-top:0px;">
                                                     <p style="font-size: 12px;font-family: sans-serif;"><b>SUMMARY - BY HOUSE (GROUP ' . $groupNumber . ')</b></p>
                                                     <div style="width:50%; padding-left: 100px;">
-                                                        <table class="table" style="width: 50%">
+                                                        <table class="table">
                                                             <tbody>
                                                                 <tr>
                                                                     <th style="width: 28%;border-top:0px;padding: 0.3rem;font-size: 12px;font-family: sans-serif;">H</th>
@@ -1463,55 +1476,65 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                                                 }
                                                             
                                                             $message .= '</tbody>
-                                                        </table>';
-
-                                                        if (count($group['houses']) > 3){
-                                                            $birdPerCageMargin = "45%";
-                                                        }else{
-                                                            $birdPerCageMargin = "90%";
-                                                        }
+                                                        </table>
                                                         
-                                                        $message.= '
-                                                        <table class="table" style="width: 70%; margin-top: '.$birdPerCageMargin.'; margin-left: 35px">
+                                                        <table class="table" style="position: absolute; bottom: 10px; right: 50px; width: 200px;">
                                                             <tbody>
                                                                 <tr>
                                                                     <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Birds/Cage</th>
-                                                                    <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Cages</th>
+                                                                    <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Male</th>
+                                                                    <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Female</th>
+                                                                    <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Mixed</th>
                                                                     <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Birds</th>
                                                                 </tr>';
 
                                                                 if (count($groupMapOfBirdsToCages) > 0) {
                                                                     $groupTotalBirdsInCages = 0;
                                                                     $groupTotalCages = 0;
+                                                                    $groupTotalMale = 0;
+                                                                    $groupTotalFemale = 0;
+                                                                    $groupTotalMixed = 0;
 
                                                                     foreach ($groupMapOfBirdsToCages as $bc) {
                                                                         $message .= '
                                                                             <tr>
-                                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;">'.$bc['numberOfBirds'].'</td>
-                                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$bc['count'].'</td>
-                                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.((int)$bc['count'] * (int)$bc['numberOfBirds']).'</td>
+                                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;">'.$bc['numberOfBirds'].'</td>
+                                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$bc['maleCount'].'</td>
+                                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$bc['femaleCount'].'</td>
+                                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$bc['mixedCount'].'</td>
+                                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalBirds.'</td>
                                                                             </tr>
                                                                         ';
-                                                                        $groupTotalBirdsInCages += ((int)$bc['count'] * (int)$bc['numberOfBirds']);
-                                                                        $groupTotalCages += (int)$bc['count'];
-
+                                                                        // $groupTotalBirdsInCages += ((int)$bc['count'] * (int)$bc['numberOfBirds']);
+                                                                        // $groupTotalCages += (int)$bc['count'];
+                                                                        $groupTotalMale += $bc['maleCount'];
+                                                                        $groupTotalFemale += $bc['femaleCount'];
+                                                                        $groupTotalMixed += $bc['mixedCount'];
                                                                     }
 
                                                                     // Total row for birds/cages
                                                                     $message .= '
                                                                             <tr>
                                                                                 <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;"><b>Total</b></td>
-                                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalCages.'</td>
-                                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalBirdsInCages.'</td>
+                                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalMale.'</td>
+                                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalFemale.'</td>
+                                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalMixed.'</td>
+                                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;"></td>
                                                                             </tr>
                                                                         ';
                                                                 }
                                                             
                                                                 $message .= '</tbody>
-                                                        </table> 
-                                                        <div style="position: absolute; bottom: 10px; right: 10px; font-size: 12px; font-family: sans-serif;">
-                                                            Indicator Id: ' . $row['indicator_id'] . '
-                                                        </div>
+                                                        </table> ';
+
+                                                        if(isset($row['indicator_id']) && !empty($row['indicator_id'])){
+                                                            $message .= '
+                                                            <div style="position: absolute; bottom: 10px; right: 10px; font-size: 12px; font-family: sans-serif;">
+                                                                Indicator Id: ' . $row['indicator_id'] . '
+                                                            </div>';
+                                                        }
+
+                                                $message .= '
                                                     </div>       
                                                 </td>
                                             </tr>
