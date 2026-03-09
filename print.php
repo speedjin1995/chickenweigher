@@ -39,6 +39,8 @@ $totalFemaleBirds = 0;
 $totalFemaleCages = 0;
 $totalMixedBirds = 0;
 $totalMixedCages = 0;
+
+$gradeData = [];
  
 // Filter the excel data 
 function filterData(&$str){ 
@@ -61,7 +63,7 @@ function totalWeight($strings){
 }
 
 function rearrangeList($weightDetails) {
-    global $mapOfHouses, $mapOfWeights, $mapOfBirdsToCages, $totalSGross, $totalSCrate, $totalSReduce, $totalSNet, $totalSBirds, $totalSCages, $totalAGross, $totalACrate, $totalAReduce, $totalANet, $totalABirds, $totalACages, $totalGross, $totalCrate, $totalReduce, $totalNet, $totalCrates, $totalBirds, $totalMaleBirds, $totalMaleCages, $totalFemaleBirds, $totalFemaleCages, $totalMixedBirds, $totalMixedCages, $totalCount;
+    global $mapOfHouses, $mapOfWeights, $mapOfBirdsToCages, $totalSGross, $totalSCrate, $totalSReduce, $totalSNet, $totalSBirds, $totalSCages, $totalAGross, $totalACrate, $totalAReduce, $totalANet, $totalABirds, $totalACages, $totalGross, $totalCrate, $totalReduce, $totalNet, $totalCrates, $totalBirds, $totalMaleBirds, $totalMaleCages, $totalFemaleBirds, $totalFemaleCages, $totalMixedBirds, $totalMixedCages, $totalCount, $gradeData;
 
     if (!empty($weightDetails)) {
         $array1 = array(); // group
@@ -160,7 +162,27 @@ function rearrangeList($weightDetails) {
                 $totalAReduce += floatval($element['reduceWeight']);
                 $totalANet += floatval($element['netWeight']);
             }
+
+            // Dynamic grade totaling
+            $grade = $element['grade'];
+            if (!isset($gradeData[$grade])) {
+                $gradeData[$grade] = [
+                    'birds' => 0,
+                    'cages' => 0,
+                    'gross' => 0,
+                    'crate' => 0,
+                    'reduce' => 0,
+                    'net' => 0
+                ];
+            }
             
+            $gradeData[$grade]['birds'] += intval($element['numberOfBirds']);
+            $gradeData[$grade]['cages'] += intval($element['numberOfCages']);
+            $gradeData[$grade]['gross'] += floatval($element['grossWeight']);
+            $gradeData[$grade]['crate'] += floatval($element['tareWeight']);
+            $gradeData[$grade]['reduce'] += floatval($element['reduceWeight']);
+            $gradeData[$grade]['net'] += floatval($element['netWeight']);
+        
             $totalCount++;
         }
     }
@@ -639,64 +661,55 @@ if(isset($_GET['userID'], $_GET['printType'])){
                                     <table class="table" style="width: 95%">
                                         <tbody>
                                             <tr>
-                                                <th style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;"></th>
-                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">S</th>
-                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">A</th>
-                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Total</th>
+                                                <th style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;"></th>';
+                                                foreach ($gradeData as $grade => $data) {
+                                                    $message .= '<th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">'.$grade.'</th>';
+                                                }
+                                                $message .= '<th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Total</th>
                                             </tr>
                                             <tr>
-                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalSCages.'</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalACages.'</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalCrates.'</td>
+                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates</td>';
+                                                foreach ($gradeData as $grade => $data) {
+                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$data['cages'].'</td>';
+                                                }
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalCrates.'</td>
                                             </tr>
                                             <tr>
-                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Birds</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalSBirds.'</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalABirds.'</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalBirds.'</td>
+                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Birds</td>';
+                                                foreach ($gradeData as $grade => $data) {
+                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$data['birds'].'</td>';
+                                                }
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalBirds.'</td>
                                             </tr>
                                             <tr>
-                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Gross Wt (kg)</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSGross, 2, '.', '').'</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalAGross, 2, '.', '').'</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalGross, 2, '.', '').'</td>
+                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Gross Wt (kg)</td>';
+                                                foreach ($gradeData as $grade => $data) {
+                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($data['gross'], 2, '.', '').'</td>';
+                                                }
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalGross, 2, '.', '').'</td>
                                             </tr>';
                                             $message .= '<tr>
-                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates Wt (kg)</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSCrate, 2, '.', '').'</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalACrate, 2, '.', '').'</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalCrate, 2, '.', '').'</td>
+                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates Wt (kg)</td>';
+                                                foreach ($gradeData as $grade => $data) {
+                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($data['crate'], 2, '.', '').'</td>';
+                                                }
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalCrate, 2, '.', '').'</td>
                                             </tr>
                                             <tr>
                                                 <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Avg kg/Bird</td>';
-                                                
-                                                if($totalSCages <= 0){
-                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
+                                                foreach ($gradeData as $grade => $data) {
+                                                    $avg = ($data['birds'] > 0) ? number_format($data['net']/$data['birds'], 2, '.', '') : '0.00';
+                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$avg.'</td>';
                                                 }
-                                                else{
-                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSNet/$totalSBirds, 2, '.', '').'</td>';
-                                                }
-                                                
-                                                if($totalACages <= 0){
-                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
-                                                }
-                                                else{
-                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalANet/$totalABirds, 2, '.', '').'</td>';
-                                                }
-                                                
-                                                if($totalBirds <= 0){
-                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
-                                                }
-                                                else{
-                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalNet/$totalBirds, 2, '.', '').'</td>';
-                                                }
+                                                $totalAvg = ($totalBirds > 0) ? number_format($totalNet/$totalBirds, 2, '.', '') : '0.00';
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalAvg.'</td>';
                                             $message.= '</tr>
                                             <tr>
-                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg)</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalSGross - $totalSCrate, 2, '.', '').'</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalAGross - $totalACrate, 2, '.', '').'</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalGross - $totalCrate, 2, '.', '').'</td>
+                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg)</td>';
+                                                foreach ($gradeData as $grade => $data) {
+                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($data['gross'] - $data['crate'], 2, '.', '').'</td>';
+                                                }
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($totalGross - $totalCrate, 2, '.', '').'</td>
                                             </tr>
                                         </tbody>
                                     </table><br>
@@ -1223,6 +1236,7 @@ if(isset($_GET['userID'], $_GET['printType'])){
             $groupMixedBirds = 0;
             $groupMapOfBirdsToCages = array();
             $groupArray3 = array(); 
+            $groupGradeData = [];
 
             foreach ($group['weightList'] as $element) {
                 $groupCrates += intval($element['numberOfCages']);
@@ -1241,6 +1255,16 @@ if(isset($_GET['userID'], $_GET['printType'])){
                     $groupAGross += floatval($element['grossWeight']);
                     $groupACrate += floatval($element['tareWeight']);
                 }
+
+                $grade = $element['grade'];
+                if (!isset($groupGradeData[$grade])) {
+                    $groupGradeData[$grade] = ['birds' => 0, 'cages' => 0, 'gross' => 0, 'crate' => 0, 'net' => 0];
+                }
+                $groupGradeData[$grade]['birds'] += intval($element['numberOfBirds']);
+                $groupGradeData[$grade]['cages'] += intval($element['numberOfCages']);
+                $groupGradeData[$grade]['gross'] += floatval($element['grossWeight']);
+                $groupGradeData[$grade]['crate'] += floatval($element['tareWeight']);
+                $groupGradeData[$grade]['net'] = $groupGradeData[$grade]['gross'] - $groupGradeData[$grade]['crate'];
 
                 if ($element['sex'] == 'Male') {
                     $groupMaleCages += intval($element['numberOfCages']);
@@ -1517,66 +1541,55 @@ if(isset($_GET['userID'], $_GET['printType'])){
                                     <table class="table" style="width: 95%">
                                         <tbody>
                                             <tr>
-                                                <th style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;"></th>
-                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">S</th>
-                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">A</th>
-                                                <th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Total</th>
+                                                <th style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;"></th>';
+                                                foreach ($groupGradeData as $grade => $data) {
+                                                    $message .= '<th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">'.$grade.'</th>';
+                                                }
+                                                $message .= '<th style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;background-color: silver;">Total</th>
                                             </tr>
                                             <tr>
-                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupSCages.'</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupACages.'</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupCrates.'</td>
+                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates</td>';
+                                                foreach ($groupGradeData as $grade => $data) {
+                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$data['cages'].'</td>';
+                                                }
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupCrates.'</td>
                                             </tr>
                                             <tr>
-                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Birds</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupSBirds.'</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupABirds.'</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupBirds.'</td>
+                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Birds</td>';
+                                                foreach ($groupGradeData as $grade => $data) {
+                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$data['birds'].'</td>';
+                                                }
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupBirds.'</td>
                                             </tr>
                                             <tr>
-                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Gross Wt (kg)</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupSGross, 2, '.', '').'</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupAGross, 2, '.', '').'</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupGross, 2, '.', '').'</td>
+                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Gross Wt (kg)</td>';
+                                                foreach ($groupGradeData as $grade => $data) {
+                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($data['gross'], 2, '.', '').'</td>';
+                                                }
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupGross, 2, '.', '').'</td>
                                             </tr>';
                                             $message .= '<tr>
-                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates Wt (kg)</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupSCrate, 2, '.', '').'</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupACrate, 2, '.', '').'</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupTare, 2, '.', '').'</td>
+                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Crates Wt (kg)</td>';
+                                                foreach ($groupGradeData as $grade => $data) {
+                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($data['crate'], 2, '.', '').'</td>';
+                                                }
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupTare, 2, '.', '').'</td>
                                             </tr>
                                             <tr>
                                                 <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Avg kg/Bird</td>';
-                                                
-                                                if($groupSBirds <= 0){
-                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
+                                                foreach ($groupGradeData as $grade => $data) {
+                                                    $avg = ($data['birds'] > 0) ? number_format($data['net']/$data['birds'], 2, '.', '') : '0.00';
+                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$avg.'</td>';
                                                 }
-                                                else{
-                                                    $groupSNet = $groupSGross - $groupSCrate;
-                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupSNet/$groupSBirds, 2, '.', '').'</td>';
-                                                }
-                                                
-                                                if($groupABirds <= 0){
-                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
-                                                }
-                                                else{
-                                                    $groupANet = $groupAGross - $groupACrate;
-                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupANet/$groupABirds, 2, '.', '').'</td>';
-                                                }
-                                                
-                                                if($groupBirds <= 0){
-                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">0.00</td>';
-                                                }
-                                                else{
-                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupNet/$groupBirds, 2, '.', '').'</td>';
-                                                }
+                                                $groupAvg = ($groupBirds > 0) ? number_format($groupNet/$groupBirds, 2, '.', '') : '0.00';
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupAvg.'</td>';
                                             $message.= '</tr>
                                             <tr>
-                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg)</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupSGross - $groupSCrate, 2, '.', '').'</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupAGross - $groupACrate, 2, '.', '').'</td>
-                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupGross - $groupTare, 2, '.', '').'</td>
+                                                <td style="width: 40%;border-top:0px;padding: 0 0.7rem;font-size: 12px;font-family: sans-serif;font-weight: bold;">Nett Wt (kg)</td>';
+                                                foreach ($groupGradeData as $grade => $data) {
+                                                    $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($data['gross'] - $data['crate'], 2, '.', '').'</td>';
+                                                }
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.number_format($groupGross - $groupTare, 2, '.', '').'</td>
                                             </tr>
                                         </tbody>
                                     </table><br>
@@ -1671,13 +1684,14 @@ if(isset($_GET['userID'], $_GET['printType'])){
                                                     $groupTotalMixed = 0;
 
                                                     foreach ($groupMapOfBirdsToCages as $bc) {
+                                                        $groupBirds = ($bc['maleCount'] + $bc['femaleCount'] + $bc['mixedCount']) * (int)$bc['numberOfBirds'];
                                                         $message .= '
                                                             <tr>
                                                                 <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center !important;">'.$bc['numberOfBirds'].'</td>
                                                                 <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$bc['maleCount'].'</td>
                                                                 <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$bc['femaleCount'].'</td>
                                                                 <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$bc['mixedCount'].'</td>
-                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$totalBirds.'</td>
+                                                                <td style="width: 20%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupBirds.'</td>
                                                             </tr>
                                                         ';
                                                         // $groupTotalBirdsInCages += ((int)$bc['count'] * (int)$bc['numberOfBirds']);
