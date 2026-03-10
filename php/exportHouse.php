@@ -35,6 +35,10 @@ if($_GET['toDate'] != null && $_GET['toDate'] != ''){
     $searchQuery .= " and created_datetime <= '".$toDateTime."'";
 }
 
+if($_GET['vehicle'] != null && $_GET['vehicle'] != '' && $_GET['vehicle'] != '-'){
+    $searchQuery .= " and lorry_no = '".$_GET['vehicle']."'";
+}
+
 if($_GET['farm'] != null && $_GET['farm'] != '' && $_GET['farm'] != '-'){
     $searchQuery .= " and farm_id = '".$_GET['farm']."'";
 }

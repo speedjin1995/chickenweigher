@@ -73,39 +73,25 @@ function rearrangeList($weightDetails) {
             $totalCrates += intval($element['numberOfCages']);
             $totalBirds += intval($element['numberOfBirds']);
             
-            if($element['birdsPerCages'] != null){
-                if(!in_array($element['birdsPerCages'], $array3)){
-                    $mapOfBirdsToCages[] = array( 
-                        'numberOfBirds' => $element['birdsPerCages'],
-                        'count' => 0
-                    );
-    
-                    array_push($array3, $element['birdsPerCages']);
-                }
+            if(!in_array($element['birdsPerCages'], $array3)){
+                $mapOfBirdsToCages[] = array( 
+                    'numberOfBirds' => $element['birdsPerCages'],
+                    'maleCount' => 0,
+                    'femaleCount' => 0,
+                    'mixedCount' => 0
+                );
+
+                array_push($array3, $element['birdsPerCages']);
+            } 
+
+            $keyB = array_search($element['birdsPerCages'], $array3); 
+            if ($element['sex'] == 'Male') {
+                $mapOfBirdsToCages[$keyB]['maleCount'] += (int)$element['numberOfCages'];
+            } elseif ($element['sex'] == 'Female') {
+                $mapOfBirdsToCages[$keyB]['femaleCount'] += (int)$element['numberOfCages'];
+            } elseif ($element['sex'] == 'Mixed') {
+                $mapOfBirdsToCages[$keyB]['mixedCount'] += (int)$element['numberOfCages'];
             }
-            else{
-                $birdsPerCages = (string)((int)$element['numberOfBirds'] / (int)$element['numberOfCages']);
-                
-                if(!in_array($birdsPerCages, $array3)){
-                    $mapOfBirdsToCages[] = array( 
-                        'numberOfBirds' => $birdsPerCages,
-                        'count' => 0
-                    );
-    
-                    array_push($array3, $birdsPerCages);
-                }
-            }
-            
-            if($element['birdsPerCages'] != null){
-                 $keyB = array_search($element['birdsPerCages'], $array3);
-            }
-            else{
-                 $birdsPerCages = (string)((int)$element['numberOfBirds'] / (int)$element['numberOfCages']);
-                 $keyB = array_search($birdsPerCages, $array3);
-            }
-            
-           
-            $mapOfBirdsToCages[$keyB]['count'] += (int)$element['numberOfCages'];
 
             if ($element['sex'] == 'Male') {
                 $totalMaleBirds += intval($element['numberOfBirds']);
@@ -303,7 +289,7 @@ if(isset($_GET['userID'])){
                             
                             <body>
                                 <div class="page-header">
-                                        <table class="table">
+                                    <table class="table">
                                         <tbody>
                                             <tr>
                                                 <td style="width: 100%;border-top:0px;text-align:center;"><img src="https://dglink.com.my/ccb/assets/header.png" width="100%" height="auto" /></td>
@@ -410,34 +396,6 @@ if(isset($_GET['userID'])){
                                                                 <td style="text-align: center;font-size: 14px;"></td>
                                                             </tr>
                                                         </tbody>
-                                                    </table><br>
-                                                    <table class="table-full" style="width: 90%;">
-                                                        <tbody>
-                                                            <tr>
-                                                                <td style="text-align: center;font-size: 14px;"><b>Birds/Cage</b></td>
-                                                                <td style="text-align: center;font-size: 14px;"><b>Cages</b></td>
-                                                                <td style="text-align: center;font-size: 14px;"><b>Birds</b></td>
-                                                            </tr>';
-                                                        
-                                                            $totalBirdsInCages = 0;
-                                                            $totalCages = 0;
-                                                            for ($bc = 0; $bc < count($mapOfBirdsToCages); $bc++) {
-                                                                $message .= '<tr>';
-                                                                $message .= '<td style="text-align: center;font-size: 14px;">' . $mapOfBirdsToCages[$bc]['numberOfBirds'] . '</td>';
-                                                                $message .= '<td style="text-align: center;font-size: 14px;">' . $mapOfBirdsToCages[$bc]['count'] . '</td>';
-                                                                $message .= '<td style="text-align: center;font-size: 14px;">' . ((int)$mapOfBirdsToCages[$bc]['count'] * (int)$mapOfBirdsToCages[$bc]['numberOfBirds']) . '</td>';
-                                                                $message .= '</tr>';
-                                                                $totalBirdsInCages += ((int)$mapOfBirdsToCages[$bc]['count'] * (int)$mapOfBirdsToCages[$bc]['numberOfBirds']);
-                                                                $totalCages += (int)$mapOfBirdsToCages[$bc]['count'];
-                                                            }
-                                                            
-                                                            $message .= '<tr>';
-                                                            $message .= '<td style="text-align: center;font-size: 14px;"><b>Total</b></td>';
-                                                            $message .= '<td style="text-align: center;font-size: 14px;"><b>'.$totalCages.'</b></td>';
-                                                            $message .= '<td style="text-align: center;font-size: 14px;"><b>' . $totalBirdsInCages . '</b></td>';
-                                                            $message .= '</tr>';
-                                                            
-                                                        $message .= '</tbody>
                                                     </table>
                                                 </td>
                                                 <td style="width: 30%;">
@@ -487,6 +445,47 @@ if(isset($_GET['userID'])){
                                                         </tbody>
                                                     </table>
                                                 </td> 
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <table class="table-full" style="width: 50%;">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td style="text-align: center;font-size: 12px;"><b>Birds/Cage</b></td>
+                                                                <td style="text-align: center;font-size: 12px;"><b>Male</b></td>
+                                                                <td style="text-align: center;font-size: 12px;"><b>Female</b></td>
+                                                                <td style="text-align: center;font-size: 12px;"><b>Mixed</b></td>
+                                                                <td style="text-align: center;font-size: 12px;"><b>Birds</b></td>
+                                                            </tr>';
+                                                        
+                                                            $totalMale = 0;
+                                                            $totalFemale = 0;
+                                                            $totalMixed = 0;
+                                                            foreach ($mapOfBirdsToCages as $bc) {
+                                                                $birds = ($bc['maleCount'] + $bc['femaleCount'] + $bc['mixedCount']) * (int)$bc['numberOfBirds'];
+                                                                $message .= '<tr>';
+                                                                $message .= '<td style="text-align: center;font-size: 12px;">' . $bc['numberOfBirds'] . '</td>';
+                                                                $message .= '<td style="text-align: center;font-size: 12px;">' . $bc['maleCount'] . '</td>';
+                                                                $message .= '<td style="text-align: center;font-size: 12px;">' . $bc['femaleCount'] . '</td>';
+                                                                $message .= '<td style="text-align: center;font-size: 12px;">' . $bc['mixedCount'] . '</td>';
+                                                                $message .= '<td style="text-align: center;font-size: 12px;">' . $birds . '</td>';
+                                                                $message .= '</tr>';
+                                                                $totalMale += $bc['maleCount'];
+                                                                $totalFemale += $bc['femaleCount'];
+                                                                $totalMixed += $bc['mixedCount'];
+                                                            }
+                                                            
+                                                            $message .= '<tr>';
+                                                            $message .= '<td style="text-align: center;font-size: 12px;"><b>Total</b></td>';
+                                                            $message .= '<td style="text-align: center;font-size: 12px;"><b>'.$totalMale.'</b></td>';
+                                                            $message .= '<td style="text-align: center;font-size: 12px;"><b>'.$totalFemale.'</b></td>';
+                                                            $message .= '<td style="text-align: center;font-size: 12px;"><b>'.$totalMixed.'</b></td>';
+                                                            $message .= '<td style="text-align: center;font-size: 12px;"></td>';
+                                                            $message .= '</tr>';
+                                                            
+                                                        $message .= '</tbody>
+                                                    </table>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -796,35 +795,29 @@ if(isset($_GET['userID'])){
 
                                     // Calculate group-specific birds per cage mapping
                                     if($element['birdsPerCages'] != null){
-                                        if(!in_array($element['birdsPerCages'], $groupArray3)){
-                                            $groupMapOfBirdsToCages[] = array( 
-                                                'numberOfBirds' => $element['birdsPerCages'],
-                                                'count' => 0
-                                            );
-                                            array_push($groupArray3, $element['birdsPerCages']);
-                                        }
+                                        $birdsPerCageValue = $element['birdsPerCages'];
+                                    } else {
+                                        $birdsPerCageValue = (string)((int)$element['numberOfBirds'] / (int)$element['numberOfCages']);
                                     }
-                                    else{
-                                        $birdsPerCages = (string)((int)$element['numberOfBirds'] / (int)$element['numberOfCages']);
-                                        
-                                        if(!in_array($birdsPerCages, $groupArray3)){
-                                            $groupMapOfBirdsToCages[] = array( 
-                                                'numberOfBirds' => $birdsPerCages,
-                                                'count' => 0
-                                            );
-                                            array_push($groupArray3, $birdsPerCages);
-                                        }
+
+                                    if(!in_array($birdsPerCageValue, $groupArray3)){
+                                        $groupMapOfBirdsToCages[] = array( 
+                                            'numberOfBirds' => $birdsPerCageValue,
+                                            'maleCount' => 0,
+                                            'femaleCount' => 0,
+                                            'mixedCount' => 0
+                                        );
+                                        array_push($groupArray3, $birdsPerCageValue);
                                     }
-                                    
-                                    if($element['birdsPerCages'] != null){
-                                            $keyB = array_search($element['birdsPerCages'], $groupArray3);
+
+                                    $keyB = array_search($birdsPerCageValue, $groupArray3);
+                                    if ($element['sex'] == 'Male') {
+                                        $groupMapOfBirdsToCages[$keyB]['maleCount'] += (int)$element['numberOfCages'];
+                                    } elseif ($element['sex'] == 'Female') {
+                                        $groupMapOfBirdsToCages[$keyB]['femaleCount'] += (int)$element['numberOfCages'];
+                                    } elseif ($element['sex'] == 'Mixed') {
+                                        $groupMapOfBirdsToCages[$keyB]['mixedCount'] += (int)$element['numberOfCages'];
                                     }
-                                    else{
-                                            $birdsPerCages = (string)((int)$element['numberOfBirds'] / (int)$element['numberOfCages']);
-                                            $keyB = array_search($birdsPerCages, $groupArray3);
-                                    }
-                                    
-                                    $groupMapOfBirdsToCages[$keyB]['count'] += (int)$element['numberOfCages'];
                                 }
                                 
                                 $groupNet = $groupGross - $groupTare;
@@ -944,44 +937,6 @@ if(isset($_GET['userID'])){
                                                                     <td style="text-align: center;font-size: 14px;"></td>
                                                                 </tr>
                                                             </tbody>
-                                                        </table><br>
-                                                        <table class="table-full" style="width: 90%;">
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td style="text-align: center;font-size: 14px;"><b>Birds/Cage</b></td>
-                                                                    <td style="text-align: center;font-size: 14px;"><b>Cages</b></td>
-                                                                    <td style="text-align: center;font-size: 14px;"><b>Birds</b></td>
-                                                                </tr>';
-                                                            
-                                                                if (count($groupMapOfBirdsToCages) > 0) {
-                                                                    $groupTotalBirdsInCages = 0;
-                                                                    $groupTotalCages = 0;
-
-                                                                    foreach ($groupMapOfBirdsToCages as $bc) {
-                                                                        $message .= '
-                                                                            <tr>
-                                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$bc['numberOfBirds'].'</td>
-                                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$bc['count'].'</td>
-                                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.((int)$bc['count'] * (int)$bc['numberOfBirds']).'</td>
-                                                                            </tr>
-                                                                        ';
-                                                                        $groupTotalBirdsInCages += ((int)$bc['count'] * (int)$bc['numberOfBirds']);
-                                                                        $groupTotalCages += (int)$bc['count'];
-
-                                                                    }
-                                                                    
-                                                                    // Total row for birds/cages
-                                                                    $message .= '
-                                                                            <tr>
-                                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;"><b>Total</b></td>
-                                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalCages.'</td>
-                                                                                <td style="width: 25%;border-top:0px;padding: 0 0.7rem;border: 1px solid #000000;font-size: 12px;font-family: sans-serif;text-align: center;">'.$groupTotalBirdsInCages.'</td>
-                                                                            </tr>
-                                                                        ';
-                                                                }
-                                                                
-                                                            $message .= '
-                                                            </tbody>
                                                         </table>
                                                     </td>
                                                     <td style="width: 30%;">
@@ -1031,6 +986,56 @@ if(isset($_GET['userID'])){
                                                             </tbody>
                                                         </table>
                                                     </td> 
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="3">
+                                                        <table class="table-full" style="width: 50%;">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td style="text-align: center;font-size: 12px;"><b>Birds/Cage</b></td>
+                                                                    <td style="text-align: center;font-size: 12px;"><b>Male</b></td>
+                                                                    <td style="text-align: center;font-size: 12px;"><b>Female</b></td>
+                                                                    <td style="text-align: center;font-size: 12px;"><b>Mixed</b></td>
+                                                                    <td style="text-align: center;font-size: 12px;"><b>Birds</b></td>
+                                                                </tr>';
+
+                                                                if (count($groupMapOfBirdsToCages) > 0) {
+                                                                    // $groupTotalBirdsInCages = 0;
+                                                                    // $groupTotalCages = 0;
+                                                                    $groupTotalMale = 0;
+                                                                    $groupTotalFemale = 0;
+                                                                    $groupTotalMixed = 0;
+
+                                                                    foreach ($groupMapOfBirdsToCages as $bc) {
+                                                                        $birds = ($bc['maleCount'] + $bc['femaleCount'] + $bc['mixedCount']) * (int)$bc['numberOfBirds'];
+                                                                        $message .= '<tr>';
+                                                                        $message .= '<td style="text-align: center;font-size: 12px;">' . $bc['numberOfBirds'] . '</td>';
+                                                                        $message .= '<td style="text-align: center;font-size: 12px;">' . $bc['maleCount'] . '</td>';
+                                                                        $message .= '<td style="text-align: center;font-size: 12px;">' . $bc['femaleCount'] . '</td>';
+                                                                        $message .= '<td style="text-align: center;font-size: 12px;">' . $bc['mixedCount'] . '</td>';
+                                                                        $message .= '<td style="text-align: center;font-size: 12px;">' . $birds . '</td>';
+                                                                        $message .= '</tr>';
+                                                                        // $groupTotalBirdsInCages += ((int)$bc['count'] * (int)$bc['numberOfBirds']);
+                                                                        // $groupTotalCages += (int)$bc['count'];
+                                                                        $groupTotalMale += $bc['maleCount'];
+                                                                        $groupTotalFemale += $bc['femaleCount'];
+                                                                        $groupTotalMixed += $bc['mixedCount'];
+                                                                    }
+                                                                    
+                                                                    // Total row for birds/cages
+                                                                    $message .= '<tr>';
+                                                                    $message .= '<td style="text-align: center;font-size: 12px;"><b>Total</b></td>';
+                                                                    $message .= '<td style="text-align: center;font-size: 12px;"><b>'.$groupTotalMale.'</b></td>';
+                                                                    $message .= '<td style="text-align: center;font-size: 12px;"><b>'.$groupTotalFemale.'</b></td>';
+                                                                    $message .= '<td style="text-align: center;font-size: 12px;"><b>'.$groupTotalMixed.'</b></td>';
+                                                                    $message .= '<td style="text-align: center;font-size: 12px;"></td>';
+                                                                    $message .= '</tr>';
+                                                                }
+
+                                                                $message .= '
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
                                                 </tr>
                                             </tbody>
                                         </table>

@@ -110,7 +110,7 @@ if(isset($_GET['id']) &&$_GET['id'] != null && $_GET['id'] != ''){
         // ================================
         // ✅ SECTION 3 — WEIGHT DATA
         // ================================
-        $excelData .= "WEIGHT_NO\tDATE_TIME\tGROSS\tCRATE\tNET\tUNIT\tNO_OF_CRATES\tBIRD_PER_CAGE\tBIRDS\tGENDER\tGRADE\tHOUSE_NO\tGROUP_NO\n";
+        $excelData .= "WEIGHT_NO\tDATE_TIME\tGROSS\tCRATE\tNET\tUNIT\tNO_OF_CRATES\tBIRD_PER_CAGE\tBIRDS\tGENDER\tGRADE\tHOUSE_NO\tGROUP_NO\tAVE_WEIGHT\tREMARK\n";
     
         $timestampData = json_decode($row['weight_time'], true);
         $weightData = json_decode($row['weight_data'], true);
@@ -131,7 +131,9 @@ if(isset($_GET['id']) &&$_GET['id'] != null && $_GET['id'] != ''){
                     strtoupper($w['sex']),
                     $w['grade'],
                     $w['houseNumber'],
-                    $w['groupNumber']
+                    $w['groupNumber'],
+                    floatval($w['numberOfBirds']) > 0 ? number_format(floatval($w['netWeight'])/floatval($w['numberOfBirds']), 2) : '0.00',
+                    $w['remark'] ?? ''
                 ];
     
                 array_walk($weightRow, 'filterData');

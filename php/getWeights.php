@@ -52,6 +52,17 @@ if(isset($_POST['userID'])){
                 }
 
                 $message['remark'] = $row['remark'];
+
+                $weightData = json_decode($row['weight_data'], true);
+                
+                if (is_array($weightData)) {
+                    foreach ($weightData as &$w) {
+                        $w['aveWeight'] = floatval($w['numberOfBirds']) > 0 ? number_format(floatval($w['netWeight'])/floatval($w['numberOfBirds']), 2) : '0.00';
+                    }
+                }
+                
+                $message['weight_data'] = $weightData;
+
             }
             
             echo json_encode(
