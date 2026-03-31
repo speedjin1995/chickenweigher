@@ -88,6 +88,8 @@ function rearrangeList($weightDetails) {
                 $mapOfWeights[$key1]['houses'][] = array(
                     'house' => $element['houseNumber'],
                     'weightList' => array(),
+                    'gradeList' => array(),
+                    'grades' => array(),
                 );
     
                 array_push($mapOfWeights[$key1]['houseList'], $element['houseNumber']);
@@ -105,6 +107,18 @@ function rearrangeList($weightDetails) {
             $key3 = array_search($element['houseNumber'], $array3);
             $key2 = array_search($element['houseNumber'], $mapOfWeights[$key1]['houseList']);
             array_push($mapOfWeights[$key1]['houses'][$key2]['weightList'], $element);
+
+            $houseGrade = $element['grade'];
+            if (!in_array($houseGrade, $mapOfWeights[$key1]['houses'][$key2]['gradeList'])) {
+                $mapOfWeights[$key1]['houses'][$key2]['grades'][] = array(
+                    'grade' => $houseGrade,
+                    'weightList' => array(),
+                );
+                array_push($mapOfWeights[$key1]['houses'][$key2]['gradeList'], $houseGrade);
+            }
+            $keyG = array_search($houseGrade, $mapOfWeights[$key1]['houses'][$key2]['gradeList']);
+            array_push($mapOfWeights[$key1]['houses'][$key2]['grades'][$keyG]['weightList'], $element);
+
             array_push($mapOfWeights[$key1]['weightList'], $element);
             array_push($mapOfHouses[$key3]['weightList'], $element);
 
@@ -880,68 +894,42 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                         foreach ($group['houses'] as $house) {
                                             $message .= '<div class="house-container">';
                                             $message .= '<p style="margin: 0px;">House ' . $house['house'] . '</p>';
-                                            $message .= '<table class="table house-table">';
-                                            $message .= '<tbody>';
-                                            $message .= '<tr  style="border-top: 1px solid #000000;border-bottom: 1px solid #000000;font-family: sans-serif;">';
-                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;"><p>
-                                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Grade ' . $house['weightList'][0]['grade'] . '</span>
-                                                </p></td>';
-                                            $message .= '<td colspan="10" style="width: 80%;border-top:0px;padding: 0 0.7rem;">
-                                                <p>
-                                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Weight (kg) / Bird (Nos)</span>
-                                                </p>
-                                            </td>
-                                        </tr>';
-                            
-                                            $count = 0;
-                                            $newRow = false;
-                                            $indexCount2 = 11;
-                                            $oldWeight = "";
-                                            $indexString = '<tr><td style="border-top:0px;padding: 0 0.7rem;">
-                                                <p>
-                                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">1</span>
-                                                </p>
-                                            </td>';
-                                            
-                                            foreach ($house['weightList'] as $element) {
-                                                if ($count < 10) {
-                                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%; text-align: end;">
-                                                        <p>
-                                                            <span style="font-size: 12px;font-family: sans-serif;">' . $element['grossWeight'] . '/' . $element['numberOfBirds'] . '</span>
-                                                        </p>
-                                                    </td>';
-                                                    $count++;
-                                                    $newRow = false;
+
+                                            foreach ($house['grades'] as $gradeGroup) {
+                                                $message .= '<table class="table house-table" style="margin-bottom: 10px">';
+                                                $message .= '<tbody>';
+                                                $message .= '<tr style="border-top: 1px solid #000000;border-bottom: 1px solid #000000;font-family: sans-serif;">';
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;"><p><span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Grade ' . $gradeGroup['grade'] . '</span></p></td>';
+                                                $message .= '<td colspan="10" style="width: 80%;border-top:0px;padding: 0 0.7rem;"><p><span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Weight (kg) / Bird (Nos)</span></p></td></tr>';
+
+                                                $count = 0;
+                                                $indexCount2 = 11;
+                                                $indexString = '<tr><td style="border-top:0px;padding: 0 0.7rem;"><p><span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">1</span></p></td>';
+
+                                                foreach ($gradeGroup['weightList'] as $element) {
+                                                    if ($count < 10) {
+                                                        $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;"><p><span style="font-size: 12px;font-family: sans-serif;">' . $element['grossWeight'] . '/' . $element['numberOfBirds'] . '</span></p></td>';
+                                                        $count++;
+                                                    } else {
+                                                        $oldWeight = $element['grossWeight'] . '/' . $element['numberOfBirds'];
+                                                        $indexString .= '</tr><tr><td style="border-top:0px;padding: 0 0.7rem;width: 20%;"><p><span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">' . $indexCount2 . '</span></p></td>';
+                                                        $indexCount2 += 10;
+                                                        $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;"><p><span style="font-size: 12px;font-family: sans-serif;">' . $oldWeight . '</span></p></td>';
+                                                        $count = 1;
+                                                    }
                                                 }
-                                                else {
+
+                                                if ($count > 0) {
+                                                    for ($k = 0; $k < (10 - $count); $k++) {
+                                                        $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;"><p><span style="font-size: 12px;font-family: sans-serif;"></span></p></td>';
+                                                    }
                                                     $indexString .= '</tr>';
-                                                    $count = 0;
-                                                    $newRow = true;
-                                                    $oldWeight = $element['grossWeight'] . '/' . $element['numberOfBirds'];
-                                                    $indexString .= '<tr><td style="border-top:0px;padding: 0 0.7rem;width: 20%;">
-                                                        <p>
-                                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">' . $indexCount2 . '</span>
-                                                        </p>
-                                                    </td>';
-                                                    $indexCount2 += 10;
-                                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%; text-align: end;">
-                                                        <p>
-                                                            <span style="font-size: 12px;font-family: sans-serif;">' . $oldWeight . '</span>
-                                                        </p>
-                                                    </td>';
-                                                    $count++;
                                                 }
+
+                                                $message .= $indexString;
+                                                $message .= '</tbody></table>';
+
                                             }
-                            
-                                            if ($count > 0) {
-                                                for ($k = 0; $k < (10 - $count); $k++) {
-                                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;"><p><span style="font-size: 12px;font-family: sans-serif;"></span></p></td>';
-                                                }
-                                                $indexString .= '</tr>';
-                                            }
-                            
-                                            $message .= $indexString;
-                                            $message .= '</tbody></table><br>';
                                             $message .= '</div>'; // Close house-container
                                         }
                                     }
@@ -1585,68 +1573,40 @@ if(isset($_GET['ids'], $_GET['printType'])) {
                                     if (isset($group['houses']) && is_array($group['houses'])) {
                                         foreach ($group['houses'] as $house) {
                                             $message .= '<p style="margin: 0px;">House ' . $house['house'] . '</p>';
-                                            $message .= '<table class="table">';
-                                            $message .= '<tbody>';
-                                            $message .= '<tr  style="border-top: 1px solid #000000;border-bottom: 1px solid #000000;font-family: sans-serif;">';
-                                            $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;"><p>
-                                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Grade ' . $house['weightList'][0]['grade'] . '</span>
-                                                </p></td>';
-                                            $message .= '<td colspan="10" style="width: 80%;border-top:0px;padding: 0 0.7rem;">
-                                                <p>
-                                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Weight (kg) / Bird (Nos)</span>
-                                                </p>
-                                            </td>
-                                        </tr>';
-                            
-                                            $count = 0;
-                                            $newRow = false;
-                                            $indexCount2 = 11;
-                                            $oldWeight = "";
-                                            $indexString = '<tr><td style="border-top:0px;padding: 0 0.7rem;">
-                                                <p>
-                                                    <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">1</span>
-                                                </p>
-                                            </td>';
-                                            
-                                            foreach ($house['weightList'] as $element) {
-                                                if ($count < 10) {
-                                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%; text-align: end;">
-                                                        <p>
-                                                            <span style="font-size: 12px;font-family: sans-serif;">' . $element['grossWeight'] . '/' . $element['numberOfBirds'] . '</span>
-                                                        </p>
-                                                    </td>';
-                                                    $count++;
-                                                    $newRow = false;
+                                            foreach ($house['grades'] as $gradeGroup){
+                                                $message .= '<table class="table" style="margin-bottom: 10px">';
+                                                $message .= '<tbody>';
+                                                $message .= '<tr style="border-top: 1px solid #000000;border-bottom: 1px solid #000000;font-family: sans-serif;">';
+                                                $message .= '<td style="width: 20%;border-top:0px;padding: 0 0.7rem;"><p><span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Grade ' . $gradeGroup['grade'] . '</span></p></td>';
+                                                $message .= '<td colspan="10" style="width: 80%;border-top:0px;padding: 0 0.7rem;"><p><span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">Weight (kg) / Bird (Nos)</span></p></td></tr>';
+
+                                                $count = 0;
+                                                $indexCount2 = 11;
+                                                $indexString = '<tr><td style="border-top:0px;padding: 0 0.7rem;width: 20%;"><p><span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">1</span></p></td>';
+
+                                                foreach ($gradeGroup['weightList'] as $element) {
+                                                    if ($count < 10) {
+                                                        $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;"><p><span style="font-size: 12px;font-family: sans-serif;">' . $element['grossWeight'] . '/' . $element['numberOfBirds'] . '</span></p></td>';
+                                                        $count++;
+                                                    } else {
+                                                        $oldWeight = $element['grossWeight'] . '/' . $element['numberOfBirds'];
+                                                        $indexString .= '</tr><tr><td style="border-top:0px;padding: 0 0.7rem;width: 20%;"><p><span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">' . $indexCount2 . '</span></p></td>';
+                                                        $indexCount2 += 10;
+                                                        $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;"><p><span style="font-size: 12px;font-family: sans-serif;">' . $oldWeight . '</span></p></td>';
+                                                        $count = 1;
+                                                    }
                                                 }
-                                                else {
+
+                                                if ($count > 0) {
+                                                    for ($k = 0; $k < (10 - $count); $k++) {
+                                                        $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%;"><p><span style="font-size: 12px;font-family: sans-serif;"></span></p></td>';
+                                                    }
                                                     $indexString .= '</tr>';
-                                                    $count = 0;
-                                                    $newRow = true;
-                                                    $oldWeight = $element['grossWeight'] . '/' . $element['numberOfBirds'];
-                                                    $indexString .= '<tr><td style="border-top:0px;padding: 0 0.7rem;width: 20%;">
-                                                        <p>
-                                                            <span style="font-size: 12px;font-family: sans-serif;font-weight: bold;">' . $indexCount2 . '</span>
-                                                        </p>
-                                                    </td>';
-                                                    $indexCount2 += 10;
-                                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;width: 10%; text-align: end;">
-                                                        <p>
-                                                            <span style="font-size: 12px;font-family: sans-serif;">' . $oldWeight . '</span>
-                                                        </p>
-                                                    </td>';
-                                                    $count++;
                                                 }
+
+                                                $message .= $indexString;
+                                                $message .= '</tbody></table>'; 
                                             }
-                            
-                                            if ($count > 0) {
-                                                for ($k = 0; $k < (10 - $count); $k++) {
-                                                    $indexString .= '<td style="border-top:0px;padding: 0 0.7rem;"><p><span style="font-size: 12px;font-family: sans-serif;"></span></p></td>';
-                                                }
-                                                $indexString .= '</tr>';
-                                            }
-                            
-                                            $message .= $indexString;
-                                            $message .= '</tbody></table><br>';
                                         }
                                     }
                     $message .= '
